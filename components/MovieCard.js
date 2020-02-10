@@ -5,6 +5,7 @@ import { Title, List,Caption } from 'react-native-paper';
 
 export default function MovieCard(props) {
     return (
+        
         <TouchableOpacity style={{margin:5, marginBottom: 20,}}>
             <View style={{ flexDirection: 'row', }}>
                 <Image

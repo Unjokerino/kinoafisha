@@ -11,7 +11,7 @@ import {
   Dimensions,
   FlatList,
 } from 'react-native';
-
+import moment from 'moment'
 import MovieCard from '../components/MovieCard'
 import { Appbar } from 'react-native-paper';
 import { MonoText } from '../components/StyledText';
@@ -26,6 +26,10 @@ export default function HomeScreen() {
   let scrollListReftop
   useEffect(() => {
     setDates(getDates())
+   
+   
+  
+
     fetch('https://newtime.binarywd.com/jsonfeed/kino.html').then(response => response.json().then(text => {
       setMovies(text)
     }))
@@ -34,8 +38,10 @@ export default function HomeScreen() {
   return (
 
     <View style={styles.container}>
-      <View
-        style={{flexDirection:'row',flexWrap:'wrap'}}
+      <ScrollView
+      horizontal={true}
+      showsHorizontalScrollIndicator={false}
+        style={{flexWrap:'wrap',flexGrow:1}}
       >
         {dates.map(date => {
           return (
@@ -50,14 +56,16 @@ export default function HomeScreen() {
                     setScrollCheckEnabled(true)
                   }, 500);
                 }}
-                style={{ backgroundColor: currentDate === date.getDate() ? '#e91e63' : '#fff', paddingVertical: 8, paddingHorizontal: 12, borderColor: 'gray', borderRadius: 4, borderWidth: 1, margin: 5 }}>
+                style={{flexGrow:1, backgroundColor: currentDate === date.getDate() ? '#e91e63' : '#fff', 
+                paddingVertical: 8, paddingHorizontal: 12, borderColor: 'gray', 
+                borderRadius: 4, borderWidth: 1, margin: 5 }}>
                 <Text style={{ color: currentDate === date.getDate() ? '#fff' : '#000' }}>{date.getDate() < 10 ? '0' : ''}{date.getDate()}.{date.getMonth() < 10 ? '0' : ''}{date.getMonth() + 1}</Text>
               </TouchableOpacity>
 
             </View>
           )
         })}
-      </View>
+      </ScrollView>
       <ScrollView
         nestedScrollEnabled={true}
         ref={(ref) => scrollListReftop = ref}
@@ -66,7 +74,7 @@ export default function HomeScreen() {
             let offset = Math.round(event.nativeEvent.contentOffset.x / deviceWidth);
             let date = new Date();
             let newDate = new Date(date.setDate(date.getDate() + offset))
-            console.log('new: ',newDate.getDate(), 'cur: ',currentDate)
+            //console.log('new: ',newDate.getDate(), 'cur: ',currentDate)
             if (currentDate !== newDate.getDate()) {
               setCurrentDate(newDate.getDate())
             }
@@ -76,7 +84,7 @@ export default function HomeScreen() {
         }}
         horizontal={true} pagingEnabled={true} showsHorizontalScrollIndicator={false}>
         {dates.map(date => {
-      
+         
           return (
             <View>
               <FlatList
@@ -84,8 +92,8 @@ export default function HomeScreen() {
                 key={date}
                 showsVerticalScrollIndicator={false}
                 style={styles.scrollView}
-                data={movies}
-                renderItem={({ item }) => <MovieCard {...item} ></MovieCard>}
+                data={checkDate(date,movies)}
+                renderItem={({ item }) => item.seanses.length > 0 ? <MovieCard {...item} ></MovieCard>: <Text></Text>}
                 keyExtractor={item => item.name}
               />
          </View>
@@ -103,11 +111,21 @@ export default function HomeScreen() {
 }
 function checkDate(date,movies){
 
-  movies.forEach(movie => {
-    movie.seanses.forEach(element => {
-      
+  movies.map(movie => {
+    let avalableSeanses = []
+    movie.seanses.forEach(seans => {
+
+      let seansDate = new Date(moment(seans.date))
+    
+      if(seansDate.getDate() === date.getDate()){
+        
+        avalableSeanses.push(seans)
+      }
+      console.log(avalableSeanses)
     });
+    movie.seanses = avalableSeanses
   });
+  return movies
 
 }
 
