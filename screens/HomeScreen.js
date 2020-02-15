@@ -8,124 +8,197 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ActivityIndicator,
   Dimensions,
   FlatList,
 } from 'react-native';
 import moment from 'moment'
 import MovieCard from '../components/MovieCard'
-import { Appbar } from 'react-native-paper';
+import { Appbar, Title, FAB, Portal, Provider } from 'react-native-paper';
 import { MonoText } from '../components/StyledText';
 
 const deviceWidth = Dimensions.get('window').width;
+HomeScreen.navigationOptions = {
+  headerShown: false,
+};
+export default function HomeScreen(props) {
 
-export default function HomeScreen() {
   const [movies, setMovies] = useState([])
   const [dates, setDates] = useState([new Date()])
+  const [FABopen, setFABopen] = useState(false)
+  const [avalableSeanses, setAvalableSeanses] = useState([])
   const [currentDate, setCurrentDate] = useState(new Date().getDate())
   const [scrollCheckEnabled, setScrollCheckEnabled] = useState(true)
+
+
   let scrollListReftop
   useEffect(() => {
-    setDates(getDates())
-   
-   
-  
 
-    fetch('https://newtime.binarywd.com/jsonfeed/kino.html').then(response => response.json().then(text => {
-      setMovies(text)
-    }))
+    let aSeanses = []
+    try {
+      fetch('http://newtime.binarywd.com/jsonfeed/kino.html', { cache: "no-cache" }).then(response => response.json().then(text => {
+        setDates(getDates())
+        setMovies(text)
+        dates.forEach(date => {
+          aSeanses.push(checkDate(date, text))
+        });
+        setAvalableSeanses(aSeanses)
+      }))
+    } catch (error) {
+      console.log(111111, error)
+    }
+
+
   }, [])
 
   return (
-
     <View style={styles.container}>
-      <ScrollView
-      horizontal={true}
-      showsHorizontalScrollIndicator={false}
-        style={{flexWrap:'wrap',flexGrow:1}}
-      >
-        {dates.map(date => {
-          return (
-            <View>
-              <TouchableOpacity
-                onPress={() => {
-                  setScrollCheckEnabled(false)
-                  setCurrentDate(date.getDate())
-                  let offset = date.getDate() - new Date().getDate()
-                  scrollListReftop.scrollTo({ x: deviceWidth * offset, y: 0, animated: true })
-                  setTimeout(() => {
-                    setScrollCheckEnabled(true)
-                  }, 500);
-                }}
-                style={{flexGrow:1, backgroundColor: currentDate === date.getDate() ? '#e91e63' : '#fff', 
-                paddingVertical: 8, paddingHorizontal: 12, borderColor: 'gray', 
-                borderRadius: 4, borderWidth: 1, margin: 5 }}>
-                <Text style={{ color: currentDate === date.getDate() ? '#fff' : '#000' }}>{date.getDate() < 10 ? '0' : ''}{date.getDate()}.{date.getMonth() < 10 ? '0' : ''}{date.getMonth() + 1}</Text>
-              </TouchableOpacity>
+      <Appbar style={{ backgroundColor: '#fff', elevation: 0 }}>
+        <Appbar.Action icon="menu" title="ad" onPress={() => console.log('Pressed archive')} />
+        <Appbar.Content title="Афиша"></Appbar.Content>
+      </Appbar>
 
-            </View>
-          )
-        })}
-      </ScrollView>
-      <ScrollView
-        nestedScrollEnabled={true}
-        ref={(ref) => scrollListReftop = ref}
-        onScroll={(event) => {
-          if(scrollCheckEnabled){
-            let offset = Math.round(event.nativeEvent.contentOffset.x / deviceWidth);
-            let date = new Date();
-            let newDate = new Date(date.setDate(date.getDate() + offset))
-            //console.log('new: ',newDate.getDate(), 'cur: ',currentDate)
-            if (currentDate !== newDate.getDate()) {
-              setCurrentDate(newDate.getDate())
+      <Provider >
+
+        <View style={{ backgroundColor: '#fff' }}>
+          <Title style={{ paddingHorizontal: 10, marginTop: 10 }}>Расписание</Title>
+          <ScrollView
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            style={{ flexWrap: 'wrap', flexGrow: 1, }}
+          >
+
+            {dates.map(date => {
+              return (
+                <View>
+                  <TouchableOpacity
+
+                    onPress={() => {
+                      setScrollCheckEnabled(false)
+                      setCurrentDate(date.getDate())
+                      let offset = date.getDate() - new Date().getDate()
+                      scrollListReftop.scrollTo({ x: deviceWidth * offset, y: 0, animated: true })
+                      setTimeout(() => {
+                        setScrollCheckEnabled(true)
+                      }, 500);
+                    }}
+                    style={{
+                      flexGrow: 1,
+                      paddingVertical: 8, paddingHorizontal: 8,
+                      margin: 5
+                    }}>
+                    <Text style={{ fontSize: 16, fontWeight: '700' }}>{date.getDate() < 10 ? '0' : ''}{date.getDate()}/{date.getMonth() < 10 ? '0' : ''}{date.getMonth() + 1}</Text>
+                    <View style={{ marginTop: 3, borderTopLeftRadius: 5, borderTopRightRadius: 5, height: 3, width: '100%', backgroundColor: currentDate === date.getDate() ? '#990000' : '#CFCFCF', }}></View>
+                  </TouchableOpacity>
+
+                </View>
+              )
+            })}
+          </ScrollView>
+        </View>
+        <ScrollView
+
+          nestedScrollEnabled={true}
+          ref={(ref) => scrollListReftop = ref}
+          onScroll={(event) => {
+            if (scrollCheckEnabled) {
+              let offset = Math.round(event.nativeEvent.contentOffset.x / deviceWidth);
+              let date = new Date();
+              let newDate = new Date(date.setDate(date.getDate() + offset))
+              //console.log('new: ',newDate.getDate(), 'cur: ',currentDate)
+              if (currentDate !== newDate.getDate()) {
+                setCurrentDate(newDate.getDate())
+              }
             }
+
+
+          }}
+          horizontal={true} pagingEnabled={true} showsHorizontalScrollIndicator={false}>
+          {dates.map((date, index) => {
+            return (
+              <View>
+
+                <Text style={{ paddingVertical: 10, fontSize: 16, paddingHorizontal: 5 }}> Сеансы на {date.getDate()}/{date.getMonth() + 1}</Text>
+                <FlatList
+                  contentContainerStyle={{ backgroundColor: '#fff', paddingTop: 10 }}
+                  style={{ backgroundColor: '#fff' }}
+                  nestedScrollEnabled={true}
+                  key={date}
+                  showsVerticalScrollIndicator={false}
+                  style={styles.scrollView}
+                  data={checkDate(date,movies)}
+                  renderItem={({ item }) => item.seanses.length > 0 ? <MovieCard {...item} navigation={props.route.navigation} ></MovieCard> : <View></View>}
+                  keyExtractor={item => item.name}
+                />
+              </View>
+
+            )
+          })
+
           }
 
 
-        }}
-        horizontal={true} pagingEnabled={true} showsHorizontalScrollIndicator={false}>
-        {dates.map(date => {
-         
-          return (
-            <View>
-              <FlatList
-                nestedScrollEnabled={true}
-                key={date}
-                showsVerticalScrollIndicator={false}
-                style={styles.scrollView}
-                data={checkDate(date,movies)}
-                renderItem={({ item }) => item.seanses.length > 0 ? <MovieCard {...item} ></MovieCard>: <Text></Text>}
-                keyExtractor={item => item.name}
-              />
-         </View>
-          )
-        })}
+
+        </ScrollView>
+        <Portal>
+          <FAB.Group
+            fabStyle={{ backgroundColor: '#EF0000' }}
+            open={FABopen}
+            icon={FABopen ? 'dots-vertical' : 'format-list-bulleted'}
+            actions={[
 
 
+              { icon: 'email', label: 'Формат', onPress: () => console.log('Pressed email') },
+              { icon: 'bell', label: 'Жанр', onPress: () => console.log('Pressed notifications') },
+              { icon: 'email', label: 'Дата и время', onPress: () => console.log('Pressed email') },
+              { icon: 'email', label: 'Контент', onPress: () => console.log('Pressed email') },
 
-      </ScrollView>
+            ]}
+            onStateChange={({ open }) => setFABopen(open)}
+            onPress={() => {
+              if (FABopen) {
+                // do something if the speed dial is open
+              }
+            }}
+          />
+        </Portal>
 
 
-
+      </Provider>
     </View>
   );
 }
-function checkDate(date,movies){
 
-  movies.map(movie => {
+
+function checkDate(date, all_movies) {
+  let avalableMovies = JSON.stringify(all_movies)
+  avalableMovies = JSON.parse(avalableMovies)
+
+  avalableMovies.forEach((avalableMovie, index) => {
+
     let avalableSeanses = []
-    movie.seanses.forEach(seans => {
+
+    avalableMovies[index].seanses.forEach(seans => {
 
       let seansDate = new Date(moment(seans.date))
-    
-      if(seansDate.getDate() === date.getDate()){
-        
+
+      if (seansDate.getDate() === date.getDate()) {
         avalableSeanses.push(seans)
       }
-      console.log(avalableSeanses)
+
     });
-    movie.seanses = avalableSeanses
+
+    if (avalableSeanses.length > 0) {
+      avalableMovies[index].date = date.getDate()
+      avalableMovies[index].seanses = avalableSeanses
+      //console.log(date,avalableMovies[index])
+    } else {
+      avalableMovies[index].seanses = []
+    }
+
   });
-  return movies
+
+  return avalableMovies
 
 }
 
@@ -148,8 +221,9 @@ HomeScreen.navigationOptions = {
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 30,
     flex: 1,
-    backgroundColor: '#fafbfc',
+    backgroundColor: '#f5f5f5',
   }, headerText: {
     fontSize: 30,
     textAlign: "center",

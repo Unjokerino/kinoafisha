@@ -1205,6 +1205,11 @@
     query-string "^6.4.2"
     react-is "^16.8.6"
 
+"@react-navigation/native-stack@^5.0.3":
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/@react-navigation/native-stack/-/native-stack-5.0.3.tgz#fa3457667f74f1ff9fbbc761c85e914a9fd842e4"
+  integrity sha512-UAQR5WiQ464TcyHdE/YIZ2m6ko9CJ1cBh2Wn9WAejhbsrFWXPKYAPV2eSQZ9RYrSO1B4ri7x/qHi4I2kxW+LJw==
+
 "@react-navigation/native@^3.6.2":
   version "3.6.5"
   resolved "https://registry.yarnpkg.com/@react-navigation/native/-/native-3.6.5.tgz#97b0b9a48f059a0704e3527f40fb034720ef363d"
@@ -1212,6 +1217,14 @@
   dependencies:
     hoist-non-react-statics "^3.3.2"
     react-native-safe-area-view "^0.14.8"
+
+"@react-navigation/stack@^5.0.3":
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/@react-navigation/stack/-/stack-5.0.3.tgz#e3d0f27b83a6da50da98846de4cd180647597546"
+  integrity sha512-CAFfURsfY6/zmIQsUunDoiuCrvZLNqUwN5D1usN8I8VFkJg1kKCZbIxaVftAbZiPcfwORarsuWMxqkCVmVvEuA==
+  dependencies:
+    color "^3.1.2"
+    react-native-iphone-x-helper "^1.2.1"
 
 "@react-navigation/web@~1.0.0-alpha.9":
   version "1.0.0-alpha.9"
@@ -5366,6 +5379,11 @@ react-native-gesture-handler@~1.5.0:
     hoist-non-react-statics "^2.3.1"
     invariant "^2.2.4"
     prop-types "^15.7.2"
+
+react-native-iphone-x-helper@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.2.1.tgz#645e2ffbbb49e80844bb4cbbe34a126fda1e6772"
+  integrity sha512-/VbpIEp8tSNNHIvstuA3Swx610whci1Zpc9mqNkqn14DkMbw+ORviln2u0XyHG1kPvvwTNGZY6QpeFwxYaSdbQ==
 
 react-native-paper@^3.6.0:
   version "3.6.0"

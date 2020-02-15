@@ -15,6 +15,8 @@ import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
 import LinksScreen from '../screens/LinksScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import TheaterScreen from '../screens/TheaterScreen'
+import DetailMovieScreen from '../screens/DetailMovieScreen';
 import { Appbar } from 'react-native-paper';
 import { BottomNavigation, Text } from "react-native-paper";
 
@@ -26,6 +28,7 @@ const config = Platform.select({
 const HomeStack = createStackNavigator(
   {
     Home: HomeScreen,
+    Details:DetailMovieScreen,
   },
   config
 );
@@ -45,6 +48,8 @@ HomeStack.navigationOptions = {
 };
 
 HomeStack.path = '';
+
+
 
 const LinksStack = createStackNavigator(
   {
@@ -86,29 +91,40 @@ const tabNavigator = createBottomTabNavigator({
 
 tabNavigator.path = '';
 
+function dd(){
+  return (
+    <HomeStack/>
+  );
+}
 export default class BottomNavigator extends React.Component {
-  state = {
-    index: 0,
-    routes: [
-      { key: "Afisha", title: "Афиша", icon: "star", color: "#000"},
-      { key: "Stuff", title: "Театр", icon: "drama-masks", color: "#000" },
-      { key: "Calendar", title: "Что-то еще", icon: "clipboard-account-outline", color: "#000" },
-      { key: "Stuff3", title: "Что-то еще", icon: "ticket-confirmation", color: "#000" }
-    ]
-  };
+  constructor(props){
+    super(props)
+   
+    this.state = {
+      index: 0,
+      routes: [
+        { key: "Afisha", title: "Афиша", icon: "filmstrip", color: "#EF0000",navigation:this.props.navigation},
+        { key: "Theater", title: "Театр", icon: "drama-masks", color: "#000" },
+        { key: "Calendar", title: "События", icon: "calendar-star", color: "#6518f4" },
+        { key: "Stuff3", title: "Клубы", icon: "account-multiple", color: "#006d6a",  }
+      ]
+    };
+  }
+
 
   _handleIndexChange = index => this.setState({ index });
 
   _renderScene = BottomNavigation.SceneMap({
-    Afisha: HomeScreen,
-    Stuff: SettingsScreen,
+    Afisha:HomeScreen,
+    Theater: TheaterScreen,
     Calendar: SettingsScreen,
-    Stuff3: HomeScreen,
+    Stuff3: SettingsScreen,
   });
 
   render() {
     return (
       <BottomNavigation
+       
         shifting={true}
         navigationState={this.state}
         onIndexChange={this._handleIndexChange}
