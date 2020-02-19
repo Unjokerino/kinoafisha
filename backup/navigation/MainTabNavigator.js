@@ -6,16 +6,11 @@ import HomeScreen from "../screens/HomeScreen";
 import LinksScreen from "../screens/LinksScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import TheaterScreen from "../screens/TheaterScreen";
-<<<<<<< HEAD
 import EventsScreen from "../screens/EventsScreen";
 import ClubsScreen from "../screens/ClubsScreen";
 import DetailMovieScreen from "../screens/DetailMovieScreen";
 import DetailTheaterScreen from "../screens/DetailTheaterScreen";
 import DetailClubScreen from "../screens/DetailClubScreen";
-=======
-import DetailMovieScreen from "../screens/DetailMovieScreen";
-import DetailTheaterScreen from "../screens/DetailTheaterScreen";
->>>>>>> 9f4f301c09d6f94e3e203135973d3a478b05504e
 import { createStackNavigator } from "@react-navigation/stack";
 import { BottomNavigation, Text, Appbar } from "react-native-paper";
 
@@ -122,11 +117,7 @@ const Stack = createStackNavigator();
 export default function NavigationStuckScreen(props) {
   return (
     <Stack.Navigator>
-<<<<<<< HEAD
       <Stack.Screen
-=======
-      <Stack.Screenb
->>>>>>> 9f4f301c09d6f94e3e203135973d3a478b05504e
         options={{
           headerShown: false
         }}
@@ -148,7 +139,6 @@ export default function NavigationStuckScreen(props) {
         name="DetailTheaterScreen"
         component={DetailTheaterScreen}
       />
-<<<<<<< HEAD
       <Stack.Screen
         options={{
           headerShown: false
@@ -156,8 +146,6 @@ export default function NavigationStuckScreen(props) {
         name="DetailClubScreen"
         component={DetailClubScreen}
       />
-=======
->>>>>>> 9f4f301c09d6f94e3e203135973d3a478b05504e
     </Stack.Navigator>
   );
 }

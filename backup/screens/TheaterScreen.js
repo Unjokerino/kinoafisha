@@ -10,10 +10,7 @@ import {
   View,
   ActivityIndicator,
   Dimensions,
-<<<<<<< HEAD
   RefreshControl,
-=======
->>>>>>> 9f4f301c09d6f94e3e203135973d3a478b05504e
   FlatList
 } from "react-native";
 import moment from "moment";
@@ -28,6 +25,7 @@ import {
 } from "react-native-paper";
 import { MonoText } from "../components/StyledText";
 import "moment/min/moment-with-locales";
+
 const deviceWidth = Dimensions.get("window").width;
 HomeScreen.navigationOptions = {
   headerShown: false

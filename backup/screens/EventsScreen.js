@@ -10,10 +10,7 @@ import {
   View,
   ActivityIndicator,
   Dimensions,
-<<<<<<< HEAD
   RefreshControl,
-=======
->>>>>>> 9f4f301c09d6f94e3e203135973d3a478b05504e
   FlatList
 } from "react-native";
 import moment from "moment";
@@ -28,12 +25,10 @@ import {
 } from "react-native-paper";
 import { MonoText } from "../components/StyledText";
 import "moment/min/moment-with-locales";
-const deviceWidth = Dimensions.get("window").width;
-HomeScreen.navigationOptions = {
-  headerShown: false
-};
 
-export default function HomeScreen(props) {
+const deviceWidth = Dimensions.get("window").width;
+
+export default function EventsScreen(props) {
   const [theatre, setTheatre] = useState([]);
   const [dates, setDates] = useState([new Date()]);
   const [avalableSeanses, setAvalableSeanses] = useState([]);
@@ -43,14 +38,16 @@ export default function HomeScreen(props) {
     let aTheatres = [];
     try {
       setRefreshing(true);
-      fetch("https://newtime.binarywd.com/jsonfeed/theatre", {
+      fetch("https://newtime.binarywd.com/jsonfeed/afisha", {
         headers: {
-          "Cache-Control": "no-cache",
+          "Cache-Control": "no-cache, no-store, must-revalidate,max-age=0",
           "Content-Type": "application/json",
+          "Cache-Control": "post-check=0, pre-check=0",
           Pragma: "no-cache"
         }
       }).then(response =>
         response.json().then(text => {
+          console.log(text);
           setRefreshing(false);
           setDates(getDates());
 
@@ -93,21 +90,21 @@ export default function HomeScreen(props) {
       >
         {avalableSeanses.map(avalableSeans => {
           moment.locale("ru");
-          if (avalableSeans.theatres.length > 0)
-            return (
-              <View>
-                <Text style={{ padding: 5 }}>
-                  {moment(avalableSeans.date).format("MMM Do")}
-                </Text>
-                <View style={{ backgroundColor: "#fff" }}>
-                  {avalableSeans.theatres.map(val => {
-                    return (
-                      <TheaterCard navigation={props} {...val}></TheaterCard>
-                    );
-                  })}
-                </View>
+
+          return (
+            <View>
+              <Text style={{ padding: 5 }}>
+                {moment(avalableSeans.date).format("MMM Do")}
+              </Text>
+              <View style={{ backgroundColor: "#fff" }}>
+                {avalableSeans.theatres.map(val => {
+                  return (
+                    <TheaterCard navigation={props} {...val}></TheaterCard>
+                  );
+                })}
               </View>
-            );
+            </View>
+          );
         })}
       </ScrollView>
     </View>

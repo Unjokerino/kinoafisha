@@ -53,7 +53,6 @@ export default function HomeScreen(props) {
             aSeanses.push(checkDate(date, text));
           });
           setAvalableSeanses(aSeanses);
-<<<<<<< HEAD
         });
       });
     } catch (error) {
@@ -63,13 +62,6 @@ export default function HomeScreen(props) {
 
   useEffect(() => {
     getData();
-=======
-        })
-      );
-    } catch (error) {
-      console.log(111111, error);
-    }
->>>>>>> 9f4f301c09d6f94e3e203135973d3a478b05504e
   }, []);
 
   return (
@@ -131,13 +123,10 @@ export default function HomeScreen(props) {
           </ScrollView>
         </View>
         <ScrollView
-<<<<<<< HEAD
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={getData} />
           }
           style={{}}
-=======
->>>>>>> 9f4f301c09d6f94e3e203135973d3a478b05504e
           nestedScrollEnabled={true}
           ref={ref => (scrollListReftop = ref)}
           onScroll={event => {
@@ -180,22 +169,14 @@ export default function HomeScreen(props) {
                   key={date}
                   showsVerticalScrollIndicator={false}
                   style={styles.scrollView}
-<<<<<<< HEAD
                   data={avalableSeanses[index]}
-=======
-                  data={checkDate(date, movies)}
->>>>>>> 9f4f301c09d6f94e3e203135973d3a478b05504e
                   renderItem={({ item }) =>
                     item.seanses.length > 0 ? (
                       <MovieCard navigation={props} {...item} />
                     ) : (
-<<<<<<< HEAD
                       <View style={{ flex: 1 }}>
                         <View></View>
                       </View>
-=======
-                      <View></View>
->>>>>>> 9f4f301c09d6f94e3e203135973d3a478b05504e
                     )
                   }
                   keyExtractor={item => item.name}
