@@ -10,7 +10,8 @@ import {
   View,
   ActivityIndicator,
   Dimensions,
-  FlatList
+  FlatList,
+  Linking
 } from "react-native";
 import moment from "moment";
 import MovieCard from "../components/MovieCard";
@@ -18,9 +19,9 @@ import {
   Appbar,
   Title,
   FAB,
-  Portal,
   Provider,
   Headline,
+  Portal,
   Subheading,
   Caption
 } from "react-native-paper";
@@ -34,84 +35,72 @@ const STATUS_BAR_HEIGHT = Platform.OS === "ios" ? (IS_IPHONE_X ? 44 : 20) : 0;
 const HEADER_HEIGHT = Platform.OS === "ios" ? (IS_IPHONE_X ? 88 : 64) : 64;
 const NAV_BAR_HEIGHT = HEADER_HEIGHT - STATUS_BAR_HEIGHT;
 
-export default function DetailMovieScreen(props) {
-  const movieData = props.route.params;
+export default function DetailClubScreen(props) {
+  const clubData = props.route.params;
 
   const images = {
     background: {
       uri:
-        movieData.poster === ""
+        clubData.preview_img === ""
           ? "https://webgradients.com/public/webgradients_png/035%20Itmeo%20Branding.png"
-          : movieData.poster
+          : clubData.preview_img
     }
   };
 
   function renderContent() {
     return (
-      <View style={{ backgroundColor: "#FBFBFB", flex: 1 }}>
-        <View
+      <View
+        style={{
+          backgroundColor: "#FBFBFB",
+          flex: 1,
+          alignItems: "center",
+          paddingHorizontal: 8
+        }}
+      >
+        <Text
+          style={{ textAlign: "center", fontFamily: "Roboto", paddingTop: 30 }}
+        >
+          {clubData.mobile}
+        </Text>
+        <Caption
           style={{
-            justifyContent: "space-between",
-            flexDirection: "row",
-            paddingHorizontal: 8,
-            alignItems: "center"
+            textAlign: "center",
+            paddingHorizontal: 16,
+            fontFamily: "Roboto"
           }}
         >
-          <Headline>Расписание</Headline>
-          <Text>
-            {movieData.type_film} | {movieData.vozvrast}+
-          </Text>
-        </View>
-        <View
-          style={{
-            height: 50,
-            backgroundColor: "#fff",
-            width: "100%",
-            elevation: 1,
-            marginVertical: 8
+          Увидеть положение и подать заявку на вступление вы можете на нашем
+          сайте
+        </Caption>
+
+        <TouchableOpacity
+          onPress={() => {
+            Linking.openURL(clubData.link);
           }}
-        ></View>
-        <View style={styles.box}>
-          {movieData.seanses.map(seans => {
-            return (
-              <TouchableOpacity
-                style={{
-                  paddingHorizontal: 16,
-                  paddingVertical: 8,
-                  borderRadius: 5,
-                  borderColor: "#f1f1f1",
-                  borderWidth: 1,
-                  alignSelf: "flex-start"
-                }}
-              >
-                <Text>
-                  {moment(seans.date).format("HH:MM")} | {seans.type_zal}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-          <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-            {movieData.country.map(val => {
-              return <Caption>{val} </Caption>;
-            })}
-          </View>
-          <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-            {movieData.ganre.map(val => {
-              return <Caption>{val} </Caption>;
-            })}
-          </View>
-          <Text>{movieData.desc}</Text>
-          <Caption>Режисер</Caption>
-          <Text>{movieData.regisser}</Text>
-          <Caption>В главных ролях</Caption>
-          <Text>{movieData.acters} </Text>
-        </View>
+          style={{
+            borderRadius: 10,
+            borderColor: "#990000",
+            borderWidth: 1,
+            paddingVertical: 8,
+            justifyContent: "center",
+            alignItems: "center",
+
+            elevation: 2,
+            backgroundColor: "#fff",
+            marginHorizontal: 20
+          }}
+        >
+          <Text style={{ textAlign: "center", fontFamily: "Roboto" }}>
+            {" "}
+            Перейти на сайт на страницу клубного формирования
+          </Text>
+        </TouchableOpacity>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <Provider style={styles.container}>
       <View
         style={{
           height: 30,
@@ -122,8 +111,23 @@ export default function DetailMovieScreen(props) {
         headerMinHeight={HEADER_HEIGHT}
         headerMaxHeight={200}
         extraScrollHeight={20}
-        navbarColor="#EF0000"
-        title={movieData.name}
+        navbarColor="#006d6a"
+        title={
+          <View
+            style={{
+              backgroundColor: "#00000052",
+              flex: 1,
+
+              width: "100%",
+              justifyContent: "flex-end",
+              alignItems: "center"
+            }}
+          >
+            <Text style={{ color: "#fff", fontSize: 12, paddingVertical: 16 }}>
+              {clubData.name}
+            </Text>
+          </View>
+        }
         titleStyle={styles.titleStyle}
         backgroundImage={images.background}
         backgroundImageScale={1.2}
@@ -137,7 +141,7 @@ export default function DetailMovieScreen(props) {
           onScrollEndDrag: () => console.log("onScrollEndDrag")
         }}
       />
-    </View>
+    </Provider>
   );
 }
 

@@ -1,16 +1,34 @@
-import React from 'react';
-import { createAppContainer, createSwitchNavigator } from 'react-navigation';
+import * as React from "react";
+import { View, Text } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import MainTabNavigator from "./MainTabNavigator";
+import NewsScreen from "../screens/NewsScreen";
+import DetailMovieScreen from "../screens/DetailMovieScreen";
+import {
+  createDrawerNavigator,
+  DrawerContentScrollView,
+  DrawerItemList,
+  DrawerItem
+} from "@react-navigation/drawer";
 
-import MainTabNavigator from './MainTabNavigator';
-import DetailMovieScreen from '../screens/DetailMovieScreen';
-import { createStackNavigator } from 'react-navigation-stack';
-export default createAppContainer(
-  createStackNavigator({
-    // You could add another route here for authentication.
-    // Read more at https://reactnavigation.org/docs/en/auth-flow.html
-    Main: MainTabNavigator,
-    DeatailedScreen: DetailMovieScreen
-  },{
-    headerMode:'none'
-  })
-);
+const Drawer = createDrawerNavigator();
+
+const Stack = createStackNavigator();
+
+function App() {
+  return (
+    <NavigationContainer>
+      <Drawer.Navigator>
+        <Drawer.Screen
+          name="Главная"
+          icon="menu"
+          component={MainTabNavigator}
+        />
+        <Drawer.Screen name="Новости" icon="menu" component={NewsScreen} />
+      </Drawer.Navigator>
+    </NavigationContainer>
+  );
+}
+
+export default App;

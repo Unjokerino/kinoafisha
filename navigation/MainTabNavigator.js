@@ -1,135 +1,151 @@
-import React from 'react';
+import React from "react";
+import { createBottomTabNavigator } from "react-navigation-tabs";
+import { Platform, View, StatusBar } from "react-native";
+import TabBarIcon from "../components/TabBarIcon";
+import HomeScreen from "../screens/HomeScreen";
+import LinksScreen from "../screens/LinksScreen";
+import SettingsScreen from "../screens/SettingsScreen";
+import TheaterScreen from "../screens/TheaterScreen";
+import EventsScreen from "../screens/EventsScreen";
+import ClubsScreen from "../screens/ClubsScreen";
+import DetailMovieScreen from "../screens/DetailMovieScreen";
+import DetailTheaterScreen from "../screens/DetailTheaterScreen";
+import DetailClubScreen from "../screens/DetailClubScreen";
+import { createStackNavigator } from "@react-navigation/stack";
+import { BottomNavigation, Text, Appbar } from "react-native-paper";
 
-import { createStackNavigator } from 'react-navigation-stack';
-import { createBottomTabNavigator } from 'react-navigation-tabs';
 import {
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
- 
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import TabBarIcon from '../components/TabBarIcon';
-import HomeScreen from '../screens/HomeScreen';
-import LinksScreen from '../screens/LinksScreen';
-import SettingsScreen from '../screens/SettingsScreen';
-import TheaterScreen from '../screens/TheaterScreen'
-import DetailMovieScreen from '../screens/DetailMovieScreen';
-import { Appbar } from 'react-native-paper';
-import { BottomNavigation, Text } from "react-native-paper";
-
+  createDrawerNavigator,
+  DrawerContentScrollView,
+  DrawerItemList,
+  DrawerItem
+} from "@react-navigation/drawer";
 const config = Platform.select({
-  web: { headerMode: 'screen' },
-  default: {},
+  web: { headerMode: "screen" },
+  default: {}
 });
-
-const HomeStack = createStackNavigator(
-  {
-    Home: HomeScreen,
-    Details:DetailMovieScreen,
-  },
-  config
-);
-
-HomeStack.navigationOptions = {
-  tabBarLabel: 'Home',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={
-        Platform.OS === 'ios'
-          ? `ios-information-circle${focused ? '' : '-outline'}`
-          : 'md-information-circle'
-      }
-    />
-  ),
-};
-
-HomeStack.path = '';
-
-
-
-const LinksStack = createStackNavigator(
-  {
-    Links: LinksScreen,
-  },
-  config
-);
-
-LinksStack.navigationOptions = {
-  tabBarLabel: 'Links',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-link' : 'md-link'} />
-  ),
-};
-
-LinksStack.path = '';
-
-const SettingsStack = createStackNavigator(
-  {
-    Settings: SettingsScreen,
-  },
-  config
-);
-
-SettingsStack.navigationOptions = {
-  tabBarLabel: 'Settings',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-options' : 'md-options'} />
-  ),
-};
-
-SettingsStack.path = '';
 
 const tabNavigator = createBottomTabNavigator({
-  HomeStack,
-  LinksStack,
-  SettingsStack,
+  HomeScreen,
+  TheaterScreen,
+  SettingsScreen
 });
 
-tabNavigator.path = '';
+tabNavigator.path = "";
 
-function dd(){
-  return (
-    <HomeStack/>
-  );
-}
-export default class BottomNavigator extends React.Component {
-  constructor(props){
-    super(props)
-   
+class BottomNavigator extends React.Component {
+  constructor(props) {
+    super(props);
+
     this.state = {
       index: 0,
       routes: [
-        { key: "Afisha", title: "Афиша", icon: "filmstrip", color: "#EF0000",navigation:this.props.navigation},
-        { key: "Theater", title: "Театр", icon: "drama-masks", color: "#000" },
-        { key: "Calendar", title: "События", icon: "calendar-star", color: "#6518f4" },
-        { key: "Stuff3", title: "Клубы", icon: "account-multiple", color: "#006d6a",  }
+        {
+          key: "Afisha",
+          title: "Афиша",
+          icon: "filmstrip",
+          color: "#EF0000",
+          navigation: this.props.navigation
+        },
+        {
+          key: "Theater",
+          title: "Театр",
+          icon: "drama-masks",
+          color: "#000",
+          navigation: this.props.navigation
+        },
+        {
+          key: "Calendar",
+          title: "События",
+          icon: "calendar-star",
+          color: "#6518f4",
+          navigation: this.props.navigation
+        },
+        {
+          key: "Clubs",
+          title: "Клубы",
+          icon: "account-multiple",
+          color: "#006d6a",
+          navigation: this.props.navigation
+        }
       ]
     };
   }
 
-
   _handleIndexChange = index => this.setState({ index });
 
   _renderScene = BottomNavigation.SceneMap({
-    Afisha:HomeScreen,
+    Afisha: HomeScreen,
     Theater: TheaterScreen,
-    Calendar: SettingsScreen,
-    Stuff3: SettingsScreen,
+    Calendar: EventsScreen,
+    Clubs: ClubsScreen
   });
 
   render() {
     return (
-      <BottomNavigation
-       
-        shifting={true}
-        navigationState={this.state}
-        onIndexChange={this._handleIndexChange}
-        renderScene={this._renderScene}
-      />
+      <View style={{ flex: 1 }}>
+        <View
+          style={{
+            height: 30,
+            backgroundColor: this.state.routes[this.state.index].color
+          }}
+        />
+        <Appbar
+          style={{
+            backgroundColor: this.state.routes[this.state.index].color,
+            elevation: 0
+          }}
+        >
+          <Appbar.Action
+            icon="menu"
+            onPress={() => this.props.navigation.openDrawer()}
+          />
+          <Appbar.Content title={this.state.routes[this.state.index].title} />
+        </Appbar>
+        <BottomNavigation
+          shifting={true}
+          navigationState={this.state}
+          onIndexChange={this._handleIndexChange}
+          renderScene={this._renderScene}
+        />
+      </View>
     );
   }
+}
+const Stack = createStackNavigator();
+
+export default function NavigationStuckScreen(props) {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        options={{
+          headerShown: false
+        }}
+        name="Feed"
+        {...props}
+        component={BottomNavigator}
+      />
+      <Stack.Screen
+        options={{
+          headerShown: false
+        }}
+        name="DetailMovieScreen"
+        component={DetailMovieScreen}
+      />
+      <Stack.Screen
+        options={{
+          headerShown: false
+        }}
+        name="DetailTheaterScreen"
+        component={DetailTheaterScreen}
+      />
+      <Stack.Screen
+        options={{
+          headerShown: false
+        }}
+        name="DetailClubScreen"
+        component={DetailClubScreen}
+      />
+    </Stack.Navigator>
+  );
 }

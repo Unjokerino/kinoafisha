@@ -34,78 +34,35 @@ const STATUS_BAR_HEIGHT = Platform.OS === "ios" ? (IS_IPHONE_X ? 44 : 20) : 0;
 const HEADER_HEIGHT = Platform.OS === "ios" ? (IS_IPHONE_X ? 88 : 64) : 64;
 const NAV_BAR_HEIGHT = HEADER_HEIGHT - STATUS_BAR_HEIGHT;
 
-export default function DetailMovieScreen(props) {
-  const movieData = props.route.params;
+export default function DetailTheaterScreen(props) {
+  const theaterData = props.route.params;
 
   const images = {
     background: {
       uri:
-        movieData.poster === ""
+        theaterData.img_sobitiya == ""
           ? "https://webgradients.com/public/webgradients_png/035%20Itmeo%20Branding.png"
-          : movieData.poster
+          : theaterData.img_sobitiya
     }
   };
 
   function renderContent() {
+    console.log(props);
     return (
       <View style={{ backgroundColor: "#FBFBFB", flex: 1 }}>
-        <View
-          style={{
-            justifyContent: "space-between",
-            flexDirection: "row",
-            paddingHorizontal: 8,
-            alignItems: "center"
-          }}
-        >
-          <Headline>Расписание</Headline>
-          <Text>
-            {movieData.type_film} | {movieData.vozvrast}+
-          </Text>
-        </View>
-        <View
-          style={{
-            height: 50,
-            backgroundColor: "#fff",
-            width: "100%",
-            elevation: 1,
-            marginVertical: 8
-          }}
-        ></View>
-        <View style={styles.box}>
-          {movieData.seanses.map(seans => {
-            return (
-              <TouchableOpacity
-                style={{
-                  paddingHorizontal: 16,
-                  paddingVertical: 8,
-                  borderRadius: 5,
-                  borderColor: "#f1f1f1",
-                  borderWidth: 1,
-                  alignSelf: "flex-start"
-                }}
-              >
-                <Text>
-                  {moment(seans.date).format("HH:MM")} | {seans.type_zal}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-          <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-            {movieData.country.map(val => {
-              return <Caption>{val} </Caption>;
-            })}
-          </View>
-          <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-            {movieData.ganre.map(val => {
-              return <Caption>{val} </Caption>;
-            })}
-          </View>
-          <Text>{movieData.desc}</Text>
-          <Caption>Режисер</Caption>
-          <Text>{movieData.regisser}</Text>
-          <Caption>В главных ролях</Caption>
-          <Text>{movieData.acters} </Text>
-        </View>
+        <Headline>Информация</Headline>
+        <Caption>Дата события</Caption>
+        {theaterData.seanses.map(val => {
+          return <Text>{moment(val.date).format("DD/MM HH:MM")}</Text>;
+        })}
+        <Caption>Место события</Caption>
+        <Text>{theaterData.mesto_sobitiya}</Text>
+        <Caption>Стоимость</Caption>
+        <Text>{theaterData.price}</Text>
+        <Caption>Режисер</Caption>
+        <Text>{theaterData.regiser}</Text>
+        <Caption>Актерский состав</Caption>
+        <Text>{theaterData.acters}</Text>
       </View>
     );
   }
@@ -123,7 +80,19 @@ export default function DetailMovieScreen(props) {
         headerMaxHeight={200}
         extraScrollHeight={20}
         navbarColor="#EF0000"
-        title={movieData.name}
+        title={
+          <View
+            style={{
+              backgroundColor: "#00000052",
+              flex: 1,
+              width: "100%",
+              justifyContent: "center",
+              alignItems: "center"
+            }}
+          >
+            <Text style={{ color: "#fff" }}>{theaterData.name}</Text>
+          </View>
+        }
         titleStyle={styles.titleStyle}
         backgroundImage={images.background}
         backgroundImageScale={1.2}
