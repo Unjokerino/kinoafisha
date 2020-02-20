@@ -46,14 +46,12 @@ export default function HomeScreen(props) {
       }).then(response => {
         setRefreshing(false);
         response.json().then(text => {
-          console.log(text);
           setDates(getDates());
           setMovies(text);
-          dates.forEach(date => {
-            aSeanses.push(checkDate(date, text));
-          });
+
+          aSeanses = checkDate(dates, text);
+
           setAvalableSeanses(aSeanses);
-<<<<<<< HEAD
         });
       });
     } catch (error) {
@@ -63,13 +61,6 @@ export default function HomeScreen(props) {
 
   useEffect(() => {
     getData();
-=======
-        })
-      );
-    } catch (error) {
-      console.log(111111, error);
-    }
->>>>>>> 9f4f301c09d6f94e3e203135973d3a478b05504e
   }, []);
 
   return (
@@ -131,13 +122,10 @@ export default function HomeScreen(props) {
           </ScrollView>
         </View>
         <ScrollView
-<<<<<<< HEAD
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={getData} />
           }
           style={{}}
-=======
->>>>>>> 9f4f301c09d6f94e3e203135973d3a478b05504e
           nestedScrollEnabled={true}
           ref={ref => (scrollListReftop = ref)}
           onScroll={event => {
@@ -157,7 +145,10 @@ export default function HomeScreen(props) {
           pagingEnabled={true}
           showsHorizontalScrollIndicator={false}
         >
-          {dates.map((date, index) => {
+          {Object.entries(avalableSeanses).map((avalableSeans, index) => {
+            avalableSeans = avalableSeans[1];
+            let key = avalableSeans[0];
+            console.log(index);
             return (
               <View>
                 <Text
@@ -168,7 +159,7 @@ export default function HomeScreen(props) {
                   }}
                 >
                   {" "}
-                  Сеансы на {date.getDate()}/{date.getMonth() + 1}
+                  Сеансы на
                 </Text>
                 <FlatList
                   contentContainerStyle={{
@@ -177,28 +168,22 @@ export default function HomeScreen(props) {
                   }}
                   style={{ backgroundColor: "#fff" }}
                   nestedScrollEnabled={true}
-                  key={date}
+                  key={index}
                   showsVerticalScrollIndicator={false}
                   style={styles.scrollView}
-<<<<<<< HEAD
-                  data={avalableSeanses[index]}
-=======
-                  data={checkDate(date, movies)}
->>>>>>> 9f4f301c09d6f94e3e203135973d3a478b05504e
+                  data={avalableSeans}
                   renderItem={({ item }) =>
                     item.seanses.length > 0 ? (
                       <MovieCard navigation={props} {...item} />
                     ) : (
-<<<<<<< HEAD
                       <View style={{ flex: 1 }}>
                         <View></View>
                       </View>
-=======
-                      <View></View>
->>>>>>> 9f4f301c09d6f94e3e203135973d3a478b05504e
                     )
                   }
-                  keyExtractor={item => item.name}
+                  keyExtractor={(item, index) =>
+                    item.name + new Date().getTime() + index
+                  }
                 />
               </View>
             );
@@ -244,31 +229,34 @@ export default function HomeScreen(props) {
   );
 }
 
-function checkDate(date, all_movies) {
+function checkDate(dates, all_movies) {
   let avalableMovies = JSON.stringify(all_movies);
   avalableMovies = JSON.parse(avalableMovies);
+  let seansesOnDate = {};
+  dates.forEach(date => {
+    seansesOnDate[date.getDate()] = [];
+    avalableMovies.map((avalableMovie, index) => {
+      let avalableSeanses = [];
 
-  avalableMovies.forEach((avalableMovie, index) => {
-    let avalableSeanses = [];
+      avalableMovie.seanses.forEach(seans => {
+        let seansDate = new Date(moment(seans.date));
 
-    avalableMovies[index].seanses.forEach(seans => {
-      let seansDate = new Date(moment(seans.date));
+        if (seansDate.getDate() === date.getDate()) {
+          avalableSeanses.push(seans);
+        }
+      });
 
-      if (seansDate.getDate() === date.getDate()) {
-        avalableSeanses.push(seans);
+      if (avalableSeanses.length > 0) {
+        avalableMovie.date = date.getDate();
+        avalableMovie.seanses = avalableSeanses;
+        seansesOnDate[date.getDate()].push(avalableMovie);
+        //console.log(date,avalableMovies[index])
+      } else {
+        avalableMovie.seanses = [];
       }
     });
-
-    if (avalableSeanses.length > 0) {
-      avalableMovies[index].date = date.getDate();
-      avalableMovies[index].seanses = avalableSeanses;
-      //console.log(date,avalableMovies[index])
-    } else {
-      avalableMovies[index].seanses = [];
-    }
   });
-
-  return avalableMovies;
+  return seansesOnDate;
 }
 
 function getDates() {

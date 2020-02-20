@@ -2,7 +2,13 @@ import { AppLoading } from "expo";
 import { Asset } from "expo-asset";
 import * as Font from "expo-font";
 import React, { useState } from "react";
-import { Platform, StatusBar, StyleSheet, View } from "react-native";
+import {
+  Platform,
+  StatusBar,
+  StyleSheet,
+  View,
+  AsyncStorage
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Appbar, Drawer } from "react-native-paper";
 import { NavigationContainer } from "@react-navigation/native";
@@ -10,7 +16,8 @@ import AppNavigator from "./navigation/AppNavigator";
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
-
+  const value = AsyncStorage.getItem("city");
+  console.log(value);
   if (!isLoadingComplete && !props.skipLoadingScreen) {
     return (
       <AppLoading
@@ -26,6 +33,14 @@ export default function App(props) {
         <AppNavigator />
       </View>
     );
+  }
+}
+
+async function getLocaldata(city) {
+  try {
+    await AsyncStorage.setItem("city", city);
+  } catch (error) {
+    // Error saving data
   }
 }
 

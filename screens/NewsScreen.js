@@ -9,10 +9,7 @@ import {
   TouchableOpacity,
   View,
   ActivityIndicator,
-<<<<<<< HEAD
   RefreshControl,
-=======
->>>>>>> 9f4f301c09d6f94e3e203135973d3a478b05504e
   Dimensions,
   FlatList
 } from "react-native";

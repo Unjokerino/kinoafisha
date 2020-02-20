@@ -10,10 +10,7 @@ import {
   View,
   ActivityIndicator,
   Dimensions,
-<<<<<<< HEAD
   RefreshControl,
-=======
->>>>>>> 9f4f301c09d6f94e3e203135973d3a478b05504e
   FlatList
 } from "react-native";
 import moment from "moment";
@@ -55,6 +52,7 @@ export default function HomeScreen(props) {
           setDates(getDates());
 
           setTheatre(text);
+
           dates.forEach(date => {
             aTheatres.push({
               theatres: [...checkDate(date, text)],
@@ -72,6 +70,12 @@ export default function HomeScreen(props) {
 
   useEffect(() => {
     getData();
+    {
+      setTimeout(() => {
+        console.log("try again");
+        getData();
+      }, 2500);
+    }
   }, []);
 
   return (
@@ -91,24 +95,28 @@ export default function HomeScreen(props) {
         }
         style={{}}
       >
-        {avalableSeanses.map(avalableSeans => {
-          moment.locale("ru");
-          if (avalableSeans.theatres.length > 0)
-            return (
-              <View>
-                <Text style={{ padding: 5 }}>
-                  {moment(avalableSeans.date).format("MMM Do")}
-                </Text>
-                <View style={{ backgroundColor: "#fff" }}>
-                  {avalableSeans.theatres.map(val => {
-                    return (
-                      <TheaterCard navigation={props} {...val}></TheaterCard>
-                    );
-                  })}
+        {avalableSeanses.length > 0 ? (
+          avalableSeanses.map(avalableSeans => {
+            moment.locale("ru");
+            if (avalableSeans.theatres.length > 0)
+              return (
+                <View>
+                  <Text style={{ padding: 5 }}>
+                    {moment(avalableSeans.date).format("MMM Do")}
+                  </Text>
+                  <View style={{ backgroundColor: "#fff" }}>
+                    {avalableSeans.theatres.map(val => {
+                      return (
+                        <TheaterCard navigation={props} {...val}></TheaterCard>
+                      );
+                    })}
+                  </View>
                 </View>
-              </View>
-            );
-        })}
+              );
+          })
+        ) : (
+          <View></View>
+        )}
       </ScrollView>
     </View>
   );

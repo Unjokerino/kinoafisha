@@ -115,15 +115,22 @@ export default function DetailClubScreen(props) {
         title={
           <View
             style={{
-              backgroundColor: "#00000052",
               flex: 1,
 
-              width: "100%",
               justifyContent: "flex-end",
+              alignItems: "flex-end",
+              width: "100%",
+              justifyContent: "center",
               alignItems: "center"
             }}
           >
-            <Text style={{ color: "#fff", fontSize: 12, paddingVertical: 16 }}>
+            <Text
+              style={{
+                maxWidth: 200,
+                color: "#fff",
+                fontSize: 14
+              }}
+            >
               {clubData.name}
             </Text>
           </View>
