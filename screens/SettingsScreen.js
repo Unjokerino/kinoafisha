@@ -1,5 +1,5 @@
-import React from 'react';
-import { ExpoConfigView } from '@expo/samples';
+import React from "react";
+import { ExpoConfigView } from "@expo/samples";
 import {
   Image,
   Platform,
@@ -10,8 +10,8 @@ import {
   View,
   ActivityIndicator,
   Dimensions,
-  FlatList,
-} from 'react-native';
+  FlatList
+} from "react-native";
 export default function SettingsScreen() {
   /**
    * Go ahead and delete ExpoConfigView and replace it with your content;
@@ -21,5 +21,5 @@ export default function SettingsScreen() {
 }
 
 SettingsScreen.navigationOptions = {
-  title: 'app.json',
+  title: "app.json"
 };
