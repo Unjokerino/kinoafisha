@@ -49,12 +49,13 @@ export default function HomeScreen(props) {
         }
       ).then(response => {
         response.json().then(text => {
-          setDates(getDates());
+          getDates().then((dates) => {setDates(dates); checkDate(dates, text).then((resp) => {setAvalableSeanses(resp);})});
           setMovies(text);
 
-          aSeanses = checkDate(dates, text);
-
-          setAvalableSeanses(aSeanses);
+         
+   
+      
+    
         });
         setRefreshing(false);
       });
@@ -149,8 +150,9 @@ export default function HomeScreen(props) {
           horizontal={true}
           showsHorizontalScrollIndicator={false}
         >
-          {Object.entries(avalableSeanses).map((avalableSeans, index) => {
+          {  Object.entries(avalableSeanses).map((avalableSeans, index) => {
             const [data, seans] = avalableSeans;
+         
             return (
               <View>
                 <Text
@@ -190,6 +192,7 @@ export default function HomeScreen(props) {
             );
           })}
         </ScrollView>
+        {/*}
         <Portal>
           <FAB.Group
             fabStyle={{ backgroundColor: "#EF0000" }}
@@ -225,15 +228,17 @@ export default function HomeScreen(props) {
             }}
           />
         </Portal>
+          {*/}
       </Provider>
     </View>
   );
 }
 
-function checkDate(dates, all_movies) {
+async function checkDate(dates, all_movies) {
   let startD = new Date();
   let avalableMovies = JSON.stringify(all_movies);
   avalableMovies = JSON.parse(avalableMovies);
+
   let seansesOnDate = [];
 
   dates.forEach(date => {
@@ -260,7 +265,7 @@ function checkDate(dates, all_movies) {
       //console.log(date,avalableMovies[index])
     });
   });
-
+  
   return seansesOnDate;
 }
 
@@ -296,7 +301,7 @@ function checkMonth(month) {
   }
 }
 
-function getDates() {
+async function getDates() {
   let dates = [];
   for (let i = 0; i < 7; i++) {
     let date = new Date();

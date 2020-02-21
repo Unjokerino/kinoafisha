@@ -42,7 +42,7 @@ export default function NewsCard(props) {
           <Title style={{ fontFamily: "Roboto" }}>{props.name}</Title>
           <Caption>{props.date}</Caption>
 
-          <Text>{props.short_desc.substr(0, 100)}...</Text>
+          <Text>{props.short_desc.substr(0, 100).replace('<?xml encoding=\"utf8\" ?>','')}...</Text>
         </View>
       </View>
     </TouchableOpacity>

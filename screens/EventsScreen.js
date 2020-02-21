@@ -26,11 +26,13 @@ import {
   Headline
 } from "react-native-paper";
 import { MonoText } from "../components/StyledText";
-import "moment/min/moment-with-locales";
 
 const deviceWidth = Dimensions.get("window").width;
+HomeScreen.navigationOptions = {
+  headerShown: false
+};
 
-export default function EventsScreen(props) {
+export default function HomeScreen(props) {
   const [theatre, setTheatre] = useState([]);
   const [dates, setDates] = useState([new Date()]);
   const [avalableSeanses, setAvalableSeanses] = useState([]);
@@ -44,27 +46,20 @@ export default function EventsScreen(props) {
         "https://newtime.binarywd.com/platforms/themes/blankslate/afisha.json",
         {
           headers: {
-            "Cache-Control": "no-cache, no-store, must-revalidate,max-age=0",
+            "Cache-Control": "no-cache",
             "Content-Type": "application/json",
-            "Cache-Control": "post-check=0, pre-check=0",
             Pragma: "no-cache"
           }
         }
       ).then(response =>
         response.json().then(text => {
-          console.log(text);
-          setRefreshing(false);
-          setDates(getDates());
+        
+          getDates().then((dates) => {setDates(dates); checkDate(dates, text).then((resp) => {setAvalableSeanses(resp);})});
+
+          
 
           setTheatre(text);
-          dates.forEach(date => {
-            aTheatres.push({
-              theatres: [...checkDate(date, text)],
-              date: date
-            });
-          });
-
-          setAvalableSeanses(aTheatres);
+  setRefreshing(false);
         })
       );
     } catch (error) {
@@ -74,6 +69,11 @@ export default function EventsScreen(props) {
 
   useEffect(() => {
     getData();
+    {
+      setTimeout(() => {
+        getData();
+      }, 2500);
+    }
   }, []);
 
   return (
@@ -93,29 +93,72 @@ export default function EventsScreen(props) {
         }
         style={{}}
       >
-        {avalableSeanses.map(avalableSeans => {
-          if (avalableSeans.theatres.length > 0)
-            return (
-              <View>
-                <Text
-                  style={{ padding: 8, fontSize: 15, fontFamily: "Roboto" }}
-                >
-                  {checkMonth(avalableSeans.date.getMonth() + 1)},{" "}
-                  {avalableSeans.date.getDate()}
-                </Text>
-                <View style={{ backgroundColor: "#fff" }}>
-                  {avalableSeans.theatres.map(val => {
-                    return (
-                      <TheaterCard navigation={props} {...val}></TheaterCard>
-                    );
-                  })}
-                </View>
-              </View>
-            );
-        })}
+        {  Object.entries(avalableSeanses).map((avalableSeans, index) => {
+            const [data, seans] = avalableSeans;
+            if(seans.length > 0)
+              return (
+        
+                  <View>
+                    <Text
+                      style={{ padding: 8, fontSize: 15, fontFamily: "Roboto" }}
+                    >
+                      {checkMonth(seans[0].date.getMonth() + 1)},{" "}
+                      {seans[0].date.getDate()}
+                    </Text>
+                    <View style={{ backgroundColor: "#fff" }}>
+                      { seans.map(val => {
+                      
+                          return (
+                            <View>
+                            
+                              <TheaterCard navigation={props} {...val}></TheaterCard>
+                            </View>
+                          );
+                      })}
+                    </View>
+                  </View>
+                );
+          })
+     
+        }
       </ScrollView>
     </View>
   );
+}
+
+async function checkDate(dates, all_movies) {
+  let startD = new Date();
+  let avalableMovies = JSON.stringify(all_movies);
+  avalableMovies = JSON.parse(avalableMovies);
+  let seansesOnDate = [];
+
+  dates.forEach(date => {
+    seansesOnDate[date.getDate()] = [];
+
+    avalableMovies.map((avalableMovie, index) => {
+      avalableMovie = JSON.stringify(avalableMovie);
+      avalableMovie = JSON.parse(avalableMovie);
+
+      let avalableSeanses = [];
+      avalableMovie.seanses.forEach(seans => {
+        let seansDate = new Date(moment(seans.date));
+
+        if (seansDate.getDate() === date.getDate()) {
+          avalableSeanses.push(seans);
+        }
+      });
+
+      avalableMovie.date = date;
+      avalableMovie.seanses = avalableSeanses;
+      if(avalableSeanses.length > 0)
+        seansesOnDate[date.getDate()].push({
+          ...avalableMovie
+        });
+      //console.log(date,avalableMovies[index])
+    });
+  });
+
+  return seansesOnDate;
 }
 
 function checkMonth(month) {
@@ -150,38 +193,7 @@ function checkMonth(month) {
   }
 }
 
-function checkDate(date, theatres) {
-  theatres = JSON.stringify(theatres);
-  theatres = JSON.parse(theatres);
-  let avalableTheaters = [];
-  theatres.forEach((avalableMovie, index) => {
-    let avalableSeanses = [];
-
-    theatres[index].seanses.forEach(seans => {
-      let seansDate = new Date(moment(seans.date));
-
-      if (
-        seansDate.getDate() + seansDate.getMonth() + seansDate.getFullYear() ===
-        date.getDate() + date.getMonth() + date.getFullYear()
-      ) {
-        avalableSeanses.push(seans);
-      }
-    });
-
-    if (avalableSeanses.length > 0) {
-      theatres[index].date = date.getDate();
-      theatres[index].seanses = avalableSeanses;
-      avalableTheaters.push(theatres[index]);
-      //console.log(date,avalableMovies[index])
-    } else {
-      theatres[index].seanses = [];
-    }
-  });
-
-  return avalableTheaters;
-}
-
-function getDates() {
+async function getDates() {
   let dates = [];
   for (let i = 0; i < 7; i++) {
     let date = new Date();

@@ -43,13 +43,16 @@ export default function DetailMovieScreen(props) {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   useEffect(() => {
+ 
     props.route.params.movies.forEach(element => {
       if (element.id_film === movieData.id_film) {
         setCurrentMovie(element);
       }
-    });
+    }),
     setDates(getDates());
-    setSeanses(checkDate(new Date(), currentMovie));
+  
+    setCurrentDate(new Date())
+ 
   }, []);
 
   useEffect(() => {
@@ -210,11 +213,15 @@ export default function DetailMovieScreen(props) {
                 return <Caption>{val} </Caption>;
               })}
             </View>
-            <Text>{movieData.desc}</Text>
+         
             <Caption>Режисер</Caption>
             <Text>{movieData.regisser}</Text>
             <Caption>В главных ролях</Caption>
             <Text>{movieData.acters} </Text>
+           
+            <Text style={{paddingVertical:10,      borderColor: "#f1f1f1",
+              borderRadius: 5,
+              borderTopWidth: 1, marginTop:15}}>{movieData.mobile !== '' ? movieData.desc.replace('<?xml encoding=\"utf8\" ?>',''): 'Описания пока нет :('}</Text>
           </TouchableOpacity>
         </ScrollView>
       </View>

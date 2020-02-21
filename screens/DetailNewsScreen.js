@@ -60,7 +60,7 @@ export default function DetailNewsScreen(props) {
         <Text
           style={{ textAlign: "center", fontFamily: "Roboto", paddingTop: 30 }}
         >
-          {newsData.mobile}
+          {newsData.mobile.replace('<?xml encoding=\"utf8\" ?>','')}
         </Text>
 
         <TouchableOpacity

@@ -22,7 +22,7 @@ export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
   const value = AsyncStorage.getItem("city");
   moment.locale = "ru";
-
+  global.currentScreen = 0
   if (!isLoadingComplete && !props.skipLoadingScreen) {
     return (
       <AppLoading

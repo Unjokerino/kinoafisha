@@ -36,12 +36,14 @@ const tabNavigator = createBottomTabNavigator({
 
 tabNavigator.path = "";
 
+
 class BottomNavigator extends React.Component {
   constructor(props) {
     super(props);
-
+ 
     this.state = {
-      index: 0,
+      cind: global.currentScreen,
+      index: props.route.params !== undefined ? props.route.params.screenIndex : 0,
       routes: [
         {
           key: "Afisha",
@@ -75,6 +77,10 @@ class BottomNavigator extends React.Component {
     };
   }
 
+
+
+
+
   _handleIndexChange = index => this.setState({ index });
 
   _renderScene = BottomNavigation.SceneMap({
@@ -93,6 +99,7 @@ class BottomNavigator extends React.Component {
             backgroundColor: this.state.routes[this.state.index].color
           }}
         />
+   
         <Appbar
           style={{
             backgroundColor: this.state.routes[this.state.index].color,
@@ -118,12 +125,14 @@ class BottomNavigator extends React.Component {
 const Stack = createStackNavigator();
 
 export default function NavigationStuckScreen(props) {
+  let screenIndex = props.route.params != undefined ? props.route.params.screen : 0
   return (
     <Stack.Navigator>
       <Stack.Screen
         options={{
           headerShown: false
         }}
+        initialParams={{screenIndex:screenIndex}}
         name="Feed"
         {...props}
         component={BottomNavigator}

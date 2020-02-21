@@ -18,6 +18,7 @@ const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
 function CustomDrawerContent(props) {
+
   return (
     <DrawerContentScrollView style={{ flex: 1 }} {...props}>
       <View
@@ -41,6 +42,11 @@ function CustomDrawerContent(props) {
         }}
       >
         <TouchableOpacity
+        onPress={()=>{
+          props.navigation.setParams
+          global.currentScreen = 1
+        
+        }}
           style={{
             marginHorizontal: 8,
             paddingVertical: 8,
@@ -84,14 +90,15 @@ function App() {
           activeTintColor: "#fff"
         }}
       >
-        <Drawer.Screen
-          color="#fff"
-          active
-          name="Главная"
-          icon="phone"
-          component={MainTabNavigator}
-        />
-        <Drawer.Screen name="Новости" icon="menu" component={NewsScreen} />
+    
+       
+        <Drawer.Screen initialParams={{screen:0}} name="Кино" icon="menu" component={MainTabNavigator} />
+        <Drawer.Screen initialParams={{screen:1}} name="Театр" icon="фыв" component={MainTabNavigator} />
+        <Drawer.Screen initialParams={{screen:2}} name="Афиша" icon="menu" component={MainTabNavigator} />
+        <Drawer.Screen initialParams={{screen:3}} name="Клубы" icon="menu" component={MainTabNavigator} />
+
+        <Drawer.Screen  name="Новости" icon="menu" component={NewsScreen} />
+
       </Drawer.Navigator>
     </NavigationContainer>
   );

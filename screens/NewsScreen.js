@@ -46,6 +46,7 @@ export default function NewsScreen(props) {
     }
   }
   useEffect(() => {
+    
     getData();
   }, []);
   return (
@@ -53,12 +54,12 @@ export default function NewsScreen(props) {
       <View
         style={{
           height: 30,
-          backgroundColor: "#fff"
+          backgroundColor: "#000"
         }}
       />
       <Appbar
         style={{
-          backgroundColor: "#fff"
+          backgroundColor: "#000"
         }}
       >
         <Appbar.Action

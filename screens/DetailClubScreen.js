@@ -60,24 +60,29 @@ export default function DetailClubScreen(props) {
         <Text
           style={{ textAlign: "center", fontFamily: "Roboto", paddingTop: 30 }}
         >
-          {clubData.mobile}
+          {clubData.mobile.replace('<?xml encoding=\"utf8\" ?>', '')}
         </Text>
         <Caption
           style={{
             textAlign: "center",
             paddingHorizontal: 16,
-            fontFamily: "Roboto"
+            fontFamily: "Roboto",
+            marginBottom:50,
           }}
         >
           Увидеть положение и подать заявку на вступление вы можете на нашем
           сайте
         </Caption>
-
+        <Portal >
         <TouchableOpacity
           onPress={() => {
             Linking.openURL(clubData.link);
           }}
           style={{
+            position:'absolute',
+            bottom:0,
+            alignSelf:'center',
+            paddingHorizontal:5,
             borderRadius: 10,
             borderColor: "#990000",
             borderWidth: 1,
@@ -87,14 +92,15 @@ export default function DetailClubScreen(props) {
 
             elevation: 2,
             backgroundColor: "#fff",
-            marginHorizontal: 20
+          
           }}
         >
-          <Text style={{ textAlign: "center", fontFamily: "Roboto" }}>
-            {" "}
-            Перейти на сайт на страницу клубного формирования
-          </Text>
+     
+        <Text>Функция записи будет скоро доступна</Text>
+ 
+
         </TouchableOpacity>
+        </Portal>
       </View>
     );
   }
@@ -148,6 +154,7 @@ export default function DetailClubScreen(props) {
           onScrollEndDrag: () => console.log("onScrollEndDrag")
         }}
       />
+
     </Provider>
   );
 }
@@ -157,7 +164,7 @@ function renderNavBar(navigation) {
     <View style={styles.navContainer}>
       <View style={styles.statusBar} />
       <View style={styles.navBar}>
-        <TouchableOpacity style={styles.iconLeft} onPress={() => {}}>
+        <TouchableOpacity style={styles.iconLeft} onPress={() => { }}>
           <Appbar.Action
             color="#fff"
             icon="arrow-left"
@@ -166,7 +173,7 @@ function renderNavBar(navigation) {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.iconRight}
-          onPress={() => {}}
+          onPress={() => { }}
         ></TouchableOpacity>
       </View>
     </View>

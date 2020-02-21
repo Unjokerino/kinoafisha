@@ -46,25 +46,51 @@ export default function DetailTheaterScreen(props) {
     }
   };
 
-  function renderContent() {
-    console.log(props);
-    return (
+
+
+  return (
+    <ScrollView style={styles.container}>
       <View
+        style={{
+          height: 30,
+          backgroundColor: "#000"
+        }}
+      />
+          <Appbar
+        style={{
+          
+          zIndex: 999,
+          elevation: 2,
+          backgroundColor: "#fff"
+        }}
+      >
+        <Appbar.Action
+          icon="arrow-left"
+          onPress={() => props.navigation.goBack()}
+        />
+        <Appbar.Content title={props.route.params.name} />
+      </Appbar>
+         <View
         style={{
           backgroundColor: "#FBFBFB",
           flex: 1,
-          paddingHorizontal: 8
+    
         }}
       >
+          <Image style={{width:'100%',height:200,   }}source={{ uri:
+        theaterData.img_sobitiya == ""
+          ? "https://webgradients.com/public/webgradients_png/035%20Itmeo%20Branding.png"
+          : theaterData.img_sobitiya}}></Image>
         <TouchableOpacity
           style={{
-            marginTop: 20,
-            borderColor: "#f1f1f1",
-            borderRadius: 5,
-            borderWidth: 1,
-            padding: 16
+            backgroundColor:'#fff',
+            paddingHorizontal:8
+        
+         
           }}
-        >
+        > 
+  
+      
           <Headline>Информация</Headline>
           <Caption>Дата события</Caption>
           {theaterData.seanses.map(val => {
@@ -74,58 +100,16 @@ export default function DetailTheaterScreen(props) {
           <Text>{theaterData.mesto_sobitiya}</Text>
           <Caption>Стоимость</Caption>
           <Text>{theaterData.price}</Text>
-          <Caption>Режисер</Caption>
-          <Text>{theaterData.regiser}</Text>
-          <Caption>Актерский состав</Caption>
-          <Text>{theaterData.acters}</Text>
+          <Caption>{theaterData.acters_sostav.length > 0 ? 'Актерский состав' :''}</Caption>
+          <View>{theaterData.acters_sostav.length > 0 ? theaterData.acters_sostav.map(actor =>{
+            return<Text>{actor.post_title}</Text>
+          }): <Text></Text>}</View>
+          <Text style={{paddingVertical:10,      borderColor: "#f1f1f1",
+              borderRadius: 5,
+              borderTopWidth: 1, marginTop:15}}>{theaterData.mobile !== '' ? theaterData.mobile.replace('<?xml encoding=\"utf8\" ?>',''): 'Описания пока нет :('}</Text>
         </TouchableOpacity>
       </View>
-    );
-  }
-
-  return (
-    <View style={styles.container}>
-      <View
-        style={{
-          height: 30,
-          backgroundColor: "#000"
-        }}
-      />
-      <ReactNativeParallaxHeader
-        headerMinHeight={HEADER_HEIGHT}
-        headerMaxHeight={200}
-        extraScrollHeight={20}
-        navbarColor="#EF0000"
-        title={
-          <View
-            style={{
-              backgroundColor: "#00000052",
-              flex: 1,
-              width: 300,
-
-              justifyContent: "center",
-              alignItems: "center"
-            }}
-          >
-            <Text style={{ color: "#fff", textAlign: "center" }}>
-              {theaterData.name}
-            </Text>
-          </View>
-        }
-        titleStyle={styles.titleStyle}
-        backgroundImage={images.background}
-        backgroundImageScale={1.2}
-        renderNavBar={() => renderNavBar(props.navigation)}
-        renderContent={renderContent}
-        containerStyle={styles.container}
-        contentContainerStyle={styles.contentContainer}
-        innerContainerStyle={styles.container}
-        scrollViewProps={{
-          onScrollBeginDrag: () => console.log("onScrollBeginDrag"),
-          onScrollEndDrag: () => console.log("onScrollEndDrag")
-        }}
-      />
-    </View>
+    </ScrollView>
   );
 }
 
