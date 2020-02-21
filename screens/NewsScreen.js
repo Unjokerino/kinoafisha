@@ -26,13 +26,16 @@ export default function NewsScreen(props) {
   function getData() {
     try {
       setRefreshing(true);
-      fetch("https://newtime.binarywd.com/jsonfeed/news/", {
-        headers: {
-          "Cache-Control": "no-cache",
-          "Content-Type": "application/json",
-          Pragma: "no-cache"
+      fetch(
+        "https://newtime.binarywd.com/platforms/themes/blankslate/news.json",
+        {
+          headers: {
+            "Cache-Control": "no-cache",
+            "Content-Type": "application/json",
+            Pragma: "no-cache"
+          }
         }
-      }).then(response => {
+      ).then(response => {
         setRefreshing(false);
         response.json().then(text => {
           setNews(text);
@@ -70,7 +73,7 @@ export default function NewsScreen(props) {
         }
       >
         {news.map(value => {
-          return <NewsCard {...value}></NewsCard>;
+          return <NewsCard navigation={props} {...value}></NewsCard>;
         })}
       </ScrollView>
     </View>

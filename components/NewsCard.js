@@ -12,7 +12,7 @@ export default function NewsCard(props) {
   return (
     <TouchableOpacity
       onPress={() => {
-        Linking.openURL(props.link);
+        props.navigation.navigation.navigate("DetailNewsScreen", { ...props });
       }}
       style={{
         margin: 5,

@@ -10,7 +10,8 @@ import {
   View,
   ActivityIndicator,
   Dimensions,
-  FlatList
+  FlatList,
+  Linking
 } from "react-native";
 import moment from "moment";
 import MovieCard from "../components/MovieCard";
@@ -18,9 +19,9 @@ import {
   Appbar,
   Title,
   FAB,
-  Portal,
   Provider,
   Headline,
+  Portal,
   Subheading,
   Caption
 } from "react-native-paper";
@@ -34,57 +35,62 @@ const STATUS_BAR_HEIGHT = Platform.OS === "ios" ? (IS_IPHONE_X ? 44 : 20) : 0;
 const HEADER_HEIGHT = Platform.OS === "ios" ? (IS_IPHONE_X ? 88 : 64) : 64;
 const NAV_BAR_HEIGHT = HEADER_HEIGHT - STATUS_BAR_HEIGHT;
 
-export default function DetailTheaterScreen(props) {
-  const theaterData = props.route.params;
+export default function DetailNewsScreen(props) {
+  const newsData = props.route.params;
 
   const images = {
     background: {
       uri:
-        theaterData.img_sobitiya == ""
+        newsData.img_sobitiya === ""
           ? "https://webgradients.com/public/webgradients_png/035%20Itmeo%20Branding.png"
-          : theaterData.img_sobitiya
+          : newsData.img_sobitiya
     }
   };
 
   function renderContent() {
-    console.log(props);
     return (
       <View
         style={{
           backgroundColor: "#FBFBFB",
           flex: 1,
+          alignItems: "center",
           paddingHorizontal: 8
         }}
       >
+        <Text
+          style={{ textAlign: "center", fontFamily: "Roboto", paddingTop: 30 }}
+        >
+          {newsData.mobile}
+        </Text>
+
         <TouchableOpacity
+          onPress={() => {
+            Linking.openURL(newsData.link);
+          }}
           style={{
-            marginTop: 20,
-            borderColor: "#f1f1f1",
-            borderRadius: 5,
+            borderRadius: 10,
+            borderColor: "#990000",
             borderWidth: 1,
-            padding: 16
+            paddingVertical: 8,
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: 30,
+            elevation: 2,
+            backgroundColor: "#fff",
+            marginHorizontal: 20
           }}
         >
-          <Headline>Информация</Headline>
-          <Caption>Дата события</Caption>
-          {theaterData.seanses.map(val => {
-            return <Text>{moment(val.date).format("DD/MM HH:MM")}</Text>;
-          })}
-          <Caption>Место события</Caption>
-          <Text>{theaterData.mesto_sobitiya}</Text>
-          <Caption>Стоимость</Caption>
-          <Text>{theaterData.price}</Text>
-          <Caption>Режисер</Caption>
-          <Text>{theaterData.regiser}</Text>
-          <Caption>Актерский состав</Caption>
-          <Text>{theaterData.acters}</Text>
+          <Text style={{ textAlign: "center", fontFamily: "Roboto" }}>
+            {" "}
+            Перейти на сайт на страницу новости
+          </Text>
         </TouchableOpacity>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <Provider style={styles.container}>
       <View
         style={{
           height: 30,
@@ -95,20 +101,27 @@ export default function DetailTheaterScreen(props) {
         headerMinHeight={HEADER_HEIGHT}
         headerMaxHeight={200}
         extraScrollHeight={20}
-        navbarColor="#EF0000"
+        navbarColor="#006d6a"
         title={
           <View
             style={{
-              backgroundColor: "#00000052",
               flex: 1,
-              width: 300,
 
+              justifyContent: "flex-end",
+              alignItems: "flex-end",
+              width: "100%",
               justifyContent: "center",
               alignItems: "center"
             }}
           >
-            <Text style={{ color: "#fff", textAlign: "center" }}>
-              {theaterData.name}
+            <Text
+              style={{
+                maxWidth: 200,
+                color: "#fff",
+                fontSize: 14
+              }}
+            >
+              {newsData.name}
             </Text>
           </View>
         }
@@ -125,7 +138,7 @@ export default function DetailTheaterScreen(props) {
           onScrollEndDrag: () => console.log("onScrollEndDrag")
         }}
       />
-    </View>
+    </Provider>
   );
 }
 

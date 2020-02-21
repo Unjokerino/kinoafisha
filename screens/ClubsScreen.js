@@ -36,13 +36,16 @@ export default function ClubsScreen(props) {
   function loadData() {
     try {
       setRefreshing(true);
-      fetch("https://newtime.binarywd.com/jsonfeed/clubs", {
-        headers: {
-          "Cache-Control": "no-cache",
-          "Content-Type": "application/json",
-          Pragma: "no-cache"
+      fetch(
+        "https://newtime.binarywd.com/platforms/themes/blankslate/clubs.json",
+        {
+          headers: {
+            "Cache-Control": "no-cache",
+            "Content-Type": "application/json",
+            Pragma: "no-cache"
+          }
         }
-      }).then(response =>
+      ).then(response =>
         response.json().then(text => {
           setRefreshing(false);
           setClubs(text);
@@ -67,7 +70,7 @@ export default function ClubsScreen(props) {
       >
         {clubs.map(club => {
           return (
-            <View style={{ backgroundColor: "#fff" }}>
+            <View key={club.name} style={{ backgroundColor: "#fff" }}>
               <ClubCard navigation={props} {...club} />
             </View>
           );

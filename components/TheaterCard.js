@@ -25,7 +25,12 @@ export default function MovieCard(props) {
       }}
     >
       <View style={{ flexDirection: "row" }}>
-        <View style={{ height: "100%" }}>
+        <View
+          style={{
+            alignItems: "center",
+            justifyContent: "center"
+          }}
+        >
           <Image
             style={{
               margin: 5,
@@ -42,9 +47,17 @@ export default function MovieCard(props) {
             }}
           />
         </View>
-        <View style={{ width: 200, marginLeft: 20 }}>
-          <Title style={{ fontFamily: "Roboto" }}>{props.name}</Title>
-          <Caption>{props.short_desc}</Caption>
+        <View
+          style={{
+            width: 200,
+            marginLeft: 20,
+
+            justifyContent: "center"
+          }}
+        >
+          <Title style={{ fontFamily: "Roboto", maxHeight: 100 }}>
+            {props.name}
+          </Title>
 
           <View style={{ flexDirection: "row", marginBottom: 15 }}>
             {props.seanses.map((seans, index) => {

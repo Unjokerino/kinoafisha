@@ -14,6 +14,7 @@ import {
   FlatList
 } from "react-native";
 import moment from "moment";
+import "moment/src/locale/ru";
 import MovieCard from "../components/MovieCard";
 import { Appbar, Title, FAB, Portal, Provider } from "react-native-paper";
 import { MonoText } from "../components/StyledText";
@@ -37,14 +38,16 @@ export default function HomeScreen(props) {
     let aSeanses = [];
     try {
       setRefreshing(true);
-      fetch("https://newtime.binarywd.com/jsonfeed/kino/", {
-        headers: {
-          "Cache-Control": "no-cache",
-          "Content-Type": "application/json",
-          Pragma: "no-cache"
+      fetch(
+        "https://newtime.binarywd.com/platforms/themes/blankslate/kino.json",
+        {
+          headers: {
+            "Cache-Control": "no-cache",
+            "Content-Type": "application/json",
+            Pragma: "no-cache"
+          }
         }
-      }).then(response => {
-        setRefreshing(false);
+      ).then(response => {
         response.json().then(text => {
           setDates(getDates());
           setMovies(text);
@@ -53,6 +56,7 @@ export default function HomeScreen(props) {
 
           setAvalableSeanses(aSeanses);
         });
+        setRefreshing(false);
       });
     } catch (error) {
       console.log(111111, error);
@@ -125,6 +129,7 @@ export default function HomeScreen(props) {
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={getData} />
           }
+          pagingEnabled={true}
           style={{}}
           nestedScrollEnabled={true}
           ref={ref => (scrollListReftop = ref)}
@@ -142,13 +147,10 @@ export default function HomeScreen(props) {
             }
           }}
           horizontal={true}
-          pagingEnabled={true}
           showsHorizontalScrollIndicator={false}
         >
           {Object.entries(avalableSeanses).map((avalableSeans, index) => {
-            avalableSeans = avalableSeans[1];
-            let key = avalableSeans[0];
-            console.log(index);
+            const [data, seans] = avalableSeans;
             return (
               <View>
                 <Text
@@ -158,8 +160,7 @@ export default function HomeScreen(props) {
                     paddingHorizontal: 5
                   }}
                 >
-                  {" "}
-                  Сеансы на
+                  Сеансы на {checkMonth(seans[0].date.getMonth() + 1)}, {data}
                 </Text>
                 <FlatList
                   contentContainerStyle={{
@@ -171,10 +172,10 @@ export default function HomeScreen(props) {
                   key={index}
                   showsVerticalScrollIndicator={false}
                   style={styles.scrollView}
-                  data={avalableSeans}
+                  data={seans}
                   renderItem={({ item }) =>
                     item.seanses.length > 0 ? (
-                      <MovieCard navigation={props} {...item} />
+                      <MovieCard movies={movies} navigation={props} {...item} />
                     ) : (
                       <View style={{ flex: 1 }}>
                         <View></View>
@@ -182,7 +183,7 @@ export default function HomeScreen(props) {
                     )
                   }
                   keyExtractor={(item, index) =>
-                    item.name + new Date().getTime() + index
+                    item.name + new Date().getTime() + index + Math.random(10)
                   }
                 />
               </View>
@@ -230,14 +231,19 @@ export default function HomeScreen(props) {
 }
 
 function checkDate(dates, all_movies) {
+  let startD = new Date();
   let avalableMovies = JSON.stringify(all_movies);
   avalableMovies = JSON.parse(avalableMovies);
-  let seansesOnDate = {};
+  let seansesOnDate = [];
+
   dates.forEach(date => {
     seansesOnDate[date.getDate()] = [];
-    avalableMovies.map((avalableMovie, index) => {
-      let avalableSeanses = [];
 
+    avalableMovies.map((avalableMovie, index) => {
+      avalableMovie = JSON.stringify(avalableMovie);
+      avalableMovie = JSON.parse(avalableMovie);
+
+      let avalableSeanses = [];
       avalableMovie.seanses.forEach(seans => {
         let seansDate = new Date(moment(seans.date));
 
@@ -246,17 +252,48 @@ function checkDate(dates, all_movies) {
         }
       });
 
-      if (avalableSeanses.length > 0) {
-        avalableMovie.date = date.getDate();
-        avalableMovie.seanses = avalableSeanses;
-        seansesOnDate[date.getDate()].push(avalableMovie);
-        //console.log(date,avalableMovies[index])
-      } else {
-        avalableMovie.seanses = [];
-      }
+      avalableMovie.date = date;
+      avalableMovie.seanses = avalableSeanses;
+      seansesOnDate[date.getDate()].push({
+        ...avalableMovie
+      });
+      //console.log(date,avalableMovies[index])
     });
   });
+
   return seansesOnDate;
+}
+
+function checkMonth(month) {
+  switch (month) {
+    case 1:
+      return "Январь";
+    case 2:
+      return "Февраль";
+    case 3:
+      return "Март";
+    case 4:
+      return "Аперль";
+    case 5:
+      return "Май";
+    case 6:
+      return "Июнь";
+    case 7:
+      return "Июль";
+    case 8:
+      return "Август";
+    case 9:
+      return "Сентябрь";
+    case 10:
+      return "Октябрь";
+    case 11:
+      return "Ноябрь";
+    case 12:
+      return "Декабрь";
+
+    default:
+      return "Январь";
+  }
 }
 
 function getDates() {

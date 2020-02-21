@@ -14,6 +14,8 @@ import {
   FlatList
 } from "react-native";
 import moment from "moment";
+import "moment/src/locale/ru";
+import "moment/min/moment-with-locales";
 import TheaterCard from "../components/TheaterCard";
 import {
   Appbar,
@@ -24,7 +26,7 @@ import {
   Headline
 } from "react-native-paper";
 import { MonoText } from "../components/StyledText";
-import "moment/min/moment-with-locales";
+
 const deviceWidth = Dimensions.get("window").width;
 HomeScreen.navigationOptions = {
   headerShown: false
@@ -40,13 +42,16 @@ export default function HomeScreen(props) {
     let aTheatres = [];
     try {
       setRefreshing(true);
-      fetch("https://newtime.binarywd.com/jsonfeed/theatre", {
-        headers: {
-          "Cache-Control": "no-cache",
-          "Content-Type": "application/json",
-          Pragma: "no-cache"
+      fetch(
+        "https://newtime.binarywd.com/platforms/themes/blankslate/theatre.json",
+        {
+          headers: {
+            "Cache-Control": "no-cache",
+            "Content-Type": "application/json",
+            Pragma: "no-cache"
+          }
         }
-      }).then(response =>
+      ).then(response =>
         response.json().then(text => {
           setRefreshing(false);
           setDates(getDates());
@@ -72,7 +77,6 @@ export default function HomeScreen(props) {
     getData();
     {
       setTimeout(() => {
-        console.log("try again");
         getData();
       }, 2500);
     }
@@ -97,12 +101,14 @@ export default function HomeScreen(props) {
       >
         {avalableSeanses.length > 0 ? (
           avalableSeanses.map(avalableSeans => {
-            moment.locale("ru");
             if (avalableSeans.theatres.length > 0)
               return (
                 <View>
-                  <Text style={{ padding: 5 }}>
-                    {moment(avalableSeans.date).format("MMM Do")}
+                  <Text
+                    style={{ padding: 8, fontSize: 15, fontFamily: "Roboto" }}
+                  >
+                    {checkMonth(avalableSeans.date.getMonth() + 1)},{" "}
+                    {avalableSeans.date.getDate()}
                   </Text>
                   <View style={{ backgroundColor: "#fff" }}>
                     {avalableSeans.theatres.map(val => {
@@ -149,8 +155,40 @@ function checkDate(date, theatres) {
       theatres[index].seanses = [];
     }
   });
-
+  console.log();
   return avalableTheaters;
+}
+
+function checkMonth(month) {
+  switch (month) {
+    case 1:
+      return "Январь";
+    case 2:
+      return "Февраль";
+    case 3:
+      return "Март";
+    case 4:
+      return "Аперль";
+    case 5:
+      return "Май";
+    case 6:
+      return "Июнь";
+    case 7:
+      return "Июль";
+    case 8:
+      return "Август";
+    case 9:
+      return "Сентябрь";
+    case 10:
+      return "Октябрь";
+    case 11:
+      return "Ноябрь";
+    case 12:
+      return "Декабрь";
+
+    default:
+      return "Январь";
+  }
 }
 
 function getDates() {

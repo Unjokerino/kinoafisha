@@ -8,6 +8,9 @@ import SettingsScreen from "../screens/SettingsScreen";
 import TheaterScreen from "../screens/TheaterScreen";
 import EventsScreen from "../screens/EventsScreen";
 import ClubsScreen from "../screens/ClubsScreen";
+import WebViewScreen from "../screens/WebViewScreen";
+
+import DetailNewsScreen from "../screens/DetailNewsScreen";
 import DetailMovieScreen from "../screens/DetailMovieScreen";
 import DetailTheaterScreen from "../screens/DetailTheaterScreen";
 import DetailClubScreen from "../screens/DetailClubScreen";
@@ -145,6 +148,20 @@ export default function NavigationStuckScreen(props) {
         }}
         name="DetailClubScreen"
         component={DetailClubScreen}
+      />
+      <Stack.Screen
+        options={{
+          headerShown: false
+        }}
+        name="WebViewScreen"
+        component={WebViewScreen}
+      />
+      <Stack.Screen
+        options={{
+          headerShown: false
+        }}
+        name="DetailNewsScreen"
+        component={DetailNewsScreen}
       />
     </Stack.Navigator>
   );

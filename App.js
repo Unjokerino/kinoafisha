@@ -9,6 +9,10 @@ import {
   View,
   AsyncStorage
 } from "react-native";
+import moment from "moment";
+
+import "moment/src/locale/ru";
+import "moment/min/moment-with-locales";
 import { Ionicons } from "@expo/vector-icons";
 import { Appbar, Drawer } from "react-native-paper";
 import { NavigationContainer } from "@react-navigation/native";
@@ -17,7 +21,8 @@ import AppNavigator from "./navigation/AppNavigator";
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
   const value = AsyncStorage.getItem("city");
-  console.log(value);
+  moment.locale = "ru";
+
   if (!isLoadingComplete && !props.skipLoadingScreen) {
     return (
       <AppLoading

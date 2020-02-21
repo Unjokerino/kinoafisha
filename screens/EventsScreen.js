@@ -14,6 +14,8 @@ import {
   FlatList
 } from "react-native";
 import moment from "moment";
+import "moment/src/locale/ru";
+import "moment/min/moment-with-locales";
 import TheaterCard from "../components/TheaterCard";
 import {
   Appbar,
@@ -38,14 +40,17 @@ export default function EventsScreen(props) {
     let aTheatres = [];
     try {
       setRefreshing(true);
-      fetch("https://newtime.binarywd.com/jsonfeed/afisha", {
-        headers: {
-          "Cache-Control": "no-cache, no-store, must-revalidate,max-age=0",
-          "Content-Type": "application/json",
-          "Cache-Control": "post-check=0, pre-check=0",
-          Pragma: "no-cache"
+      fetch(
+        "https://newtime.binarywd.com/platforms/themes/blankslate/afisha.json",
+        {
+          headers: {
+            "Cache-Control": "no-cache, no-store, must-revalidate,max-age=0",
+            "Content-Type": "application/json",
+            "Cache-Control": "post-check=0, pre-check=0",
+            Pragma: "no-cache"
+          }
         }
-      }).then(response =>
+      ).then(response =>
         response.json().then(text => {
           console.log(text);
           setRefreshing(false);
@@ -89,26 +94,60 @@ export default function EventsScreen(props) {
         style={{}}
       >
         {avalableSeanses.map(avalableSeans => {
-          moment.locale("ru");
-
-          return (
-            <View>
-              <Text style={{ padding: 5 }}>
-                {moment(avalableSeans.date).format("MMM Do")}
-              </Text>
-              <View style={{ backgroundColor: "#fff" }}>
-                {avalableSeans.theatres.map(val => {
-                  return (
-                    <TheaterCard navigation={props} {...val}></TheaterCard>
-                  );
-                })}
+          if (avalableSeans.theatres.length > 0)
+            return (
+              <View>
+                <Text
+                  style={{ padding: 8, fontSize: 15, fontFamily: "Roboto" }}
+                >
+                  {checkMonth(avalableSeans.date.getMonth() + 1)},{" "}
+                  {avalableSeans.date.getDate()}
+                </Text>
+                <View style={{ backgroundColor: "#fff" }}>
+                  {avalableSeans.theatres.map(val => {
+                    return (
+                      <TheaterCard navigation={props} {...val}></TheaterCard>
+                    );
+                  })}
+                </View>
               </View>
-            </View>
-          );
+            );
         })}
       </ScrollView>
     </View>
   );
+}
+
+function checkMonth(month) {
+  switch (month) {
+    case 1:
+      return "Январь";
+    case 2:
+      return "Февраль";
+    case 3:
+      return "Март";
+    case 4:
+      return "Аперль";
+    case 5:
+      return "Май";
+    case 6:
+      return "Июнь";
+    case 7:
+      return "Июль";
+    case 8:
+      return "Август";
+    case 9:
+      return "Сентябрь";
+    case 10:
+      return "Октябрь";
+    case 11:
+      return "Ноябрь";
+    case 12:
+      return "Декабрь";
+
+    default:
+      return "Январь";
+  }
 }
 
 function checkDate(date, theatres) {

@@ -10,7 +10,8 @@ import {
   View,
   ActivityIndicator,
   Dimensions,
-  FlatList
+  FlatList,
+  Linking
 } from "react-native";
 import moment from "moment";
 import MovieCard from "../components/MovieCard";
@@ -36,6 +37,24 @@ const NAV_BAR_HEIGHT = HEADER_HEIGHT - STATUS_BAR_HEIGHT;
 
 export default function DetailMovieScreen(props) {
   const movieData = props.route.params;
+  const [dates, setDates] = useState([]);
+  const [currentMovie, setCurrentMovie] = useState([]);
+  const [seanses, setSeanses] = useState([]);
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  useEffect(() => {
+    props.route.params.movies.forEach(element => {
+      if (element.id_film === movieData.id_film) {
+        setCurrentMovie(element);
+      }
+    });
+    setDates(getDates());
+    setSeanses(checkDate(new Date(), currentMovie));
+  }, []);
+
+  useEffect(() => {
+    setSeanses(checkDate(currentDate, currentMovie));
+  }, [currentDate]);
 
   const images = {
     background: {
@@ -45,6 +64,29 @@ export default function DetailMovieScreen(props) {
           : movieData.poster
     }
   };
+
+  function checkDate(date, movie) {
+    let seansesOnDate = [];
+    if (movie.seanses != undefined) {
+      let avalableMovie = JSON.stringify(movie);
+      avalableMovie = JSON.parse(avalableMovie);
+
+      let avalableSeanses = [];
+
+      avalableMovie.seanses.forEach(seans => {
+        let seansDate = new Date(moment(seans.date));
+
+        if (seansDate.getDate() === date.getDate()) {
+          avalableSeanses.push(seans);
+        }
+      });
+
+      seansesOnDate.push(...avalableSeanses);
+    }
+    return seansesOnDate;
+  }
+
+  function setCurrentSeanses(date) {}
 
   function renderContent() {
     return (
@@ -63,49 +105,118 @@ export default function DetailMovieScreen(props) {
           </Text>
         </View>
         <View
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          containerStyle={{
+            maxHeight: 50,
+            alignItems: "center",
+            justifyContent: "center"
+          }}
           style={{
             height: 50,
             backgroundColor: "#fff",
-            width: "100%",
+            flexDirection: "row",
             elevation: 1,
+            justifyContent: "center",
+            flexWrap: "wrap",
             marginVertical: 8
           }}
-        ></View>
-        <View style={styles.box}>
-          {movieData.seanses.map(seans => {
+        >
+          {dates.map(date => {
             return (
               <TouchableOpacity
+                onPress={() => {
+                  setCurrentDate(date);
+                }}
                 style={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: "100%",
+                  backgroundColor:
+                    currentDate.getDate() === date.getDate()
+                      ? "#EF0000"
+                      : "#fff",
                   paddingHorizontal: 16,
-                  paddingVertical: 8,
-                  borderRadius: 5,
-                  borderColor: "#f1f1f1",
-                  borderWidth: 1,
-                  alignSelf: "flex-start"
+                  paddingVertical: 8
                 }}
               >
-                <Text>
-                  {moment(seans.date).format("HH:MM")} | {seans.type_zal}
+                <Text
+                  style={{
+                    textAlign: "center",
+
+                    color:
+                      currentDate.getDate() === date.getDate() ? "#fff" : "#000"
+                  }}
+                >
+                  {date.getDate()}
                 </Text>
               </TouchableOpacity>
             );
           })}
-          <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-            {movieData.country.map(val => {
-              return <Caption>{val} </Caption>;
-            })}
-          </View>
-          <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-            {movieData.ganre.map(val => {
-              return <Caption>{val} </Caption>;
-            })}
-          </View>
-          <Text>{movieData.desc}</Text>
-          <Caption>Режисер</Caption>
-          <Text>{movieData.regisser}</Text>
-          <Caption>В главных ролях</Caption>
-          <Text>{movieData.acters} </Text>
         </View>
+        <ScrollView style={styles.box}>
+          <View
+            style={{
+              flexWrap: "wrap",
+              flexDirection: "row",
+              justifyContent: "center"
+            }}
+          >
+            {seanses.map(seans => {
+              return (
+                <TouchableOpacity
+                  onPress={() => {
+                    props.navigation.navigate("WebViewScreen", {
+                      url: `https://kinowidget.kinoplan.ru/seats/776/${movieData.id_film}/${seans.id_session}`,
+                      name: movieData.name
+                    });
+                  }}
+                  style={{
+                    marginRight: 10,
+                    marginBottom: 5,
+                    paddingHorizontal: 16,
+                    paddingVertical: 8,
+                    borderRadius: 5,
+                    borderColor: "#f1f1f1",
+                    borderWidth: 1,
+
+                    alignSelf: "flex-start"
+                  }}
+                >
+                  <Text>
+                    {moment(seans.date).format("HH:MM")} | {seans.type_zal}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+
+          <TouchableOpacity
+            style={{
+              marginTop: 20,
+              borderColor: "#f1f1f1",
+              borderRadius: 5,
+              borderWidth: 1,
+              padding: 16
+            }}
+          >
+            <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+              {movieData.country.map(val => {
+                return <Caption>{val} </Caption>;
+              })}
+            </View>
+            <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+              {movieData.ganre.map(val => {
+                return <Caption>{val} </Caption>;
+              })}
+            </View>
+            <Text>{movieData.desc}</Text>
+            <Caption>Режисер</Caption>
+            <Text>{movieData.regisser}</Text>
+            <Caption>В главных ролях</Caption>
+            <Text>{movieData.acters} </Text>
+          </TouchableOpacity>
+        </ScrollView>
       </View>
     );
   }
@@ -139,6 +250,15 @@ export default function DetailMovieScreen(props) {
       />
     </View>
   );
+}
+
+function getDates() {
+  let dates = [];
+  for (let i = 0; i < 7; i++) {
+    let date = new Date();
+    dates.push(new Date(date.setDate(date.getDate() + i)));
+  }
+  return dates;
 }
 
 function renderNavBar(navigation) {
