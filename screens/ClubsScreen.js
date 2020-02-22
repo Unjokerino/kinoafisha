@@ -37,7 +37,7 @@ export default function ClubsScreen(props) {
     try {
       setRefreshing(true);
       fetch(
-        "https://newtime.binarywd.com/platforms/themes/blankslate/clubs.json",
+        "http://rus-noyabrsk.ru/platforms/themes/blankslate/clubs.json",
         {
           headers: {
             "Cache-Control": "no-cache",

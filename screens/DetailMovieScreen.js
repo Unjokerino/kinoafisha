@@ -13,6 +13,7 @@ import {
   FlatList,
   Linking
 } from "react-native";
+import { WebView } from "react-native-webview";
 import moment from "moment";
 import MovieCard from "../components/MovieCard";
 import {
@@ -40,23 +41,26 @@ export default function DetailMovieScreen(props) {
   const [dates, setDates] = useState([]);
   const [currentMovie, setCurrentMovie] = useState([]);
   const [seanses, setSeanses] = useState([]);
+  const [loading,setLoading] = useState(false)
   const [currentDate, setCurrentDate] = useState(new Date());
 
   useEffect(() => {
- 
+
     props.route.params.movies.forEach(element => {
       if (element.id_film === movieData.id_film) {
         setCurrentMovie(element);
       }
     }),
-    setDates(getDates());
-  
+      setDates(getDates());
+
     setCurrentDate(new Date())
- 
+
   }, []);
 
   useEffect(() => {
-    setSeanses(checkDate(currentDate, currentMovie));
+    setLoading(true)
+    checkDate(currentDate, currentMovie).then((dates) => {setSeanses(dates);   setLoading(false)});
+ 
   }, [currentDate]);
 
   const images = {
@@ -68,7 +72,7 @@ export default function DetailMovieScreen(props) {
     }
   };
 
-  function checkDate(date, movie) {
+  async function checkDate(date, movie) {
     let seansesOnDate = [];
     if (movie.seanses != undefined) {
       let avalableMovie = JSON.stringify(movie);
@@ -89,7 +93,7 @@ export default function DetailMovieScreen(props) {
     return seansesOnDate;
   }
 
-  function setCurrentSeanses(date) {}
+  function setCurrentSeanses(date) { }
 
   function renderContent() {
     return (
@@ -107,6 +111,8 @@ export default function DetailMovieScreen(props) {
             {movieData.type_film} | {movieData.vozvrast}+
           </Text>
         </View>
+       
+
         <View
           horizontal={true}
           showsHorizontalScrollIndicator={false}
@@ -162,10 +168,11 @@ export default function DetailMovieScreen(props) {
             style={{
               flexWrap: "wrap",
               flexDirection: "row",
-              justifyContent: "center"
+              justifyContent: "center",
+              marginBottom:15
             }}
           >
-            {seanses.map(seans => {
+            {!loading ? seanses.map(seans => {
               return (
                 <TouchableOpacity
                   onPress={() => {
@@ -187,13 +194,19 @@ export default function DetailMovieScreen(props) {
                   }}
                 >
                   <Text>
-                    {moment(seans.date).format("HH:MM")} | {seans.type_zal}
+                    {moment(seans.date).format("HH:mm")} | {seans.type_zal}
                   </Text>
                 </TouchableOpacity>
               );
-            })}
+            }): <ActivityIndicator></ActivityIndicator>}
           </View>
 
+          <WebView
+            style={{ marginTop: (Platform.OS == 'ios') ? 20 : 0, width: '100%', height: 250 }}
+            javaScriptEnabled={true}
+            domStorageEnabled={true}
+            source={{ uri: 'https://www.youtube.com/embed/' + movieData.youtube }}
+          />
           <TouchableOpacity
             style={{
               marginTop: 20,
@@ -203,25 +216,36 @@ export default function DetailMovieScreen(props) {
               padding: 16
             }}
           >
-            <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-              {movieData.country.map(val => {
-                return <Caption>{val} </Caption>;
-              })}
-            </View>
+            <Text style={[styles.title, { fontSize: 18 }]}>{movieData.name}</Text>
+
             <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
               {movieData.ganre.map(val => {
                 return <Caption>{val} </Caption>;
               })}
             </View>
-         
-            <Caption>Режисер</Caption>
-            <Text>{movieData.regisser}</Text>
-            <Caption>В главных ролях</Caption>
-            <Text>{movieData.acters} </Text>
-           
-            <Text style={{paddingVertical:10,      borderColor: "#f1f1f1",
+
+            <Text style={[{
+
+              paddingVertical: 0, borderColor: "#f1f1f1",
               borderRadius: 5,
-              borderTopWidth: 1, marginTop:15}}>{movieData.mobile !== '' ? movieData.desc.replace('<?xml encoding=\"utf8\" ?>',''): 'Описания пока нет :('}</Text>
+              fontSize:13,
+              fontFamily:'Roboto',
+              fontWeight:'bold',
+              marginTop: 15, 
+            }]}>
+              {movieData.mobile !== '' ? movieData.desc.replace('<?xml encoding=\"utf8\" ?>', '') : 'Описания пока нет :('}
+            </Text>
+            <Caption>Cтрана</Caption>
+            <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+              {movieData.country.map(val => {
+                return <Text style={styles.title}>{val} </Text>;
+              })}
+            </View>
+            <Caption>Режисер</Caption>
+            <Text style={styles.title}>{movieData.regisser}</Text>
+            <Caption>В главных ролях</Caption>
+            <Text style={styles.title}>{movieData.acters} </Text>
+
           </TouchableOpacity>
         </ScrollView>
       </View>
@@ -273,7 +297,7 @@ function renderNavBar(navigation) {
     <View style={styles.navContainer}>
       <View style={styles.statusBar} />
       <View style={styles.navBar}>
-        <TouchableOpacity style={styles.iconLeft} onPress={() => {}}>
+        <TouchableOpacity style={styles.iconLeft} onPress={() => { }}>
           <Appbar.Action
             color="#fff"
             icon="arrow-left"
@@ -282,7 +306,7 @@ function renderNavBar(navigation) {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.iconRight}
-          onPress={() => {}}
+          onPress={() => { }}
         ></TouchableOpacity>
       </View>
     </View>
@@ -303,6 +327,11 @@ const styles = StyleSheet.create({
   contentContainer: {
     flexGrow: 1,
     color: "#000"
+  },
+  title: {
+    fontSize:15,
+    fontFamily: 'Roboto',
+    fontWeight: 'bold'
   },
   navContainer: {
     height: HEADER_HEIGHT,

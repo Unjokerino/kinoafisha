@@ -39,7 +39,7 @@ export default function HomeScreen(props) {
     try {
       setRefreshing(true);
       fetch(
-        "https://newtime.binarywd.com/platforms/themes/blankslate/kino.json",
+        "http://rus-noyabrsk.ru/platforms/themes/blankslate/kino.json",
         {
           headers: {
             "Cache-Control": "no-cache",

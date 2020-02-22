@@ -56,7 +56,8 @@ export default function DetailClubScreen(props) {
           alignItems: "center",
           paddingHorizontal: 8
         }}
-      >
+      > 
+      <Title style={{textAlign:'center'}}>{clubData.name}</Title>
         <Text
           style={{ textAlign: "center", fontFamily: "Roboto", paddingTop: 30 }}
         >
@@ -118,28 +119,7 @@ export default function DetailClubScreen(props) {
         headerMaxHeight={200}
         extraScrollHeight={20}
         navbarColor="#006d6a"
-        title={
-          <View
-            style={{
-              flex: 1,
-
-              justifyContent: "flex-end",
-              alignItems: "flex-end",
-              width: "100%",
-              justifyContent: "center",
-              alignItems: "center"
-            }}
-          >
-            <Text
-              style={{
-                maxWidth: 200,
-                color: "#fff",
-                fontSize: 14
-              }}
-            >
-              {clubData.name}
-            </Text>
-          </View>
+        title={""
         }
         titleStyle={styles.titleStyle}
         backgroundImage={images.background}

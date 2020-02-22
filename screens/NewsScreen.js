@@ -27,7 +27,7 @@ export default function NewsScreen(props) {
     try {
       setRefreshing(true);
       fetch(
-        "https://newtime.binarywd.com/platforms/themes/blankslate/news.json",
+        "http://rus-noyabrsk.ru/platforms/themes/blankslate/news.json",
         {
           headers: {
             "Cache-Control": "no-cache",
