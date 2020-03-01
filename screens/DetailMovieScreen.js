@@ -42,10 +42,9 @@ export default function DetailMovieScreen(props) {
   const [currentMovie, setCurrentMovie] = useState([]);
   const [seanses, setSeanses] = useState([]);
   const [loading,setLoading] = useState(false)
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(new Date(props.route.params.cur_date));
 
   useEffect(() => {
-
     props.route.params.movies.forEach(element => {
       if (element.id_film === movieData.id_film) {
         setCurrentMovie(element);
@@ -53,11 +52,10 @@ export default function DetailMovieScreen(props) {
     }),
       setDates(getDates());
 
-    setCurrentDate(new Date())
-
   }, []);
 
   useEffect(() => {
+  
     setLoading(true)
     checkDate(currentDate, currentMovie).then((dates) => {setSeanses(dates);   setLoading(false)});
  
@@ -157,7 +155,7 @@ export default function DetailMovieScreen(props) {
                       currentDate.getDate() === date.getDate() ? "#fff" : "#000"
                   }}
                 >
-                  {date.getDate()}
+                  {date.getDate() > 9 ? date.getDate() : '0' + date.getDate()}
                 </Text>
               </TouchableOpacity>
             );
@@ -257,7 +255,7 @@ export default function DetailMovieScreen(props) {
       <View
         style={{
           height: 30,
-          backgroundColor: "#000"
+          backgroundColor: Platform.OS === "ios" ? "#fff" : "#000"
         }}
       />
       <ReactNativeParallaxHeader

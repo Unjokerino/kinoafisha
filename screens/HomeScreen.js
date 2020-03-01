@@ -25,6 +25,7 @@ HomeScreen.navigationOptions = {
 };
 export default function HomeScreen(props) {
   const [movies, setMovies] = useState([]);
+  const [offset, setOffset] = useState(0);
   const [dates, setDates] = useState([new Date()]);
   const [FABopen, setFABopen] = useState(false);
   const [avalableSeanses, setAvalableSeanses] = useState([]);
@@ -136,10 +137,12 @@ export default function HomeScreen(props) {
           ref={ref => (scrollListReftop = ref)}
           onScroll={event => {
             if (scrollCheckEnabled) {
+              console.log(event.nativeEvent.contentOffset.x / deviceWidth)
               let offset = Math.round(
                 event.nativeEvent.contentOffset.x / deviceWidth
               );
               let date = new Date();
+
               let newDate = new Date(date.setDate(date.getDate() + offset));
               //console.log('new: ',newDate.getDate(), 'cur: ',currentDate)
               if (currentDate !== newDate.getDate()) {
@@ -252,7 +255,7 @@ async function checkDate(dates, all_movies) {
       avalableMovie.seanses.forEach(seans => {
         let seansDate = new Date(moment(seans.date));
 
-        if (seansDate.getDate() === date.getDate()) {
+        if (seansDate.getDate()+"/"+seansDate.getMonth() === date.getDate()+"/"+date.getMonth()) {
           avalableSeanses.push(seans);
         }
       });

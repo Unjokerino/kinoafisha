@@ -93,7 +93,7 @@ function App() {
     
        
         <Drawer.Screen initialParams={{screen:0}} name="Кино" icon="menu" component={MainTabNavigator} />
-        <Drawer.Screen initialParams={{screen:1}} name="Театр" icon="фыв" component={MainTabNavigator} />
+        <Drawer.Screen initialParams={{screen:1}} name="Театр" icon="menu" component={MainTabNavigator} />
         <Drawer.Screen initialParams={{screen:2}} name="Афиша" icon="menu" component={MainTabNavigator} />
         <Drawer.Screen initialParams={{screen:3}} name="Клубы" icon="menu" component={MainTabNavigator} />
 

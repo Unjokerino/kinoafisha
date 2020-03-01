@@ -40,7 +40,7 @@ tabNavigator.path = "";
 class BottomNavigator extends React.Component {
   constructor(props) {
     super(props);
- 
+
     this.state = {
       cind: global.currentScreen,
       index: props.route.params !== undefined ? props.route.params.screenIndex : 0,
@@ -76,12 +76,14 @@ class BottomNavigator extends React.Component {
       ]
     };
   }
+  componentDidMount(){
+    this.setState({index: this.props.route.params.screenIndex} )
+  }
 
 
 
 
-
-  _handleIndexChange = index => this.setState({ index });
+  _handleIndexChange = index => {this.setState({ index })};
 
   _renderScene = BottomNavigation.SceneMap({
     Afisha: HomeScreen,

@@ -13,6 +13,7 @@ export default function MovieCard(props) {
     <TouchableOpacity
       onPress={() => {
         props.navigation.route.navigation.navigate("DetailMovieScreen", {
+          cur_date:props.seanses[0].date,
           ...props
         });
       }}

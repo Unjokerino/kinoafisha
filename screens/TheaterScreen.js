@@ -142,8 +142,8 @@ async function checkDate(dates, all_movies) {
       let avalableSeanses = [];
       avalableMovie.seanses.forEach(seans => {
         let seansDate = new Date(moment(seans.date));
-
-        if (seansDate.getDate() === date.getDate()) {
+      
+        if (seansDate.getDate()+"/"+seansDate.getMonth() === date.getDate()+"/"+date.getMonth()) {
           avalableSeanses.push(seans);
         }
       });
@@ -195,7 +195,7 @@ function checkMonth(month) {
 
 async function getDates() {
   let dates = [];
-  for (let i = 0; i < 7; i++) {
+  for (let i = 0; i < 30; i++) {
     let date = new Date();
     dates.push(new Date(date.setDate(date.getDate() + i)));
   }
