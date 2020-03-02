@@ -9,11 +9,12 @@ import {
 import { Title, List, Caption } from "react-native-paper";
 import moment from "moment";
 export default function MovieCard(props) {
+ 
   return (
     <TouchableOpacity
       onPress={() => {
+        
         props.navigation.route.navigation.navigate("DetailMovieScreen", {
-          cur_date:props.seanses[0].date,
           ...props
         });
       }}
@@ -44,9 +45,7 @@ export default function MovieCard(props) {
         <View style={{ width: 200, marginLeft: 20 }}>
           <Title style={{ fontFamily: "Roboto" }}>{props.name}</Title>
           <Caption>
-            {props.ganre.map(ganre => {
-              return ganre + " ";
-            })}
+            {props.ganre.join(', ')}
           </Caption>
           <Caption>
             {props.year} | {props.country[0]}

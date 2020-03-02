@@ -59,7 +59,7 @@ export default function DetailClubScreen(props) {
       > 
       <Title style={{textAlign:'center'}}>{clubData.name}</Title>
         <Text
-          style={{ textAlign: "center", fontFamily: "Roboto", paddingTop: 30 }}
+          style={{backgroundColor:'#fff', fontWeight:'bold', textAlign: "center", fontFamily: "Roboto", paddingTop: 30,elevation:1,paddingVertical:8,paddingHorizontal:4,marginTop:10,paddingBottom:20 }}
         >
           {clubData.mobile.replace('<?xml encoding=\"utf8\" ?>', '')}
         </Text>
@@ -83,21 +83,21 @@ export default function DetailClubScreen(props) {
             position:'absolute',
             bottom:0,
             alignSelf:'center',
-            paddingHorizontal:5,
-            borderRadius: 10,
-            borderColor: "#990000",
-            borderWidth: 1,
-            paddingVertical: 8,
+            paddingHorizontal:6,
+            borderRadius: 14,
+            borderColor: "#03a9f4",
+            borderWidth: 2,
+            paddingVertical: 12,
             justifyContent: "center",
             alignItems: "center",
-
+            marginVertical:20,
             elevation: 2,
             backgroundColor: "#fff",
           
           }}
         >
      
-        <Text>Функция записи будет скоро доступна</Text>
+        <Caption>Функция записи будет скоро доступна</Caption>
  
 
         </TouchableOpacity>

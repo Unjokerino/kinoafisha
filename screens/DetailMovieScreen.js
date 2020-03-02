@@ -41,24 +41,56 @@ export default function DetailMovieScreen(props) {
   const [dates, setDates] = useState([]);
   const [currentMovie, setCurrentMovie] = useState([]);
   const [seanses, setSeanses] = useState([]);
-  const [loading,setLoading] = useState(false)
-  const [currentDate, setCurrentDate] = useState(new Date(props.route.params.cur_date));
+  const [loading,setLoading] = useState(false);
+  const [currentDate, setCurrentDate] = useState(new Date(movieData.current_date));
+
+  function renderNavBar(navigation) {
+    return (
+      <View style={styles.navContainer}>
+        <View style={styles.statusBar} />
+        <View style={styles.navBar}>
+          <TouchableOpacity style={[styles.iconLeft,{display:'flex',opacity:1,zIndex:999}]} onPress={() => { }}>
+            <Appbar.Action
+              color="#fff"
+              icon="arrow-left"
+              onPress={() => navigation.goBack()}
+            />
+          </TouchableOpacity>
+          <Appbar.Content
+              color="#fff"
+              title={movieData.name}
+             
+            />
+          <TouchableOpacity
+            style={styles.iconRight}
+            onPress={() => { }}
+          ></TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
 
   useEffect(() => {
     props.route.params.movies.forEach(element => {
       if (element.id_film === movieData.id_film) {
         setCurrentMovie(element);
+        setCurrentDate(new Date(movieData.current_date))
+        checkDate(currentDate, element).then((dates) => {
+          setSeanses(dates);
+          
+          setLoading(false)});
       }
     }),
       setDates(getDates());
+     
 
   }, []);
 
   useEffect(() => {
-  
+    console.log(dates);
     setLoading(true)
     checkDate(currentDate, currentMovie).then((dates) => {setSeanses(dates);   setLoading(false)});
- 
+
   }, [currentDate]);
 
   const images = {
@@ -71,6 +103,7 @@ export default function DetailMovieScreen(props) {
   };
 
   async function checkDate(date, movie) {
+
     let seansesOnDate = [];
     if (movie.seanses != undefined) {
       let avalableMovie = JSON.stringify(movie);
@@ -96,6 +129,7 @@ export default function DetailMovieScreen(props) {
   function renderContent() {
     return (
       <View style={{ backgroundColor: "#FBFBFB", flex: 1 }}>
+       
         <View
           style={{
             justifyContent: "space-between",
@@ -104,12 +138,12 @@ export default function DetailMovieScreen(props) {
             alignItems: "center"
           }}
         >
+          
           <Headline>Расписание</Headline>
           <Text>
             {movieData.type_film} | {movieData.vozvrast}+
           </Text>
         </View>
-       
 
         <View
           horizontal={true}
@@ -129,9 +163,11 @@ export default function DetailMovieScreen(props) {
             marginVertical: 8
           }}
         >
+     
           {dates.map(date => {
             return (
               <TouchableOpacity
+                key={date.getDate()+date.getMonth()}
                 onPress={() => {
                   setCurrentDate(date);
                 }}
@@ -146,14 +182,15 @@ export default function DetailMovieScreen(props) {
                   paddingHorizontal: 16,
                   paddingVertical: 8
                 }}
-              >
+              > 
+          
                 <Text
                   style={{
                     textAlign: "center",
 
                     color:
-                      currentDate.getDate() === date.getDate() ? "#fff" : "#000"
-                  }}
+                      JSON.stringify(currentDate) == "null" ?  () => setCurrentDate(new Date(props.route.params.cur_date)) : currentDate.getDate() === date.getDate() ? "#fff" : "#000"                  
+                    }}
                 >
                   {date.getDate() > 9 ? date.getDate() : '0' + date.getDate()}
                 </Text>
@@ -170,9 +207,10 @@ export default function DetailMovieScreen(props) {
               marginBottom:15
             }}
           >
-            {!loading ? seanses.map(seans => {
+            {seanses.map(seans => {
               return (
                 <TouchableOpacity
+                  key={moment(seans.date).format("HH:mm")}
                   onPress={() => {
                     props.navigation.navigate("WebViewScreen", {
                       url: `https://kinowidget.kinoplan.ru/seats/776/${movieData.id_film}/${seans.id_session}`,
@@ -196,7 +234,7 @@ export default function DetailMovieScreen(props) {
                   </Text>
                 </TouchableOpacity>
               );
-            }): <ActivityIndicator></ActivityIndicator>}
+            })}
           </View>
 
           <WebView
@@ -205,7 +243,9 @@ export default function DetailMovieScreen(props) {
             domStorageEnabled={true}
             source={{ uri: 'https://www.youtube.com/embed/' + movieData.youtube }}
           />
-          <TouchableOpacity
+       
+        
+          <View
             style={{
               marginTop: 20,
               borderColor: "#f1f1f1",
@@ -214,37 +254,37 @@ export default function DetailMovieScreen(props) {
               padding: 16
             }}
           >
-            <Text style={[styles.title, { fontSize: 18 }]}>{movieData.name}</Text>
-
+          <View style={{borderBottomColor:'#f1f1f1',borderBottomWidth:1}}>  
+          <Text style={[styles.title, { fontSize: 18 }]}>{movieData.name}</Text>
             <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-              {movieData.ganre.map(val => {
-                return <Caption>{val} </Caption>;
-              })}
-            </View>
 
+              <Caption>{movieData.ganre.join(', ')} </Caption>
+
+            </View>
+          </View>
+            <Caption>Описание</Caption>
             <Text style={[{
 
-              paddingVertical: 0, borderColor: "#f1f1f1",
+              paddingVertical: 0, 
+              borderColor: "#f1f1f1",
               borderRadius: 5,
               fontSize:13,
               fontFamily:'Roboto',
-              fontWeight:'bold',
-              marginTop: 15, 
+              
+              
             }]}>
               {movieData.mobile !== '' ? movieData.desc.replace('<?xml encoding=\"utf8\" ?>', '') : 'Описания пока нет :('}
             </Text>
             <Caption>Cтрана</Caption>
-            <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-              {movieData.country.map(val => {
-                return <Text style={styles.title}>{val} </Text>;
-              })}
+            <View style={{ flexDirection: "row",  flexWrap: "wrap" }}>
+              <Text style={styles.title}>{movieData.country.join(', ')} </Text>
             </View>
             <Caption>Режисер</Caption>
             <Text style={styles.title}>{movieData.regisser}</Text>
             <Caption>В главных ролях</Caption>
             <Text style={styles.title}>{movieData.acters} </Text>
 
-          </TouchableOpacity>
+          </View>
         </ScrollView>
       </View>
     );
@@ -263,7 +303,20 @@ export default function DetailMovieScreen(props) {
         headerMaxHeight={200}
         extraScrollHeight={20}
         navbarColor="#EF0000"
-        title={movieData.name}
+        alwaysShowTitle={false}
+        
+        title={
+        <TouchableOpacity 
+          onPress={() =>{ 
+            props.navigation.navigate("WebViewScreen", {
+            url: 'https://www.youtube.com/embed/' + movieData.youtube,
+            name: movieData.name
+          })}} 
+          style={{height:'100%',width:'100%',justifyContent:'center',backgroundColor:'#11111154',justifyContent:'center',
+        }}>
+          <Title style={{color:'#fff',fontFamily:'Roboto',textAlign:'center',marginHorizontal:10}}>{""}</Title>
+        
+        </TouchableOpacity>}
         titleStyle={styles.titleStyle}
         backgroundImage={images.background}
         backgroundImageScale={1.2}
@@ -290,26 +343,7 @@ function getDates() {
   return dates;
 }
 
-function renderNavBar(navigation) {
-  return (
-    <View style={styles.navContainer}>
-      <View style={styles.statusBar} />
-      <View style={styles.navBar}>
-        <TouchableOpacity style={styles.iconLeft} onPress={() => { }}>
-          <Appbar.Action
-            color="#fff"
-            icon="arrow-left"
-            onPress={() => navigation.goBack()}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.iconRight}
-          onPress={() => { }}
-        ></TouchableOpacity>
-      </View>
-    </View>
-  );
-}
+
 
 const styles = StyleSheet.create({
   appbarr: {
@@ -327,9 +361,12 @@ const styles = StyleSheet.create({
     color: "#000"
   },
   title: {
-    fontSize:15,
+    fontSize:13,
     fontFamily: 'Roboto',
-    fontWeight: 'bold'
+    
+  },
+  iconLeft:{
+    opacity:1,
   },
   navContainer: {
     height: HEADER_HEIGHT,

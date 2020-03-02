@@ -15,7 +15,7 @@ export default function WebViewScreen(props) {
       />
       <Appbar
         style={{
-          marginBottom: -60,
+          
           zIndex: 999,
           elevation: 2,
           backgroundColor: "#fff"

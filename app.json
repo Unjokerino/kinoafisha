@@ -1,28 +1,31 @@
 {
-  "expo": {
-    "name": "Русь",
-    "slug": "kinoafisha",
-    "privacy": "public",
-    "sdkVersion": "36.0.0",
-    "platforms": ["ios", "android", "web"],
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "splash": {
-      "image": "./assets/images/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#000"
-    },
-    "updates": {
-      "fallbackToCacheTimeout": 0
-    },
-    "assetBundlePatterns": ["**/*"],
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.binarywd.kinoafisha"
-    },
-    "android": {
-      "package": "com.binarywd.kinoafisha"
+    "expo": {
+        "name": "Русь",
+        "slug": "kinoafisha",
+        "privacy": "public",
+        "sdkVersion": "36.0.0",
+        "platforms": ["ios", "android", "web"],
+        "version": "2.3.0",
+        "orientation": "portrait",
+        "icon": "./assets/images/icon.png",
+        "splash": {
+            "image": "./assets/images/splash.png",
+            "resizeMode": "cover",
+            "backgroundColor": "#000"
+        },
+        "updates": {
+            "fallbackToCacheTimeout": 0
+        },
+        "assetBundlePatterns": ["**/*"],
+        "ios": {
+
+            "supportsTablet": true,
+            "bundleIdentifier": "com.binarywd.kinoafisha"
+        },
+        "android": {
+            "versionCode": 4,
+            "permissions": [],
+            "package": "com.binarywd.kinoafisha"
+        }
     }
-  }
 }

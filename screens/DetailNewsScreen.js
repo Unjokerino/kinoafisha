@@ -88,6 +88,27 @@ export default function DetailNewsScreen(props) {
       </View>
     );
   }
+  function renderNavBar(navigation) {
+    return (
+      <View style={styles.navContainer}>
+        <View style={styles.statusBar} />
+        <View style={styles.navBar}>
+          <TouchableOpacity style={styles.iconLeft} onPress={() => {}}>
+            <Appbar.Action
+              color="#fff"
+              icon="arrow-left"
+              onPress={() => navigation.goBack()}
+            />
+          </TouchableOpacity>
+          <Appbar.Content title={newsData.name}></Appbar.Content>
+          <TouchableOpacity
+            style={styles.iconRight}
+            onPress={() => {}}
+          ></TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <Provider style={styles.container}>
@@ -106,7 +127,7 @@ export default function DetailNewsScreen(props) {
           <View
             style={{
               flex: 1,
-
+              backgroundColor:'#0000006e',
               justifyContent: "flex-end",
               alignItems: "flex-end",
               width: "100%",
@@ -121,10 +142,11 @@ export default function DetailNewsScreen(props) {
                 fontSize: 14
               }}
             >
-              {newsData.name}
+              
             </Text>
           </View>
         }
+        alwaysShowTitle={false}
         titleStyle={styles.titleStyle}
         backgroundImage={images.background}
         backgroundImageScale={1.2}
@@ -142,26 +164,7 @@ export default function DetailNewsScreen(props) {
   );
 }
 
-function renderNavBar(navigation) {
-  return (
-    <View style={styles.navContainer}>
-      <View style={styles.statusBar} />
-      <View style={styles.navBar}>
-        <TouchableOpacity style={styles.iconLeft} onPress={() => {}}>
-          <Appbar.Action
-            color="#fff"
-            icon="arrow-left"
-            onPress={() => navigation.goBack()}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.iconRight}
-          onPress={() => {}}
-        ></TouchableOpacity>
-      </View>
-    </View>
-  );
-}
+
 
 const styles = StyleSheet.create({
   appbarr: {
@@ -195,7 +198,7 @@ const styles = StyleSheet.create({
   },
   titleStyle: {
     color: "#fff",
-    fontWeight: "bold",
+    
     fontSize: 18
   }
 });

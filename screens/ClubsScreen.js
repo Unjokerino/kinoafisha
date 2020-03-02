@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     margin: 10,
     color: "white",
-    fontWeight: "bold"
+
   },
   scrollView: {
     width: deviceWidth

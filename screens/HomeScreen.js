@@ -77,6 +77,7 @@ export default function HomeScreen(props) {
             Расписание
           </Title>
           <ScrollView
+            ref={ref => (datesScrollListRef = ref)}
             horizontal={true}
             showsHorizontalScrollIndicator={false}
             style={{ flexWrap: "wrap", flexGrow: 1 }}
@@ -89,6 +90,7 @@ export default function HomeScreen(props) {
                       setScrollCheckEnabled(false);
                       setCurrentDate(date.getDate());
                       let offset = date.getDate() - new Date().getDate();
+                      
                       scrollListReftop.scrollTo({
                         x: deviceWidth * offset,
                         y: 0,
@@ -137,7 +139,6 @@ export default function HomeScreen(props) {
           ref={ref => (scrollListReftop = ref)}
           onScroll={event => {
             if (scrollCheckEnabled) {
-              console.log(event.nativeEvent.contentOffset.x / deviceWidth)
               let offset = Math.round(
                 event.nativeEvent.contentOffset.x / deviceWidth
               );
@@ -148,7 +149,12 @@ export default function HomeScreen(props) {
               if (currentDate !== newDate.getDate()) {
                 setCurrentDate(newDate.getDate());
               }
+              setScrollCheckEnabled(false)
+           
             }
+            setTimeout(() => {
+              setScrollCheckEnabled(true)
+            }, 100);
           }}
           horizontal={true}
           showsHorizontalScrollIndicator={false}
@@ -180,7 +186,7 @@ export default function HomeScreen(props) {
                   data={seans}
                   renderItem={({ item }) =>
                     item.seanses.length > 0 ? (
-                      <MovieCard movies={movies} navigation={props} {...item} />
+                      <MovieCard current_date={item.date} movies={movies} navigation={props} {...item} />
                     ) : (
                       <View style={{ flex: 1 }}>
                         <View></View>

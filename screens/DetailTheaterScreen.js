@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 15,
     fontFamily: 'Roboto',
-    fontWeight: 'bold'
+    
   },
   navBar: {
     height: NAV_BAR_HEIGHT,
