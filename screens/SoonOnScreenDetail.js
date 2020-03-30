@@ -39,7 +39,7 @@ const STATUS_BAR_HEIGHT = Platform.OS === "ios" ? (IS_IPHONE_X ? 44 : 20) : 0;
 const HEADER_HEIGHT = Platform.OS === "ios" ? (IS_IPHONE_X ? 88 : 64) : 64;
 const NAV_BAR_HEIGHT = HEADER_HEIGHT - STATUS_BAR_HEIGHT;
 
-export default function DetailMovieScreen(props) {
+export default function SoonOnScreenDetail(props) {
   const movieData = props.route.params;
   const [dates, setDates] = useState([]);
   const [darkTheme,setdarkTheme] = useState("0")
@@ -48,7 +48,7 @@ export default function DetailMovieScreen(props) {
   const [seanses, setSeanses] = useState([]);
   const [loading,setLoading] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date(movieData.current_date));
-  const url = "http://rus-noyabrsk.ru/platforms/themes/blankslate/kino.json"
+  const url = "https://rus-noyabrsk.ru/platforms/themes/blankslate/kinocoon.json"
 
   const styles = StyleSheet.create({
     appbarr: {
@@ -207,106 +207,16 @@ export default function DetailMovieScreen(props) {
           }}
         >
           
-          <Headline style={{color:colors.caption_color}}>Расписание</Headline>
+        <Headline style={{color:colors.caption_color}}>Расписание</Headline>
           <Text style={{color:colors.caption_color}}>
             {movieData.type_film} | {movieData.vozvrast}+
           </Text>
         </View>
 
         
-        <View
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-          containerStyle={{
-            maxHeight: 50,
-            alignItems: "center",
-            justifyContent: "center"
-          }}
-          style={{
-            height: 50,
-            backgroundColor: colors.background_color,
-            flexDirection: "row",
-            elevation: 1,
-            justifyContent: "center",
-            flexWrap: "wrap",
-            marginVertical: 8
-          }}
-        >
-     
-          {dates.map(date => {
-            return (
-              <TouchableOpacity
-                key={date.getDate()+date.getMonth()}
-                onPress={() => {
-                  setCurrentDate(date);
-                }}
-                style={{
-                  alignItems: "center",
-                  justifyContent: "center",
-                  height: "100%",
-                  backgroundColor:
-                    currentDate.getDate() === date.getDate()
-                      ? "#EF0000"
-                      : colors.card_color,
-                  paddingHorizontal: 16,
-                  paddingVertical: 8
-                }}
-              > 
-          
-                <Text
-                  style={{
-                    textAlign: "center",
+        <Title style={[styles.title,{textAlign:'center',fontSize:16}]}>В кино с {moment(movieData.seanses[0].date).locale("ru", localization).format("D MMMM")}</Title>
 
-                    color:
-                      JSON.stringify(currentDate) == "null" ?  () => setCurrentDate(new Date(props.route.params.cur_date)) : currentDate.getDate() === date.getDate() ? "#fff" : colors.text_color                  
-                    }}
-                >
-                  {date.getDate() > 9 ? date.getDate() : '0' + date.getDate()}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View> 
-        
         <ScrollView style={styles.box}>
-          <View
-            style={{
-              flexWrap: "wrap",
-              flexDirection: "row",
-              justifyContent: "center",
-              marginBottom:15
-            }}
-          >
-            {seanses.map(seans => {
-              return (
-                <TouchableOpacity
-                  key={moment(seans.date).format("HH:mm")}
-                  onPress={() => {
-                    props.navigation.navigate("WebViewScreen", {
-                      url: `https://kinowidget.kinoplan.ru/seats/776/${movieData.id_film}/${seans.id_session}`,
-                      name: movieData.name
-                    });
-                  }}
-                  style={{
-                    marginRight: 10,
-                    marginBottom: 5,
-                    paddingHorizontal: 16,
-                    paddingVertical: 8,
-                    borderRadius: 5,
-                    borderColor: "#f1f1f1",
-                    borderWidth: 1,
-                    backgroundColor:colors.card_color,
-                    alignSelf: "flex-start"
-                  }}
-                >
-                  <Text style={styles.text}>
-                    {moment(seans.date).format("HH:mm")} | {seans.type_zal}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-
           <WebView
             style={{ marginTop: (Platform.OS == 'ios') ? 20 : 0, width: '100%', height: 250 }}
             javaScriptEnabled={true}
@@ -348,7 +258,7 @@ export default function DetailMovieScreen(props) {
             <Text style={styles.title}>{movieData.acters} </Text>
 
           </View>
-          <MoreEvents name={movieData.name} url={url} target="DetailMovieScreen" navigation={props} />
+          <MoreEvents skipCityCheck={true} skipDateCheck={true} name={movieData.name} url={url} target="DetailMovieScreen" navigation={props} />
         </ScrollView>
       </View>
     );

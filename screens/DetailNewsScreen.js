@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import {
   Image,
   Platform,
+  AsyncStorage,
   ScrollView,
   StyleSheet,
   Text,
@@ -27,6 +28,8 @@ import {
 } from "react-native-paper";
 import { MonoText } from "../components/StyledText";
 import ReactNativeParallaxHeader from "react-native-parallax-header";
+import COLORS from "../assets/colors"
+import MoreEvents from "../components/MoreEvents"
 
 const deviceWidth = Dimensions.get("window").width;
 const SCREEN_HEIGHT = Dimensions.get("screen").height;
@@ -35,8 +38,13 @@ const STATUS_BAR_HEIGHT = Platform.OS === "ios" ? (IS_IPHONE_X ? 44 : 20) : 0;
 const HEADER_HEIGHT = Platform.OS === "ios" ? (IS_IPHONE_X ? 88 : 64) : 64;
 const NAV_BAR_HEIGHT = HEADER_HEIGHT - STATUS_BAR_HEIGHT;
 
+
+
 export default function DetailNewsScreen(props) {
+  const [darkTheme,setdarkTheme] = useState("0")
+  const [colors, setColors] = useState(COLORS.LIGHT)
   const newsData = props.route.params;
+  const url = "http://rus-noyabrsk.ru/platforms/themes/blankslate/news.json"
 
   const images = {
     background: {
@@ -47,44 +55,75 @@ export default function DetailNewsScreen(props) {
     }
   };
 
+  async function isDarkTheme(){
+    let darkTheme = await AsyncStorage.getItem('darkTheme')
+    setdarkTheme(darkTheme)
+    darkTheme === "1" ? setColors(COLORS.DARK) : setColors(COLORS.LIGHT)
+  }
+
+  useEffect(() =>{
+    isDarkTheme()
+  },[])
+
+  const styles = StyleSheet.create({
+    appbarr: {
+      marginTop: 30,
+      backgroundColor: "#fff",
+      elevation: 0
+    },
+    box: { paddingHorizontal: 8, flexDirection: "column" },
+    container: {
+      flex: 1,
+      backgroundColor: colors.background
+    },
+    contentContainer: {
+      flexGrow: 1,
+      color:  colors.background
+    },
+    navContainer: {
+      height: HEADER_HEIGHT,
+      marginHorizontal: 10
+    },
+    statusBar: {
+      height: STATUS_BAR_HEIGHT,
+      backgroundColor: "transparent"
+    },
+    navBar: {
+      height: NAV_BAR_HEIGHT,
+      justifyContent: "space-between",
+      alignItems: "center",
+      flexDirection: "row",
+      backgroundColor: "transparent"
+    },
+    titleStyle: {
+      color: "#fff",
+      
+      fontSize: 18
+    }
+  });
+
+  
+
+
   function renderContent() {
     return (
       <View
         style={{
-          backgroundColor: "#FBFBFB",
+          backgroundColor: colors.card_color,
           flex: 1,
           alignItems: "center",
           paddingHorizontal: 8
         }}
       >
         <Text
-          style={{ textAlign: "center", fontFamily: "Roboto", paddingTop: 30 }}
+          style={{ textAlign: "center",color:colors.text_color, fontFamily: "Roboto", paddingVertical: 35 }}
         >
           {newsData.mobile.replace('<?xml encoding=\"utf8\" ?>','')}
         </Text>
+        <View style={{marginBottom:50}}>
+          <MoreEvents skipCityCheck={true} skipDateCheck={true}  name={newsData.name} url={url} target="DetailNewsScreen" navigation={props} />
+        </View>
 
-        <TouchableOpacity
-          onPress={() => {
-            Linking.openURL(newsData.link);
-          }}
-          style={{
-            borderRadius: 10,
-            borderColor: "#990000",
-            borderWidth: 1,
-            paddingVertical: 8,
-            justifyContent: "center",
-            alignItems: "center",
-            marginTop: 30,
-            elevation: 2,
-            backgroundColor: "#fff",
-            marginHorizontal: 20
-          }}
-        >
-          <Text style={{ textAlign: "center", fontFamily: "Roboto" }}>
-            {" "}
-            Перейти на сайт на страницу новости
-          </Text>
-        </TouchableOpacity>
       </View>
     );
   }
@@ -160,45 +199,36 @@ export default function DetailNewsScreen(props) {
           onScrollEndDrag: () => console.log("onScrollEndDrag")
         }}
       />
+        <TouchableOpacity
+          onPress={() => {
+            Linking.openURL(newsData.link);
+          }}
+          style={{
+            borderRadius: 10,
+            borderColor: "#990000",
+            borderWidth: 1,
+            backgroundColor:colors.card_color,
+            paddingVertical: 8,
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: 30,
+            position:'absolute',
+            bottom:10,
+            alignSelf:'center',
+            width:'90%',
+            elevation: 2,
+            
+          }}
+        >
+          <Text style={{ color:colors.text_color,textAlign: "center", fontFamily: "Roboto" }}>
+            {" "}
+            Перейти на сайт на страницу новости
+          </Text>
+        </TouchableOpacity>
     </Provider>
   );
 }
 
 
 
-const styles = StyleSheet.create({
-  appbarr: {
-    marginTop: 30,
-    backgroundColor: "#fff",
-    elevation: 0
-  },
-  box: { paddingHorizontal: 8, flexDirection: "column" },
-  container: {
-    flex: 1,
-    backgroundColor: "#fff"
-  },
-  contentContainer: {
-    flexGrow: 1,
-    color: "#000"
-  },
-  navContainer: {
-    height: HEADER_HEIGHT,
-    marginHorizontal: 10
-  },
-  statusBar: {
-    height: STATUS_BAR_HEIGHT,
-    backgroundColor: "transparent"
-  },
-  navBar: {
-    height: NAV_BAR_HEIGHT,
-    justifyContent: "space-between",
-    alignItems: "center",
-    flexDirection: "row",
-    backgroundColor: "transparent"
-  },
-  titleStyle: {
-    color: "#fff",
-    
-    fontSize: 18
-  }
-});
+

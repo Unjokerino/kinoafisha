@@ -1,5 +1,5 @@
-import React from "react";
-import { Text, Image, View } from "react-native";
+import React,{useState} from "react";
+import { Text, Image, View, StyleSheet } from "react-native";
 import {
   TouchableOpacity,
   TouchAction,
@@ -8,23 +8,38 @@ import {
 } from "react-native-gesture-handler";
 import { Title, List, Caption } from "react-native-paper";
 import moment from "moment";
+import COLORS from "../assets/colors"
+
+
 export default function MovieCard(props) {
+  console.log(props.preview_img)
+  const [colors, setColors] = useState(props.darkTheme === "1" ? COLORS.DARK : COLORS.LIGHT)
+  const styles = StyleSheet.create({
+    container: {
+      margin: 5,
+      borderRadius: 6,
+      elevation: 2,
+      marginBottom: 5,
+      backgroundColor: colors.card_color
+    },
+    text:{ 
+      fontFamily: "Roboto",
+      color:colors.text_color
+    }
+  });
+  
   return (
     <TouchableOpacity
       onPress={() => {
         props.navigation.route.navigation.navigate("DetailClubScreen", {
+          darkTheme:props.darkTheme,
           ...props
         });
       }}
-      style={{
-        margin: 5,
-        borderRadius: 6,
-        elevation: 2,
-        marginBottom: 5,
-        backgroundColor: "#fff"
-      }}
+    style={styles.container}
     >
       <View style={{ flexDirection: "column" }}>
+        
         <Image
           style={{
             margin: 5,
@@ -41,7 +56,7 @@ export default function MovieCard(props) {
           }}
         />
         <View style={{ marginLeft: 20 }}>
-          <Title style={{ fontFamily: "Roboto" }}>{props.name}</Title>
+          <Title style={styles.text}>{props.name}</Title>
         </View>
       </View>
     </TouchableOpacity>

@@ -5,6 +5,7 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
+  AsyncStorage,
   Text,
   TouchableOpacity,
   View,
@@ -25,13 +26,40 @@ import {
 } from "react-native-paper";
 import { MonoText } from "../components/StyledText";
 import "moment/min/moment-with-locales";
+import COLORS from "../assets/colors"
+
 const deviceWidth = Dimensions.get("window").width;
 
 export default function ClubsScreen(props) {
   const [clubs, setClubs] = useState([]);
+  const [darkTheme,setdarkTheme] = useState("0")
   const [dates, setDates] = useState([new Date()]);
   const [avalableSeanses, setAvalableSeanses] = useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
+  const [colors, setColors] = useState(global.darkTheme ? COLORS.DARK : COLORS.LIGHT)
+  const [city,setCity] = useState("Ноябрьск")
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background_color
+    },
+    headerText: {
+      fontSize: 30,
+      textAlign: "center",
+      margin: 10,
+      color: colors.text_color,
+  
+    },
+    scrollView: {
+      width: deviceWidth
+    }
+  });
+
+  async function getCity(){
+    const city = await AsyncStorage.getItem('city');
+    return city ? city : 'Ноябрьск'
+  }
 
   function loadData() {
     try {
@@ -56,9 +84,19 @@ export default function ClubsScreen(props) {
     }
   }
 
+  async function isDarkTheme(){
+    let darkTheme = await AsyncStorage.getItem('darkTheme')
+    setdarkTheme(darkTheme)
+    darkTheme === "1" ? setColors(COLORS.DARK) : setColors(COLORS.LIGHT)
+  }
+
   useEffect(() => {
     loadData();
+    isDarkTheme()
+    getCity().then(setCity)
   }, []);
+
+
 
   return (
     <View style={styles.container}>
@@ -70,8 +108,8 @@ export default function ClubsScreen(props) {
       >
         {clubs.map(club => {
           return (
-            <View key={club.name} style={{ backgroundColor: "#fff" }}>
-              <ClubCard navigation={props} {...club} />
+            <View key={club.name} >
+              <ClubCard darkTheme={darkTheme} navigation={props} {...club} />
             </View>
           );
         })}
@@ -80,19 +118,4 @@ export default function ClubsScreen(props) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5"
-  },
-  headerText: {
-    fontSize: 30,
-    textAlign: "center",
-    margin: 10,
-    color: "white",
 
-  },
-  scrollView: {
-    width: deviceWidth
-  }
-});

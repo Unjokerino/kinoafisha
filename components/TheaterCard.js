@@ -8,11 +8,16 @@ import {
 } from "react-native-gesture-handler";
 import { Title, List, Caption } from "react-native-paper";
 import moment from "moment";
+import COLORS from "../assets/colors"
+
 export default function MovieCard(props) {
+  const colors = props.darkTheme === "1" ? COLORS.DARK : COLORS.LIGHT
+
   if(props.seanses.length > 0)
     return (
       <TouchableOpacity
         onPress={() => {
+          
           props.navigation.route.navigation.navigate("DetailTheaterScreen", {
             ...props
           });

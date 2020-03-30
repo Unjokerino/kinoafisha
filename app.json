@@ -16,14 +16,17 @@
         "updates": {
             "fallbackToCacheTimeout": 0
         },
+        "notification": {
+            "icon": "./assets/images/icon.png"
+        },
         "assetBundlePatterns": ["**/*"],
         "ios": {
-
+            
             "supportsTablet": true,
             "bundleIdentifier": "com.binarywd.kinoafisha"
         },
         "android": {
-            "versionCode": 4,
+            "versionCode": 5,
             "permissions": [],
             "package": "com.binarywd.kinoafisha"
         }

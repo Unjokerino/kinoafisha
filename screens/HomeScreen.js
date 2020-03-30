@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import {
   Image,
   Platform,
+  AsyncStorage,
   ScrollView,
   StyleSheet,
   Text,
@@ -13,11 +14,14 @@ import {
   Dimensions,
   FlatList
 } from "react-native";
-import moment from "moment";
-import "moment/src/locale/ru";
 import MovieCard from "../components/MovieCard";
 import { Appbar, Title, FAB, Portal, Provider } from "react-native-paper";
 import { MonoText } from "../components/StyledText";
+import COLORS from "../assets/colors"
+import moment from 'moment'
+import localization from 'moment/locale/ru'
+
+
 
 const deviceWidth = Dimensions.get("window").width;
 HomeScreen.navigationOptions = {
@@ -26,14 +30,81 @@ HomeScreen.navigationOptions = {
 export default function HomeScreen(props) {
   const [movies, setMovies] = useState([]);
   const [offset, setOffset] = useState(0);
+  const [scrollState, setscrollState] = useState(false)
+  const [categoryScrollState, setcategoryScrollState] = useState(false)
+  const [darkTheme,setdarkTheme] = useState("0")
+  const [categoryIndex,setCategoryIndex] = useState(0)
   const [dates, setDates] = useState([new Date()]);
   const [FABopen, setFABopen] = useState(false);
   const [avalableSeanses, setAvalableSeanses] = useState([]);
   const [currentDate, setCurrentDate] = useState(new Date().getDate());
   const [scrollCheckEnabled, setScrollCheckEnabled] = useState(true);
   const [refreshing, setRefreshing] = React.useState(false);
+  const [colors, setColors] = useState(COLORS.LIGHT)
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background_color
+    },
+    scheduleContainer:{
+      backgroundColor:colors.card_color
+    },
+    scheduleText:{
+      fontSize: 16, 
+      fontWeight: "700",
+      color:colors.text_color
+    },
+    scheduleTitle:{
+      paddingHorizontal: 10, 
+      marginTop: 10,
+      color:colors.text_color
+    },
+    message:{
+      textAlign:'center',
+      paddingHorizontal:30,
+      alignItems:'center',
+      flex:1,
+      justifyContent:'center'
+    },
+    messageText:{
+      textAlign:'center',
+      color:colors.text_color,
+      fontWeight:'bold'
+    },
+    headerText: {
+      fontSize: 30,
+      textAlign: "center",
+      margin: 10,
+      color: "white",
+      fontWeight: "bold"
+    },
+    scrollView: {
+      width: deviceWidth
+    }
+  });
 
   let scrollListReftop;
+
+  useEffect(() => {
+    //getData()
+    console.log(categoryIndex)
+    if (scrollState && categoryScrollState){
+      scrollState.scrollTo({
+        x: deviceWidth * categoryIndex,
+        y: 0,
+        animated: false
+      });
+      categoryScrollState.scrollTo({
+        x: 100*categoryIndex  - (deviceWidth/2+50),
+        y: 0,
+        animated: true
+      });
+    }
+
+      
+  }, [categoryIndex])
+
 
   function getData() {
     let aSeanses = [];
@@ -52,11 +123,6 @@ export default function HomeScreen(props) {
         response.json().then(text => {
           getDates().then((dates) => {setDates(dates); checkDate(dates, text).then((resp) => {setAvalableSeanses(resp);})});
           setMovies(text);
-
-         
-   
-      
-    
         });
         setRefreshing(false);
       });
@@ -66,39 +132,36 @@ export default function HomeScreen(props) {
   }
 
   useEffect(() => {
+    isDarkTheme()
     getData();
   }, []);
+
+  async function isDarkTheme(){
+      let darkTheme = await AsyncStorage.getItem('darkTheme')
+      setdarkTheme(darkTheme)
+      darkTheme === "1" ? setColors(COLORS.DARK) : setColors(COLORS.LIGHT)
+  }
 
   return (
     <View style={styles.container}>
       <Provider>
-        <View style={{ backgroundColor: "#fff" }}>
-          <Title style={{ paddingHorizontal: 10, marginTop: 10 }}>
+
+        <View style={styles.scheduleContainer}>
+          <Title style={styles.scheduleTitle}>
             Расписание
           </Title>
           <ScrollView
-            ref={ref => (datesScrollListRef = ref)}
+            ref={setcategoryScrollState}
             horizontal={true}
             showsHorizontalScrollIndicator={false}
             style={{ flexWrap: "wrap", flexGrow: 1 }}
           >
-            {dates.map(date => {
+            {dates.map((date,index) => {
               return (
                 <View>
                   <TouchableOpacity
                     onPress={() => {
-                      setScrollCheckEnabled(false);
-                      setCurrentDate(date.getDate());
-                      let offset = date.getDate() - new Date().getDate();
-                      
-                      scrollListReftop.scrollTo({
-                        x: deviceWidth * offset,
-                        y: 0,
-                        animated: true
-                      });
-                      setTimeout(() => {
-                        setScrollCheckEnabled(true);
-                      }, 500);
+                      setCategoryIndex(index)
                     }}
                     style={{
                       flexGrow: 1,
@@ -107,7 +170,7 @@ export default function HomeScreen(props) {
                       margin: 5
                     }}
                   >
-                    <Text style={{ fontSize: 16, fontWeight: "700" }}>
+                    <Text style={styles.scheduleText}>
                       {date.getDate() < 10 ? "0" : ""}
                       {date.getDate()}/{date.getMonth() < 10 ? "0" : ""}
                       {date.getMonth() + 1}
@@ -120,7 +183,7 @@ export default function HomeScreen(props) {
                         height: 3,
                         width: "100%",
                         backgroundColor:
-                          currentDate === date.getDate() ? "#990000" : "#CFCFCF"
+                          categoryIndex === index ? "#990000" : "#CFCFCF"
                       }}
                     ></View>
                   </TouchableOpacity>
@@ -134,69 +197,57 @@ export default function HomeScreen(props) {
             <RefreshControl refreshing={refreshing} onRefresh={getData} />
           }
           pagingEnabled={true}
-          style={{}}
           nestedScrollEnabled={true}
-          ref={ref => (scrollListReftop = ref)}
+          ref={ref => (setscrollState)}
           onScroll={event => {
-            if (scrollCheckEnabled) {
-              let offset = Math.round(
-                event.nativeEvent.contentOffset.x / deviceWidth
-              );
-              let date = new Date();
+            let offset = Math.round(
+              event.nativeEvent.contentOffset.x / deviceWidth
+            )
+            offset !== categoryIndex && setCategoryIndex(offset) 
 
-              let newDate = new Date(date.setDate(date.getDate() + offset));
-              //console.log('new: ',newDate.getDate(), 'cur: ',currentDate)
-              if (currentDate !== newDate.getDate()) {
-                setCurrentDate(newDate.getDate());
-              }
-              setScrollCheckEnabled(false)
-           
-            }
-            setTimeout(() => {
-              setScrollCheckEnabled(true)
-            }, 100);
           }}
+          ref={setscrollState}
           horizontal={true}
           showsHorizontalScrollIndicator={false}
         >
           {  Object.entries(avalableSeanses).map((avalableSeans, index) => {
-            const [data, seans] = avalableSeans;
-         
+            const [data, seans] = avalableSeans
+            
             return (
               <View>
                 <Text
                   style={{
                     paddingVertical: 10,
                     fontSize: 16,
+                    color:colors.text_color,
                     paddingHorizontal: 5
                   }}
-                >
-                  Сеансы на {checkMonth(seans[0].date.getMonth() + 1)}, {data}
+                > 
+                  Сеансы на {data}
                 </Text>
-                <FlatList
+                {countSeanses(seans) > 0  ? <FlatList
                   contentContainerStyle={{
-                    backgroundColor: "#fff",
+                    backgroundColor: colors.background_color,
                     paddingTop: 10
                   }}
-                  style={{ backgroundColor: "#fff" }}
                   nestedScrollEnabled={true}
-                  key={index}
+                  key={seans.name + index}
                   showsVerticalScrollIndicator={false}
                   style={styles.scrollView}
                   data={seans}
                   renderItem={({ item }) =>
-                    item.seanses.length > 0 ? (
-                      <MovieCard current_date={item.date} movies={movies} navigation={props} {...item} />
-                    ) : (
-                      <View style={{ flex: 1 }}>
-                        <View></View>
+                    
+                      <View>
+                       
+                        <MovieCard detailType="DetailMovieScreen" darkTheme={darkTheme} current_date={item.date} movies={movies} navigation={props} {...item} />
                       </View>
-                    )
+                    
                   }
                   keyExtractor={(item, index) =>
-                    item.name + new Date().getTime() + index + Math.random(10)
+                    item.name
                   }
-                />
+                /> : 
+                <View style={[styles.scrollView,styles.message]}><Text style={styles.messageText}>Сеансов пока нет, но скоро обязательно появятся </Text></View>}
               </View>
             );
           })}
@@ -243,15 +294,24 @@ export default function HomeScreen(props) {
   );
 }
 
+function countSeanses(seans){
+  let count = 0
+  seans.forEach(element => {
+    count += element.seanses.length 
+  });
+  return count
+}
+
 async function checkDate(dates, all_movies) {
   let startD = new Date();
   let avalableMovies = JSON.stringify(all_movies);
   avalableMovies = JSON.parse(avalableMovies);
-
+  let city = await AsyncStorage.getItem('city');
+  city ? city : 'Ноябрьск'
   let seansesOnDate = [];
-
+  
   dates.forEach(date => {
-    seansesOnDate[date.getDate()] = [];
+    seansesOnDate[moment(date).format("D MMMM")] = [];
 
     avalableMovies.map((avalableMovie, index) => {
       avalableMovie = JSON.stringify(avalableMovie);
@@ -260,17 +320,23 @@ async function checkDate(dates, all_movies) {
       let avalableSeanses = [];
       avalableMovie.seanses.forEach(seans => {
         let seansDate = new Date(moment(seans.date));
-
-        if (seansDate.getDate()+"/"+seansDate.getMonth() === date.getDate()+"/"+date.getMonth()) {
-          avalableSeanses.push(seans);
+        if(seans.city === city){
+          if (seansDate.getDate()+"/"+seansDate.getMonth() === date.getDate()+"/"+date.getMonth()) {
+            avalableSeanses.push(seans);
+          }
         }
+      
       });
 
       avalableMovie.date = date;
       avalableMovie.seanses = avalableSeanses;
-      seansesOnDate[date.getDate()].push({
-        ...avalableMovie
-      });
+      if(avalableMovie.seanses.length > 0)
+      {
+        seansesOnDate[moment(date).format("D MMMM")].push({
+          ...avalableMovie
+        });
+      }
+
       //console.log(date,avalableMovies[index])
     });
   });
@@ -287,7 +353,7 @@ function checkMonth(month) {
     case 3:
       return "Март";
     case 4:
-      return "Аперль";
+      return "Апрель";
     case 5:
       return "Май";
     case 6:
@@ -316,6 +382,12 @@ async function getDates() {
     let date = new Date();
     dates.push(new Date(date.setDate(date.getDate() + i)));
   }
+  dates = dates.sort(function(a,b){
+    // Turn your strings into dates, and then subtract them
+    // to get a value that is either negative, positive, or zero.
+    return new Date(a) - new Date(b);
+  });
+  console.log(dates)
   return dates;
 }
 
@@ -323,19 +395,4 @@ HomeScreen.navigationOptions = {
   header: null
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5"
-  },
-  headerText: {
-    fontSize: 30,
-    textAlign: "center",
-    margin: 10,
-    color: "white",
-    fontWeight: "bold"
-  },
-  scrollView: {
-    width: deviceWidth
-  }
-});
+

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Text, Image, View, Linking } from "react-native";
 import {
   TouchableOpacity,
@@ -8,7 +8,13 @@ import {
 } from "react-native-gesture-handler";
 import { Title, List, Caption } from "react-native-paper";
 import moment from "moment";
+import COLORS from "../assets/colors"
+
+
 export default function NewsCard(props) {
+
+  const colors = props.darkTheme === "1" ? COLORS.DARK : COLORS.LIGHT
+
   return (
     <TouchableOpacity
       onPress={() => {
@@ -19,7 +25,7 @@ export default function NewsCard(props) {
         borderRadius: 2,
         elevation: 2,
         marginBottom: 5,
-        backgroundColor: "#fff"
+        backgroundColor: colors.card_color
       }}
     >
       <View style={{ flexDirection: "row" }}>
@@ -39,10 +45,10 @@ export default function NewsCard(props) {
           }}
         />
         <View style={{ width: 200, marginLeft: 20 }}>
-          <Title style={{ fontFamily: "Roboto" }}>{props.name}</Title>
-          <Caption>{props.date}</Caption>
+          <Title style={{ fontFamily: "Roboto", color:colors.text_color }}>{props.name}</Title>
+          <Caption style={{color:colors.caption_color}}>{props.date}</Caption>
 
-          <Text>{props.short_desc.substr(0, 100).replace('<?xml encoding=\"utf8\" ?>','')}...</Text>
+          {props.short_desc.length > 0 && <Text style={{color:colors.caption_color,paddingVertical:5}}>{props.short_desc.substr(0, 100).replace('<?xml encoding=\"utf8\" ?>','')}...</Text>}
         </View>
       </View>
     </TouchableOpacity>

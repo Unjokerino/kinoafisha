@@ -11,12 +11,13 @@ import {
   ActivityIndicator,
   Dimensions,
   RefreshControl,
-  FlatList
+  FlatList,
+  AsyncStorage
 } from "react-native";
 import moment from "moment";
 import "moment/src/locale/ru";
 import "moment/min/moment-with-locales";
-import TheaterCard from "../components/TheaterCard";
+import MovieCard from "../components/MovieCard";
 import {
   Appbar,
   Title,
@@ -25,7 +26,8 @@ import {
   Provider,
   Headline
 } from "react-native-paper";
-import { MonoText } from "../components/StyledText";
+import COLORS from "../assets/colors"
+
 
 const deviceWidth = Dimensions.get("window").width;
 HomeScreen.navigationOptions = {
@@ -35,15 +37,67 @@ HomeScreen.navigationOptions = {
 export default function HomeScreen(props) {
   const [theatre, setTheatre] = useState([]);
   const [dates, setDates] = useState([new Date()]);
+  const [darkTheme,setdarkTheme] = useState("0")
   const [avalableSeanses, setAvalableSeanses] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [colors, setColors] = useState(global.darkTheme ? COLORS.DARK : COLORS.LIGHT)
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background_color
+    },
+    scheduleContainer:{
+      backgroundColor:colors.card_color
+    },
+    scheduleText:{
+      fontSize: 16, 
+      
+      fontWeight: "700",
+      color:colors.text_color
+    },
+    message:{
+      textAlign:'center',
+      padding:30,
+      alignItems:'center',
+      flex:1,
+      
+      justifyContent:'center'
+    },
+    messageText:{
+      textAlign:'center',
+      color:colors.text_color,
+      fontWeight:'bold'
+    },
+    scheduleTitle:{
+      paddingHorizontal: 10, 
+      marginTop: 10,
+      color:colors.text_color
+    },
+    dateText:{ 
+      padding: 8, 
+      fontSize: 15, 
+      fontFamily: "Roboto",
+      color:colors.text_color
+    },
+    headerText: {
+      fontSize: 30,
+      textAlign: "center",
+      margin: 10,
+      color: "white",
+      fontWeight: "bold"
+    },
+    scrollView: {
+      width: deviceWidth
+    }
+  });
 
   function getData() {
     let aTheatres = [];
     try {
       setRefreshing(true);
       fetch(
-        "http://rus-noyabrsk.ru/platforms/themes/blankslate/theatre.json",
+        props.route.url,
         {
           headers: {
             "Cache-Control": "no-cache",
@@ -67,63 +121,74 @@ export default function HomeScreen(props) {
     }
   }
 
+  async function isDarkTheme(){
+    let darkTheme = await AsyncStorage.getItem('darkTheme')
+    setdarkTheme(darkTheme)
+    darkTheme === "1" ? setColors(COLORS.DARK) : setColors(COLORS.LIGHT)
+  }
+
   useEffect(() => {
+    isDarkTheme()
     getData();
-    {
-      setTimeout(() => {
-        getData();
-      }, 2500);
-    }
   }, []);
+
+
 
   return (
     <View style={styles.container}>
-      <Headline
-        style={{
-          paddingHorizontal: 10,
-
-          backgroundColor: "#fff"
-        }}
-      >
-        Расписание
-      </Headline>
+      <View style={styles.scheduleContainer}>
+          <Title style={styles.scheduleTitle}>
+            Расписание
+          </Title>
+      </View>
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={getData} />
         }
         style={{}}
       >
-        {  Object.entries(avalableSeanses).map((avalableSeans, index) => {
+       
+        {countSeanses(avalableSeanses) > 0 ?  Object.entries(avalableSeanses).map((avalableSeans, index) => {
             const [data, seans] = avalableSeans;
-            if(seans.length > 0)
-              return (
-        
-                  <View>
-                    <Text
-                      style={{ padding: 8, fontSize: 15, fontFamily: "Roboto" }}
-                    >
-                      {checkMonth(seans[0].date.getMonth() + 1)},{" "}
-                      {seans[0].date.getDate()}
-                    </Text>
-                    <View style={{ backgroundColor: "#fff" }}>
-                      { seans.map(val => {
-                      
-                          return (
-                            <View>
-                            
-                              <TheaterCard navigation={props} {...val}></TheaterCard>
-                            </View>
-                          );
-                      })}
+              if(seans.length > 0)
+                return (
+          
+                    <View>
+                      <Text
+                        style={styles.dateText}
+                      >
+                        {checkMonth(seans[0].date.getMonth() + 1)},{" "}
+                        {seans[0].date.getDate()}
+                      </Text>
+                      <View style={{ backgroundColor: colors.background_color }}>
+                        {seans.map(val => {
+                            return (
+                              <View>
+                                <MovieCard detailType="DetailTheaterScreen" url={props.route.url} darkTheme={darkTheme} navigation={props} {...val}></MovieCard>
+                              </View>
+                            );
+                        })}
+                      </View>
                     </View>
-                  </View>
-                );
+                )
           })
      
-        }
-      </ScrollView>
+         : 
+         <View style={[styles.message]}><Text style={styles.messageText}>Сеансов пока нет, но скоро обязательно появятся </Text></View>}
+         </ScrollView>
     </View>
   );
+}
+
+function countSeanses(avalableSeanses){
+  let count = 0
+  avalableSeanses.forEach(seans => {
+    seans.forEach(element => {
+      count += element.seanses.length 
+    });
+  });
+
+  return count
 }
 
 async function checkDate(dates, all_movies) {
@@ -131,6 +196,8 @@ async function checkDate(dates, all_movies) {
   let avalableMovies = JSON.stringify(all_movies);
   avalableMovies = JSON.parse(avalableMovies);
   let seansesOnDate = [];
+  let city = await AsyncStorage.getItem('city');
+  city ? city : 'Ноябрьск'
 
   dates.forEach(date => {
     seansesOnDate[date.getDate()] = [];
@@ -142,9 +209,10 @@ async function checkDate(dates, all_movies) {
       let avalableSeanses = [];
       avalableMovie.seanses.forEach(seans => {
         let seansDate = new Date(moment(seans.date));
-      
-        if (seansDate.getDate()+"/"+seansDate.getMonth() === date.getDate()+"/"+date.getMonth()) {
-          avalableSeanses.push(seans);
+        if(seans.city === city){
+          if (seansDate.getDate()+"/"+seansDate.getMonth() === date.getDate()+"/"+date.getMonth()) {
+            avalableSeanses.push(seans);
+          }
         }
       });
 
@@ -170,7 +238,7 @@ function checkMonth(month) {
     case 3:
       return "Март";
     case 4:
-      return "Аперль";
+      return "Апрель";
     case 5:
       return "Май";
     case 6:
@@ -202,19 +270,4 @@ async function getDates() {
   return dates;
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5"
-  },
-  headerText: {
-    fontSize: 30,
-    textAlign: "center",
-    margin: 10,
-    color: "white",
-    fontWeight: "bold"
-  },
-  scrollView: {
-    width: deviceWidth
-  }
-});
+

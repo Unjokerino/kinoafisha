@@ -1,7 +1,8 @@
-import { AppLoading,Updates  } from "expo";
+import { AppLoading, Updates, Notifications  } from "expo";
 import { Asset } from "expo-asset";
 import * as Font from "expo-font";
 import React, { useState,useEffect } from "react";
+import * as Permissions from 'expo-permissions';
 import {
   Platform,
   StatusBar,
@@ -19,18 +20,69 @@ import { NavigationContainer } from "@react-navigation/native";
 import AppNavigator from "./navigation/AppNavigator";
 import { checkForUpdateAsync } from "expo/build/Updates/Updates";
 import { Modal, Portal, Text, Button, Provider } from 'react-native-paper';
+import * as firebase from 'firebase';
+import Constants from 'expo-constants';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDHtsweqDfruO6JhZBxaQvkG-NPaBqTcHs",
+  authDomain: "kinoafisha-d29d7.firebaseapp.com",
+  databaseURL: "https://kinoafisha-d29d7.firebaseio.com",
+  projectId: "kinoafisha-d29d7",
+  storageBucket: "kinoafisha-d29d7.appspot.com",
+  messagingSenderId: "1080891018380",
+  appId: "1:1080891018380:web:7224710c052df32b83ffa9",
+  measurementId: "G-SNP0W2B5N6"
+};
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+
 
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
-  const value = AsyncStorage.getItem("city");
   const [visible, setvisible] = useState(false)
   moment.locale = "ru";
   global.currentScreen = 0
 
   useEffect(() => {
     checkForUpdates()
+    checkCity()
+    registerNotifications()
   }, [])
+
+  async function registerNotifications(){
+    const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+    // only asks if permissions have not already been determined, because
+    // iOS won't necessarily prompt the user a second time.
+    // On Android, permissions are granted on app installation, so
+    // `askAsync` will never prompt the user
+  
+    // Stop here if the user did not grant permissions
+    if (status !== 'granted') {
+      alert('No notification permissions!');
+      return;
+    }
+  
+    // Get the token that identifies this device
+    let token = await Notifications.getExpoPushTokenAsync();
+    storeHighScore(Constants.installationId,token)
+  }
+
+  function storeHighScore(userId, token) {
+    firebase.database().ref('apps/kinoafisha/users/' + userId).set({
+      token: token,
+      appOwnership: Constants.appOwnership
+    });
+  }
+
+  async function checkCity(){
+    const value = await AsyncStorage.getItem('city');
+    console.log(value)
+    if(value === null){
+      await AsyncStorage.setItem('city', 'Ноябрьск');
+    }
+  }
 
   async function checkForUpdates() {
     try {
