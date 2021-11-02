@@ -89,13 +89,14 @@ class BottomNavigator extends React.Component {
   }
 
   onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    const currentRoute = this.state.routes[this.state.index]
-    console.log(currentRoute)
-    this.setState({showDatePicker: Platform.OS === 'ios'});
-    this.setState({date:currentDate})
-    this.props.navigation.navigate("MoviesOnDateScreen",{url:currentRoute.url,date:currentDate,backgroundColor:currentRoute.color})
-    
+    this.setState({showDatePicker: false});
+    if(selectedDate){
+      const currentDate = selectedDate
+      const currentRoute = this.state.routes[this.state.index]
+      
+      this.setState({date:currentDate})
+      this.props.navigation.navigate("MoviesOnDateScreen",{url:currentRoute.url,date:currentDate,backgroundColor:currentRoute.color})
+    }
   };
 
   showMode = currentMode => {
@@ -139,7 +140,7 @@ class BottomNavigator extends React.Component {
         <View
           style={{
             height: 30,
-            backgroundColor: this.state.routes[this.state.index].color
+            backgroundColor: Platform.OS === 'ios' ?  this.state.routes[this.state.index].color : '#fff'
           }}
         />
    

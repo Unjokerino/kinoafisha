@@ -122,9 +122,9 @@ export default function DetailClubScreen(props) {
   const images = {
     background: {
       uri:
-        clubData.preview_img === ""
-          ? "https://webgradients.com/public/webgradients_png/035%20Itmeo%20Branding.png"
-          : clubData.preview_img
+        clubData.img
+          ? clubData.img.url ? clubData.img.url : clubData.img 
+          : "https://webgradients.com/public/webgradients_png/035%20Itmeo%20Branding.png"
     }
   };
 
@@ -138,7 +138,7 @@ export default function DetailClubScreen(props) {
         <Text
           style={styles.description}
         >
-          {clubData.mobile && clubData.mobile.replace('<?xml encoding=\"utf8\" ?>', '')}
+          {clubData.mobile ?  clubData.mobile.replace('<?xml encoding=\"utf8\" ?>', ''): clubData.description.replace('<?xml encoding=\"utf8\" ?>', '')}
         </Text>
         <Caption
           style={[{
@@ -151,7 +151,7 @@ export default function DetailClubScreen(props) {
           Увидеть положение и подать заявку на вступление вы можете на нашем
           сайте
         </Caption>
-        <MoreEvents name={clubData.name} url={url} target="DetailClubScreen" navigation={props} />
+        <MoreEvents skipDateCheck={true} skipCityCheck={true} name={clubData.name} url={url} target="DetailClubScreen" navigation={props} />
         <Portal >
         <TouchableOpacity
           onPress={() => {

@@ -108,12 +108,14 @@ export default function HomeScreen(props) {
       ).then(response =>
         response.json().then(text => {
         
-          getDates().then((dates) => {setDates(dates); checkDate(dates, text).then((resp) => {setAvalableSeanses(resp);})});
-
+          getDates().then((dates) => {setDates(dates); checkDate(dates, text).then((resp) => {
+          
+          })});
+          checkSeanses(text).then(setAvalableSeanses)
           
 
           setTheatre(text);
-  setRefreshing(false);
+          setRefreshing(false);
         })
       );
     } catch (error) {
@@ -147,34 +149,26 @@ export default function HomeScreen(props) {
         }
         style={{}}
       >
-       
-        {countSeanses(avalableSeanses) > 0 ?  Object.entries(avalableSeanses).map((avalableSeans, index) => {
-            const [data, seans] = avalableSeans;
-              if(seans.length > 0)
-                return (
-          
-                    <View>
-                      <Text
-                        style={styles.dateText}
-                      >
-                        {checkMonth(seans[0].date.getMonth() + 1)},{" "}
-                        {seans[0].date.getDate()}
-                      </Text>
-                      <View style={{ backgroundColor: colors.background_color }}>
-                        {seans.map(val => {
-                            return (
-                              <View>
-                                <MovieCard detailType="DetailTheaterScreen" url={props.route.url} darkTheme={darkTheme} navigation={props} {...val}></MovieCard>
-                              </View>
-                            );
-                        })}
-                      </View>
-                    </View>
-                )
-          })
-     
-         : 
-         <View style={[styles.message]}><Text style={styles.messageText}>Сеансов пока нет, но скоро обязательно появятся </Text></View>}
+        {avalableSeanses.map(event => {
+            const seans = event.seanses[0]
+
+            return (
+      
+                <View>
+                  <Text style={{color:colors.text_color}}>{moment(seans.date).format("D MMMM")}</Text>
+
+                  <View style={{ backgroundColor: colors.background_color }}>
+
+                          <View>
+                            <MovieCard detailType="DetailTheaterScreen" url={props.route.url} darkTheme={darkTheme} navigation={props} {...event}></MovieCard>
+                          </View>
+                  
+           
+                  </View>
+                </View>
+            )
+      })
+     }
          </ScrollView>
     </View>
   );
@@ -191,6 +185,23 @@ function countSeanses(avalableSeanses){
   return count
 }
 
+async function checkSeanses(events){
+  let city = await AsyncStorage.getItem('city');
+  city ? city : 'Ноябрьск'
+  let avalableEvents = []
+  events.forEach(event => {
+    event.seanses.forEach(seans =>{
+      if(seans.city === city){
+        let seansDate = new Date(moment(seans.date));
+        if (seansDate > new Date()) {
+          avalableEvents.push({...event,seanses:[seans]});
+        }
+      }
+    })
+  });
+  return avalableEvents
+}
+
 async function checkDate(dates, all_movies) {
   let startD = new Date();
   let avalableMovies = JSON.stringify(all_movies);
@@ -198,7 +209,7 @@ async function checkDate(dates, all_movies) {
   let seansesOnDate = [];
   let city = await AsyncStorage.getItem('city');
   city ? city : 'Ноябрьск'
-
+  
   dates.forEach(date => {
     seansesOnDate[date.getDate()] = [];
 
@@ -210,7 +221,9 @@ async function checkDate(dates, all_movies) {
       avalableMovie.seanses.forEach(seans => {
         let seansDate = new Date(moment(seans.date));
         if(seans.city === city){
-          if (seansDate.getDate()+"/"+seansDate.getMonth() === date.getDate()+"/"+date.getMonth()) {
+          if (moment(seansDate).format('DDMMYYYY') === moment(date).format('DDMMYYYY') ) {
+            
+
             avalableSeanses.push(seans);
           }
         }

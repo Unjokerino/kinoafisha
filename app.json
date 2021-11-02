@@ -26,8 +26,9 @@
             "bundleIdentifier": "com.binarywd.kinoafisha"
         },
         "android": {
-            "versionCode": 5,
+            "versionCode": 6,
             "permissions": [],
+            "googleServicesFile": "./google-services.json",
             "package": "com.binarywd.kinoafisha"
         }
     }

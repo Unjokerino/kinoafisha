@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1080891018380",
+    "firebase_url": "https://kinoafisha-d29d7.firebaseio.com",
+    "project_id": "kinoafisha-d29d7",
+    "storage_bucket": "kinoafisha-d29d7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1080891018380:android:946ae166bb25a17183ffa9",
+        "android_client_info": {
+          "package_name": "com.binarywd.kinoafisha"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1080891018380-uc31v80bjspp2o7fqkuj8gr4ognn0god.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRISs6bSux-vE8LZ_vHwfJezUiWdzUj3E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1080891018380-uc31v80bjspp2o7fqkuj8gr4ognn0god.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

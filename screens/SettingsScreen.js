@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { ExpoConfigView } from "@expo/samples";
 import {
-  Image,
-  Platform,
   ScrollView,
   StyleSheet,
   Switch,
-  TouchableOpacity,
   View,
-  ActivityIndicator,
-  Dimensions,
   AsyncStorage
 } from "react-native";
 import { Text, Appbar } from "react-native-paper";
@@ -18,37 +13,37 @@ import COLORS from "../assets/colors"
 import { color } from "react-native-reanimated";
 
 export default function SettingsScreen(props) {
-  const [newsNotifications,setNewsNotification] = useState(false)
-  const [darkTheme,setdarkTheme] = useState("0")
-  const [colors,setColors] = useState("0")
+  const [newsNotifications, setNewsNotification] = useState(false)
+  const [darkTheme, setdarkTheme] = useState("0")
+  const [colors, setColors] = useState("0")
   /**
    * Go ahead and delete ExpoConfigView and replace it with your content;
    * we just wanted to give you a quick view of your config.
    */
-  const  styles = StyleSheet.create({
-    container:{
-      backgroundColor:colors.background_color,
-      flex:1,
+  const styles = StyleSheet.create({
+    container: {
+      backgroundColor: colors.background_color,
+      flex: 1,
     },
-    card:{
-      marginVertical:10,
-      backgroundColor:colors.card_color,
-      padding:10,
-      elevation:1,
+    card: {
+      marginVertical: 10,
+      backgroundColor: colors.card_color,
+      padding: 10,
+      elevation: 1,
     },
-    cardItem:{
-      flexDirection:'row',
-      alignItems:'center',
-      justifyContent:'space-between'
+    cardItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between'
     },
-    cardText:{
-      color:colors.text_color
+    cardText: {
+      color: colors.text_color
     }
   })
 
-  useEffect(()=>{
+  useEffect(() => {
     isDarkTheme()
-  },[])
+  }, [])
 
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
@@ -59,22 +54,22 @@ export default function SettingsScreen(props) {
     return unsubscribe;
   }, [props.navigation]);
 
-  async function isDarkTheme(){
+  async function isDarkTheme() {
     let darkTheme = await AsyncStorage.getItem('darkTheme')
     setdarkTheme(darkTheme)
     darkTheme === "1" ? setColors(COLORS.DARK) : setColors(COLORS.LIGHT)
   }
-  
-  return <View style={{flex:1,}}>
+
+  return <View style={{ flex: 1, }}>
     <View
       style={{
-        backgroundColor:colors.card_color,
+        backgroundColor: colors.card_color,
         height: 30,
       }}
     />
     <Appbar
       style={{
-        backgroundColor:colors.card_color,
+        backgroundColor: colors.card_color,
         elevation: 0
       }}
     >

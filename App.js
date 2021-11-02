@@ -1,7 +1,7 @@
-import { AppLoading, Updates, Notifications  } from "expo";
+import { AppLoading, Updates, Notifications } from "expo";
 import { Asset } from "expo-asset";
 import * as Font from "expo-font";
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import * as Permissions from 'expo-permissions';
 import {
   Platform,
@@ -15,10 +15,7 @@ import moment from "moment";
 import "moment/src/locale/ru";
 import "moment/min/moment-with-locales";
 import { Ionicons } from "@expo/vector-icons";
-import { Appbar, Drawer } from "react-native-paper";
-import { NavigationContainer } from "@react-navigation/native";
 import AppNavigator from "./navigation/AppNavigator";
-import { checkForUpdateAsync } from "expo/build/Updates/Updates";
 import { Modal, Portal, Text, Button, Provider } from 'react-native-paper';
 import * as firebase from 'firebase';
 import Constants from 'expo-constants';
@@ -51,22 +48,22 @@ export default function App(props) {
     registerNotifications()
   }, [])
 
-  async function registerNotifications(){
+  async function registerNotifications() {
     const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
     // only asks if permissions have not already been determined, because
     // iOS won't necessarily prompt the user a second time.
     // On Android, permissions are granted on app installation, so
     // `askAsync` will never prompt the user
-  
+
     // Stop here if the user did not grant permissions
     if (status !== 'granted') {
       alert('No notification permissions!');
       return;
     }
-  
+
     // Get the token that identifies this device
     let token = await Notifications.getExpoPushTokenAsync();
-    storeHighScore(Constants.installationId,token)
+    storeHighScore(Constants.installationId, token)
   }
 
   function storeHighScore(userId, token) {
@@ -76,10 +73,10 @@ export default function App(props) {
     });
   }
 
-  async function checkCity(){
+  async function checkCity() {
     const value = await AsyncStorage.getItem('city');
     console.log(value)
-    if(value === null){
+    if (value === null) {
       await AsyncStorage.setItem('city', 'Ноябрьск');
     }
   }
@@ -113,16 +110,16 @@ export default function App(props) {
         {Platform.OS === "ios" && <StatusBar barStyle="default" />}
         <AppNavigator />
         <Portal>
-           <Modal visible={visible}>
-             <View style={{paddingVertical:10,backgroundColor:'#fff',justifyContent:'center',alignContent:'center'}}>
-                <Text style={{textAlign:'center',fontWeight:'bold'}}>Приложению необходимо обновиться</Text>
-                <Button
+          <Modal visible={visible}>
+            <View style={{ paddingVertical: 10, backgroundColor: '#fff', justifyContent: 'center', alignContent: 'center' }}>
+              <Text style={{ textAlign: 'center', fontWeight: 'bold' }}>Приложению необходимо обновиться</Text>
+              <Button
                 style={{ marginTop: 30 }}
                 onPress={() => Updates.reloadFromCache()}>
-                  Обновить
+                Обновить
                 </Button>
-              </View>
-           </Modal>
+            </View>
+          </Modal>
         </Portal>
       </Provider>
     );

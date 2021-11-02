@@ -26,7 +26,6 @@ import {
   Caption
 } from "react-native-paper";
 import MoreEvents from "../components/MoreEvents"
-import HorizontalItemCard from "../components/HorizontalItemCard"
 import COLORS from "../assets/colors"
 
 const deviceWidth = Dimensions.get("window").width;
@@ -39,18 +38,18 @@ const NAV_BAR_HEIGHT = HEADER_HEIGHT - STATUS_BAR_HEIGHT;
 
 
 export default function DetailTheaterScreen(props) {
-  const [colors,setColors] = useState(props.route.params.darkTheme ? COLORS.DARK : COLORS.LIGHT)
-  const [darkTheme,setdarkTheme] = useState("0")
+  const [colors, setColors] = useState(props.route.params.darkTheme ? COLORS.DARK : COLORS.LIGHT)
+  const [darkTheme, setdarkTheme] = useState("0")
   const theaterData = props.route.params;
-  
+
   const styles = StyleSheet.create({
     appbarr: {
       marginTop: 30,
       backgroundColor: colors.background_color,
       elevation: 0
     },
-    otherEvents:{
-      marginVertical:10
+    otherEvents: {
+      marginVertical: 10
     },
     box: { paddingHorizontal: 8, flexDirection: "column" },
     container: {
@@ -103,11 +102,11 @@ export default function DetailTheaterScreen(props) {
     }
   });
 
-  useEffect(()=>{
+  useEffect(() => {
     isDarkTheme()
-  },[])
+  }, [])
 
-  async function isDarkTheme(){
+  async function isDarkTheme() {
     let darkTheme = await AsyncStorage.getItem('darkTheme')
     setdarkTheme(darkTheme)
     darkTheme === "1" ? setColors(COLORS.DARK) : setColors(COLORS.LIGHT)
@@ -170,22 +169,22 @@ export default function DetailTheaterScreen(props) {
             <Headline style={styles.text}>Информация</Headline>
             <Caption style={styles.caption}>Дата события</Caption>
             {theaterData.seanses.map(val => {
-              return (<TouchableOpacity onPress={ () =>{
-                if(theaterData.id_film && val.id_session ){
+              return (<TouchableOpacity onPress={() => {
+                if (theaterData.id_film && val.id_session) {
                   props.navigation.navigate("WebViewScreen", {
                     url: `https://kinowidget.kinoplan.ru/seats/776/${theaterData.id_film}/${val.id_session}`,
                     name: theaterData.name
                   })
                 }
 
-                }
               }
-                style={styles.tag}><Text style={styles.title}>{moment(val.date).format("DD/MM HH:MM")}</Text></TouchableOpacity>)
+              }
+                style={styles.tag}><Text style={styles.title}>{moment(val.date).format("DD/MM HH:mm")}</Text></TouchableOpacity>)
             })}
             <Caption style={styles.caption}>Место события</Caption>
             <Text style={styles.title}>{theaterData.mesto_sobitiya}</Text>
             {theaterData.price ? <View><Caption style={styles.caption}>Стоимость</Caption>
-            <Text style={styles.title}>{theaterData.price}</Text></View> : false}
+              <Text style={styles.title}>{theaterData.price}</Text></View> : false}
             {theaterData.caption ? <Caption style={styles.caption}>{theaterData.acters_sostav.length > 0 ? 'Актерский состав' : ''}</Caption> : false}
             <View>{theaterData.acters_sostav.length > 0 ? theaterData.acters_sostav.map(actor => {
               return <Text style={styles.title}>{actor.post_title}</Text>

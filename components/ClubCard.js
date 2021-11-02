@@ -50,8 +50,8 @@ export default function MovieCard(props) {
           }}
           source={{
             uri:
-              props.preview_img !== ""
-                ? props.preview_img
+              props.img
+                ? props.img.url ? props.img.url : props.img
                 : "https://webgradients.com/public/webgradients_png/035%20Itmeo%20Branding.png"
           }}
         />
