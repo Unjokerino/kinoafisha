@@ -12,11 +12,11 @@ import {
   ActivityIndicator,
   Dimensions,
   FlatList,
-  Linking
+  Linking,
 } from "react-native";
 import { WebView } from "react-native-webview";
 import moment from "moment";
-import localization from 'moment/locale/ru'
+import localization from "moment/locale/ru";
 import MoreEvents from "../components/MoreEvents";
 import {
   Appbar,
@@ -26,11 +26,11 @@ import {
   Provider,
   Headline,
   Subheading,
-  Caption
+  Caption,
 } from "react-native-paper";
 import { MonoText } from "../components/StyledText";
 import ReactNativeParallaxHeader from "react-native-parallax-header";
-import COLORS from "../assets/colors"
+import COLORS from "../assets/colors";
 
 const deviceWidth = Dimensions.get("window").width;
 const SCREEN_HEIGHT = Dimensions.get("screen").height;
@@ -42,65 +42,69 @@ const NAV_BAR_HEIGHT = HEADER_HEIGHT - STATUS_BAR_HEIGHT;
 export default function DetailMovieScreen(props) {
   const movieData = props.route.params;
   const [dates, setDates] = useState([]);
-  const [darkTheme,setdarkTheme] = useState("0")
-  const [colors,setColors] = useState(movieData.darkTheme === "1" ? COLORS.DARK : COLORS.LIGHT)
+  const [darkTheme, setdarkTheme] = useState("0");
+  const [colors, setColors] = useState(
+    movieData.darkTheme === "1" ? COLORS.DARK : COLORS.LIGHT
+  );
   const [currentMovie, setCurrentMovie] = useState([]);
   const [seanses, setSeanses] = useState([]);
-  const [loading,setLoading] = useState(false);
-  const [currentDate, setCurrentDate] = useState(new Date(movieData.current_date));
-  const url = "http://rus-noyabrsk.ru/platforms/themes/blankslate/kino.json"
+  const [loading, setLoading] = useState(false);
+  const [currentDate, setCurrentDate] = useState(
+    new Date(movieData.current_date)
+  );
+  const url = "http://rus-noyabrsk.ru/platforms/themes/blankslate/kino.json";
 
   const styles = StyleSheet.create({
     appbarr: {
       marginTop: 30,
       backgroundColor: colors.background_color,
-      elevation: 0
+      elevation: 0,
     },
     box: { paddingHorizontal: 8, flexDirection: "column" },
     container: {
       flex: 1,
-      backgroundColor: colors.background_color
+      backgroundColor: colors.background_color,
     },
     contentContainer: {
       flexGrow: 1,
-      color: colors.text_color
+      color: colors.text_color,
     },
     title: {
-      fontSize:13,
-      fontFamily: 'Roboto',
-      color: colors.text_color
+      fontSize: 13,
+      fontFamily: "Roboto",
+      color: colors.text_color,
     },
-    iconLeft:{
-      opacity:1,
+    iconLeft: {
+      opacity: 1,
     },
     navContainer: {
       height: HEADER_HEIGHT,
-      marginHorizontal: 10
+      marginHorizontal: 10,
     },
     statusBar: {
       height: STATUS_BAR_HEIGHT,
-      backgroundColor: "transparent"
+      backgroundColor: "transparent",
     },
-    text:{
-      paddingVertical: 0, 
+    text: {
+      paddingVertical: 0,
       borderColor: "#f1f1f1",
       borderRadius: 5,
-      fontSize:13,
-      fontFamily:'Roboto',
-      color:colors.text_color
+      fontSize: 13,
+      fontFamily: "Roboto",
+      color: colors.text_color,
     },
     navBar: {
       height: NAV_BAR_HEIGHT,
       justifyContent: "space-between",
       alignItems: "center",
       flexDirection: "row",
-      backgroundColor: "transparent"
+      backgroundColor: "transparent",
     },
     titleStyle: {
       color: colors.text_color,
       fontWeight: "bold",
-      fontSize: 18
-    }
+      fontSize: 18,
+    },
   });
 
   function renderNavBar(navigation) {
@@ -108,56 +112,77 @@ export default function DetailMovieScreen(props) {
       <View style={styles.navContainer}>
         <View style={styles.statusBar} />
         <View style={styles.navBar}>
-          <TouchableOpacity style={[styles.iconLeft,{display:'flex',opacity:1,zIndex:999}]} onPress={() => { }}>
+          <TouchableOpacity
+            style={[
+              styles.iconLeft,
+              { display: "flex", opacity: 1, zIndex: 999 },
+            ]}
+            onPress={() => {}}
+          >
             <Appbar.Action
               color="#fff"
               icon="arrow-left"
               onPress={() => navigation.goBack()}
             />
           </TouchableOpacity>
-          <Appbar.Content
-              color="#fff"
-              title={movieData.name}
-             
-            />
+          <Appbar.Content color="#fff" title={movieData.name} />
           <TouchableOpacity
             style={styles.iconRight}
-            onPress={() => { }}
+            onPress={() => {}}
           ></TouchableOpacity>
         </View>
       </View>
     );
   }
 
+  const goToBuying = (item) => {
+    if (movieData.quicktickets) {
+      const url = `https://quicktickets.ru/noyabrsk-dk-rus/${movieData.quicktickets}?iframe=1`;
+      props.navigation.navigate("WebViewScreen", {
+        url,
+        name: theaterData.name,
+      });
+      return;
+    }
+    props.navigation.navigate("WebViewScreen", {
+      url: `https://kinowidget.kinoplan.ru/seats/776/${movieData.id_film}/${item.id_session}`,
+      name: movieData.name,
+    });
+  };
+
   useEffect(() => {
-    props.route.params.movies && props.route.params.movies.forEach(element => {
-      if (element.id_film === movieData.id_film) {
-        setCurrentMovie(element);
-        setCurrentDate(new Date(movieData.current_date))
-        checkDate(currentDate, element).then((dates) => {
-          setSeanses(dates);
-          
-          setLoading(false)});
-      }
-    }),
+    props.route.params.movies &&
+      props.route.params.movies.forEach((element) => {
+        if (element.id_film === movieData.id_film) {
+          setCurrentMovie(element);
+          setCurrentDate(new Date(movieData.current_date));
+          checkDate(currentDate, element).then((dates) => {
+            setSeanses(dates);
+
+            setLoading(false);
+          });
+        }
+      }),
       setDates(getDates());
   }, []);
 
-  useEffect(()=>{
-    isDarkTheme()
-  },[])
+  useEffect(() => {
+    isDarkTheme();
+  }, []);
 
-  async function isDarkTheme(){
-    let darkTheme = await AsyncStorage.getItem('darkTheme')
-    setdarkTheme(darkTheme)
-    darkTheme === "1" ? setColors(COLORS.DARK) : setColors(COLORS.LIGHT)
+  async function isDarkTheme() {
+    let darkTheme = await AsyncStorage.getItem("darkTheme");
+    setdarkTheme(darkTheme);
+    darkTheme === "1" ? setColors(COLORS.DARK) : setColors(COLORS.LIGHT);
   }
 
   useEffect(() => {
-    
-    setLoading(true)
-    checkDate(currentDate, currentMovie).then((dates) => {setSeanses(dates);   setLoading(false)});
-
+    setLoading(true);
+    checkDate(currentDate, currentMovie).then((dates) => {
+      setSeanses(dates);
+      setLoading(false);
+    });
+    console.warn(props.quicktickets);
   }, [currentDate]);
 
   const images = {
@@ -165,12 +190,11 @@ export default function DetailMovieScreen(props) {
       uri:
         movieData.poster === ""
           ? "https://webgradients.com/public/webgradients_png/035%20Itmeo%20Branding.png"
-          : movieData.poster
-    }
+          : movieData.poster,
+    },
   };
 
   async function checkDate(date, movie) {
-
     let seansesOnDate = [];
     if (movie.seanses != undefined) {
       let avalableMovie = JSON.stringify(movie);
@@ -178,7 +202,7 @@ export default function DetailMovieScreen(props) {
 
       let avalableSeanses = [];
 
-      avalableMovie.seanses.forEach(seans => {
+      avalableMovie.seanses.forEach((seans) => {
         let seansDate = new Date(moment(seans.date));
 
         if (seansDate.getDate() === date.getDate()) {
@@ -191,36 +215,33 @@ export default function DetailMovieScreen(props) {
     return seansesOnDate;
   }
 
-  function setCurrentSeanses(date) { }
-
   function renderContent() {
     return (
       <View style={{ backgroundColor: colors.background_color, flex: 1 }}>
-       
         <View
           style={{
             justifyContent: "space-between",
             flexDirection: "row",
             paddingHorizontal: 8,
-            color:colors.caption_color,
-            alignItems: "center"
+            color: colors.caption_color,
+            alignItems: "center",
           }}
         >
-          
-          <Headline style={{color:colors.caption_color}}>Расписание</Headline>
-          <Text style={{color:colors.caption_color}}>
+          <Headline style={{ color: colors.caption_color }}>
+            Расписание
+          </Headline>
+          <Text style={{ color: colors.caption_color }}>
             {movieData.type_film} | {movieData.vozvrast}+
           </Text>
         </View>
 
-        
         <View
           horizontal={true}
           showsHorizontalScrollIndicator={false}
           containerStyle={{
             maxHeight: 50,
             alignItems: "center",
-            justifyContent: "center"
+            justifyContent: "center",
           }}
           style={{
             height: 50,
@@ -229,14 +250,13 @@ export default function DetailMovieScreen(props) {
             elevation: 1,
             justifyContent: "center",
             flexWrap: "wrap",
-            marginVertical: 8
+            marginVertical: 8,
           }}
         >
-     
-          {dates.map(date => {
+          {dates.map((date) => {
             return (
               <TouchableOpacity
-                key={date.getDate()+date.getMonth()}
+                key={date.getDate() + date.getMonth()}
                 onPress={() => {
                   setCurrentDate(date);
                 }}
@@ -249,43 +269,46 @@ export default function DetailMovieScreen(props) {
                       ? "#EF0000"
                       : colors.card_color,
                   paddingHorizontal: 16,
-                  paddingVertical: 8
+                  paddingVertical: 8,
                 }}
-              > 
-          
+              >
                 <Text
                   style={{
                     textAlign: "center",
 
                     color:
-                      JSON.stringify(currentDate) == "null" ?  () => setCurrentDate(new Date(props.route.params.cur_date)) : currentDate.getDate() === date.getDate() ? "#fff" : colors.text_color                  
-                    }}
+                      JSON.stringify(currentDate) == "null"
+                        ? () =>
+                            setCurrentDate(
+                              new Date(props.route.params.cur_date)
+                            )
+                        : currentDate.getDate() === date.getDate()
+                        ? "#fff"
+                        : colors.text_color,
+                  }}
                 >
-                  {date.getDate() > 9 ? date.getDate() : '0' + date.getDate()}
+                  {date.getDate() > 9 ? date.getDate() : "0" + date.getDate()}
                 </Text>
               </TouchableOpacity>
             );
           })}
-        </View> 
-        
+        </View>
+
         <ScrollView style={styles.box}>
           <View
             style={{
               flexWrap: "wrap",
               flexDirection: "row",
               justifyContent: "center",
-              marginBottom:15
+              marginBottom: 15,
             }}
           >
-            {seanses.map(seans => {
+            {seanses.map((seans) => {
               return (
                 <TouchableOpacity
                   key={moment(seans.date).format("HH:mm")}
                   onPress={() => {
-                    props.navigation.navigate("WebViewScreen", {
-                      url: `https://kinowidget.kinoplan.ru/seats/776/${movieData.id_film}/${seans.id_session}`,
-                      name: movieData.name
-                    });
+                    goToBuying(seans);
                   }}
                   style={{
                     marginRight: 10,
@@ -295,8 +318,8 @@ export default function DetailMovieScreen(props) {
                     borderRadius: 5,
                     borderColor: "#f1f1f1",
                     borderWidth: 1,
-                    backgroundColor:colors.card_color,
-                    alignSelf: "flex-start"
+                    backgroundColor: colors.card_color,
+                    alignSelf: "flex-start",
                   }}
                 >
                   <Text style={styles.text}>
@@ -308,47 +331,64 @@ export default function DetailMovieScreen(props) {
           </View>
 
           <WebView
-            style={{ marginTop: (Platform.OS == 'ios') ? 20 : 0, width: '100%', height: 250 }}
+            style={{
+              marginTop: Platform.OS == "ios" ? 20 : 0,
+              width: "100%",
+              height: 250,
+            }}
             javaScriptEnabled={true}
             domStorageEnabled={true}
-            source={{ uri: 'https://www.youtube.com/embed/' + movieData.youtube }}
+            source={{
+              uri: "https://www.youtube.com/embed/" + movieData.youtube,
+            }}
           />
-       
-        
+
           <View
             style={{
               marginTop: 20,
               borderColor: "#f1f1f1",
               borderRadius: 5,
-              backgroundColor:colors.card_color,
+              backgroundColor: colors.card_color,
               borderWidth: 1,
               padding: 16,
-              marginBottom:10,
+              marginBottom: 10,
             }}
           >
-          <View style={{borderBottomColor:'#f1f1f1',borderBottomWidth:1}}>  
-          <Text style={[styles.title, { fontSize: 18 }]}>{movieData.name}</Text>
-            <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-
-              <Caption style={{color:colors.caption_color}}>{movieData.ganre.join(', ')} </Caption>
-
+            <View
+              style={{ borderBottomColor: "#f1f1f1", borderBottomWidth: 1 }}
+            >
+              <Text style={[styles.title, { fontSize: 18 }]}>
+                {movieData.name}
+              </Text>
+              <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+                <Caption style={{ color: colors.caption_color }}>
+                  {movieData.ganre.join(", ")}{" "}
+                </Caption>
+              </View>
             </View>
-          </View>
-            <Caption style={{color:colors.caption_color}}>Описание</Caption>
+            <Caption style={{ color: colors.caption_color }}>Описание</Caption>
             <Text style={styles.text}>
-              {movieData.mobile ? movieData.desc.replace('<?xml encoding=\"utf8\" ?>', '') : 'Описания пока нет :('}
+              {movieData.desc
+                ? movieData.desc.replace('<?xml encoding="utf8" ?>', "")
+                : "Описания пока нет :("}
             </Text>
-            <Caption style={{color:colors.caption_color}}>Cтрана</Caption>
-            <View style={{ flexDirection: "row",  flexWrap: "wrap" }}>
-              <Text style={styles.title}>{movieData.country.join(', ')} </Text>
+            <Caption style={{ color: colors.caption_color }}>Cтрана</Caption>
+            <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+              <Text style={styles.title}>{movieData.country.join(", ")} </Text>
             </View>
-            <Caption style={{color:colors.caption_color}}>Режисер</Caption>
+            <Caption style={{ color: colors.caption_color }}>Режисер</Caption>
             <Text style={styles.title}>{movieData.regisser}</Text>
-            <Caption style={{color:colors.caption_color}}>В главных ролях</Caption>
+            <Caption style={{ color: colors.caption_color }}>
+              В главных ролях
+            </Caption>
             <Text style={styles.title}>{movieData.acters} </Text>
-
           </View>
-          <MoreEvents name={movieData.name} url={url} target="DetailMovieScreen" navigation={props} />
+          <MoreEvents
+            name={movieData.name}
+            url={url}
+            target="DetailMovieScreen"
+            navigation={props}
+          />
         </ScrollView>
       </View>
     );
@@ -358,8 +398,7 @@ export default function DetailMovieScreen(props) {
     <View style={styles.container}>
       <View
         style={{
-          height: 30,
-          backgroundColor: Platform.OS === "ios" ? "#fff" : "#000"
+          backgroundColor: Platform.OS === "ios" ? "#fff" : "#000",
         }}
       />
       <ReactNativeParallaxHeader
@@ -368,19 +407,34 @@ export default function DetailMovieScreen(props) {
         extraScrollHeight={20}
         navbarColor="#EF0000"
         alwaysShowTitle={false}
-        
         title={
-        <TouchableOpacity 
-          onPress={() =>{ 
-            props.navigation.navigate("WebViewScreen", {
-            url: 'https://www.youtube.com/embed/' + movieData.youtube,
-            name: movieData.name
-          })}} 
-          style={{height:'100%',width:'100%',justifyContent:'center',backgroundColor:'#11111154',justifyContent:'center',
-        }}>
-          <Title style={{color:colors.text_color,fontFamily:'Roboto',textAlign:'center',marginHorizontal:10}}>{""}</Title>
-        
-        </TouchableOpacity>}
+          <TouchableOpacity
+            onPress={() => {
+              props.navigation.navigate("WebViewScreen", {
+                url: "https://www.youtube.com/embed/" + movieData.youtube,
+                name: movieData.name,
+              });
+            }}
+            style={{
+              height: "100%",
+              width: "100%",
+              justifyContent: "center",
+              backgroundColor: "#11111154",
+              justifyContent: "center",
+            }}
+          >
+            <Title
+              style={{
+                color: colors.text_color,
+                fontFamily: "Roboto",
+                textAlign: "center",
+                marginHorizontal: 10,
+              }}
+            >
+              {""}
+            </Title>
+          </TouchableOpacity>
+        }
         titleStyle={styles.titleStyle}
         backgroundImage={images.background}
         backgroundImageScale={1.2}
@@ -391,7 +445,7 @@ export default function DetailMovieScreen(props) {
         innerContainerStyle={styles.container}
         scrollViewProps={{
           onScrollBeginDrag: () => console.log("onScrollBeginDrag"),
-          onScrollEndDrag: () => console.log("onScrollEndDrag")
+          onScrollEndDrag: () => console.log("onScrollEndDrag"),
         }}
       />
     </View>
@@ -406,7 +460,3 @@ function getDates() {
   }
   return dates;
 }
-
-
-
-

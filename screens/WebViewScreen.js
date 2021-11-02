@@ -7,18 +7,11 @@ export default function WebViewScreen(props) {
   console.log(props.route.params);
   return (
     <View style={{ flex: 1 }}>
-      <View
-        style={{
-          height: 30,
-          backgroundColor: "#fff"
-        }}
-      />
       <Appbar
         style={{
-          
           zIndex: 999,
           elevation: 2,
-          backgroundColor: "#fff"
+          backgroundColor: "#fff",
         }}
       >
         <Appbar.Action

@@ -1,35 +1,39 @@
 {
-    "expo": {
-        "name": "Русь",
-        "slug": "kinoafisha",
-        "privacy": "public",
-        "sdkVersion": "36.0.0",
-        "platforms": ["ios", "android", "web"],
-        "version": "2.3.0",
-        "orientation": "portrait",
-        "icon": "./assets/images/icon.png",
-        "splash": {
-            "image": "./assets/images/splash.png",
-            "resizeMode": "cover",
-            "backgroundColor": "#000"
-        },
-        "updates": {
-            "fallbackToCacheTimeout": 0
-        },
-        "notification": {
-            "icon": "./assets/images/icon.png"
-        },
-        "assetBundlePatterns": ["**/*"],
-        "ios": {
-            
-            "supportsTablet": true,
-            "bundleIdentifier": "com.binarywd.kinoafisha"
-        },
-        "android": {
-            "versionCode": 6,
-            "permissions": [],
-            "googleServicesFile": "./google-services.json",
-            "package": "com.binarywd.kinoafisha"
-        }
+  "expo": {
+    "name": "Русь",
+    "slug": "kinoafisha",
+    "privacy": "public",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "version": "2.3.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#000"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "notification": {
+      "icon": "./assets/images/icon.png"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.binarywd.kinoafisha"
+    },
+    "android": {
+      "versionCode": 6,
+      "permissions": [],
+      "googleServicesFile": "./google-services.json",
+      "package": "com.binarywd.kinoafisha"
     }
+  }
 }
