@@ -15,16 +15,7 @@ import {
 } from "react-native";
 import moment from "moment";
 import MovieCard from "../components/MovieCard";
-import {
-  Appbar,
-  Title,
-  FAB,
-  Portal,
-  Provider,
-  Headline,
-  Subheading,
-  Caption,
-} from "react-native-paper";
+import { Appbar, Provider, Headline, Caption } from "react-native-paper";
 import MoreEvents from "../components/MoreEvents";
 import COLORS from "../assets/colors";
 
@@ -62,12 +53,12 @@ export default function DetailTheaterScreen(props) {
     },
     tag: {
       borderRadius: 5,
-      borderColor: "#f1f1f1",
+      paddingVertical: 5,
+      borderColor: "#666666",
       borderWidth: 1,
       maxWidth: 100,
-      marginVertical: 5,
+      justifyContent: "center",
       alignItems: "center",
-      paddingVertical: 5,
     },
     navContainer: {
       height: HEADER_HEIGHT,
@@ -79,6 +70,7 @@ export default function DetailTheaterScreen(props) {
     },
     title: {
       fontSize: 15,
+      fontWeight: "bold",
       fontFamily: "Roboto",
       color: colors.text_color,
     },
@@ -106,6 +98,7 @@ export default function DetailTheaterScreen(props) {
     isDarkTheme();
   }, []);
   const goToBuying = (item) => {
+    console.warn(item, theaterData);
     if (theaterData.quicktickets) {
       const url = `https://quicktickets.ru/noyabrsk-dk-rus/${theaterData.quicktickets}?iframe=1`;
       props.navigation.navigate("WebViewScreen", {
@@ -132,7 +125,9 @@ export default function DetailTheaterScreen(props) {
 
   return (
     <Provider>
-      <View style={{ height: 30, backgroundColor: "#6518f4" }}></View>
+      {Platform.OS === "ios" && (
+        <View style={{ height: 30, backgroundColor: "#6518f4" }} />
+      )}
       <Appbar
         style={{
           zIndex: 999,
@@ -153,15 +148,36 @@ export default function DetailTheaterScreen(props) {
             flex: 1,
           }}
         >
-          <Image
-            style={{ width: "100%", height: 200 }}
-            source={{
-              uri:
-                theaterData.img_sobitiya == ""
-                  ? "https://webgradients.com/public/webgradients_png/035%20Itmeo%20Branding.png"
-                  : theaterData.img_sobitiya,
-            }}
-          />
+          <View>
+            <Image
+              style={{ width: "100%", height: 200 }}
+              source={{
+                uri:
+                  theaterData.img_sobitiya == ""
+                    ? "https://webgradients.com/public/webgradients_png/035%20Itmeo%20Branding.png"
+                    : theaterData.img_sobitiya,
+              }}
+            />
+            <TouchableOpacity
+              onPress={() => goToBuying(theaterData.seanses[0])}
+              style={{
+                height: 50,
+                width: 200,
+                backgroundColor: colors.card_color,
+                position: "absolute",
+                bottom: 20,
+                right: 20,
+                borderRadius: 8,
+                justifyContent: "center",
+                alignItems: "center",
+                fontWeight: "800",
+                fontSize: 16,
+                elevation: 6,
+              }}
+            >
+              <Text style={{ color: colors.text_color }}>Купить билет</Text>
+            </TouchableOpacity>
+          </View>
           <View
             style={{
               backgroundColor: colors.background_color,
@@ -186,30 +202,28 @@ export default function DetailTheaterScreen(props) {
             })}
             <Caption style={styles.caption}>Место события</Caption>
             <Text style={styles.title}>{theaterData.mesto_sobitiya}</Text>
-            {theaterData.price ? (
+            {theaterData.price && (
               <View>
                 <Caption style={styles.caption}>Стоимость</Caption>
                 <Text style={styles.title}>{theaterData.price}</Text>
               </View>
-            ) : (
-              false
             )}
-            {theaterData.caption ? (
+            {theaterData.caption && (
               <Caption style={styles.caption}>
                 {theaterData.acters_sostav.length > 0 ? "Актерский состав" : ""}
               </Caption>
-            ) : (
-              false
             )}
-            <View>
-              {theaterData.acters_sostav.length > 0 ? (
-                theaterData.acters_sostav.map((actor) => {
-                  return <Text style={styles.title}>{actor.post_title}</Text>;
-                })
-              ) : (
-                <Text></Text>
-              )}
-            </View>
+            {theaterData.acters_sostav && (
+              <View>
+                {theaterData.acters_sostav.length > 0 ? (
+                  theaterData.acters_sostav.map((actor) => {
+                    return <Text style={styles.title}>{actor.post_title}</Text>;
+                  })
+                ) : (
+                  <Text></Text>
+                )}
+              </View>
+            )}
             <Text
               style={[
                 styles.title,
@@ -220,6 +234,7 @@ export default function DetailTheaterScreen(props) {
                   borderRadius: 5,
                   borderTopWidth: 1,
                   marginTop: 15,
+                  fontWeight: "500",
                 },
               ]}
             >

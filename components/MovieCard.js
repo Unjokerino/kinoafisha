@@ -70,8 +70,10 @@ export default function MovieCard(props) {
                 : "https://webgradients.com/public/webgradients_png/035%20Itmeo%20Branding.png",
           }}
         />
-        <View style={{ width: 200, marginLeft: 20 }}>
-          <Title style={styles.text}>{props.name}</Title>
+        <View style={{ flex: 1, marginLeft: 20, paddingBottom: 20 }}>
+          <Title numberOfLines={2} style={styles.text}>
+            {props.name}
+          </Title>
           {props.ganre && (
             <Caption style={styles.caption}>{props.ganre.join(", ")}</Caption>
           )}
@@ -80,9 +82,18 @@ export default function MovieCard(props) {
               {props.year} | {props.country[0]}
             </Caption>
           )}
-
+          {
+            <Caption numberOfLines={2} style={styles.caption}>
+              {props.mobile}
+            </Caption>
+          }
+          <View style={{ flex: 1 }} />
           <View
-            style={{ flexDirection: "row", marginBottom: 10, marginTop: 5 }}
+            style={{
+              flexDirection: "row",
+              marginBottom: 10,
+              marginTop: 5,
+            }}
           >
             {props.soonOnScreens ? (
               <TouchableOpacity style={styles.tag}>

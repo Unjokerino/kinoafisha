@@ -20,14 +20,7 @@ import { format } from "../utils/format";
 import "moment/src/locale/ru";
 import "moment/min/moment-with-locales";
 import MovieCard from "../components/MovieCard";
-import {
-  Appbar,
-  Title,
-  FAB,
-  Portal,
-  Provider,
-  Headline,
-} from "react-native-paper";
+import { Title } from "react-native-paper";
 import COLORS from "../assets/colors";
 
 const deviceWidth = Dimensions.get("window").width;
@@ -51,6 +44,9 @@ export default function HomeScreen(props) {
     },
     scheduleContainer: {
       backgroundColor: colors.card_color,
+    },
+    header: {
+      padding: 11,
     },
     scheduleText: {
       fontSize: 16,
@@ -108,7 +104,7 @@ export default function HomeScreen(props) {
       }).then((response) =>
         response.json().then((text) => {
           setTheatre(text);
-          console.log(text);
+          console.log("text", props.route.url, text);
           setRefreshing(false);
         })
       );
@@ -145,15 +141,29 @@ export default function HomeScreen(props) {
       {avalableSeanses?.[0]?.date && (
         <SectionList
           sections={avalableSeanses}
+          keyExtractor={(item, index) => item + index}
           renderItem={({ item, section }) => (
-            <MovieCard
-              detailType="DetailTheaterScreen"
-              url={props.route.url}
-              darkTheme={darkTheme}
-              navigation={props}
-              {...item}
-              {...section.info}
-            />
+            <View
+              style={{
+                backgroundColor: colors.card_color,
+                padding: 3,
+                paddingBottom: 10,
+              }}
+            >
+              <MovieCard
+                detailType="DetailTheaterScreen"
+                url={props.route.url}
+                darkTheme={darkTheme}
+                navigation={props}
+                {...item}
+                {...section.info}
+              />
+            </View>
+          )}
+          renderSectionHeader={({ section: { date } }) => (
+            <Text style={[styles.header, { color: colors.text_color }]}>
+              {moment(date).format("DD MMMM, dddd")}
+            </Text>
           )}
         />
       )}

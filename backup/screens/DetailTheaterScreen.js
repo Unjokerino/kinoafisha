@@ -10,7 +10,7 @@ import {
   View,
   ActivityIndicator,
   Dimensions,
-  FlatList
+  FlatList,
 } from "react-native";
 import moment from "moment";
 import MovieCard from "../components/MovieCard";
@@ -22,7 +22,7 @@ import {
   Provider,
   Headline,
   Subheading,
-  Caption
+  Caption,
 } from "react-native-paper";
 import { MonoText } from "../components/StyledText";
 import ReactNativeParallaxHeader from "react-native-parallax-header";
@@ -42,8 +42,8 @@ export default function DetailTheaterScreen(props) {
       uri:
         theaterData.img_sobitiya == ""
           ? "https://webgradients.com/public/webgradients_png/035%20Itmeo%20Branding.png"
-          : theaterData.img_sobitiya
-    }
+          : theaterData.img_sobitiya,
+    },
   };
 
   function renderContent() {
@@ -52,14 +52,14 @@ export default function DetailTheaterScreen(props) {
       <View style={{ backgroundColor: "#FBFBFB", flex: 1 }}>
         <Headline>Информация</Headline>
         <Caption>Дата события</Caption>
-        {theaterData.seanses.map(val => {
+        {theaterData.seanses.map((val) => {
           return <Text>{moment(val.date).format("DD/MM HH:MM")}</Text>;
         })}
         <Caption>Место события</Caption>
         <Text>{theaterData.mesto_sobitiya}</Text>
         <Caption>Стоимость</Caption>
         <Text>{theaterData.price}</Text>
-        <Caption>Режисер</Caption>
+        <Caption>Режиссер</Caption>
         <Text>{theaterData.regiser}</Text>
         <Caption>Актерский состав</Caption>
         <Text>{theaterData.acters}</Text>
@@ -72,7 +72,7 @@ export default function DetailTheaterScreen(props) {
       <View
         style={{
           height: 30,
-          backgroundColor: "#000"
+          backgroundColor: "#000",
         }}
       />
       <ReactNativeParallaxHeader
@@ -87,7 +87,7 @@ export default function DetailTheaterScreen(props) {
               flex: 1,
               width: "100%",
               justifyContent: "center",
-              alignItems: "center"
+              alignItems: "center",
             }}
           >
             <Text style={{ color: "#fff" }}>{theaterData.name}</Text>
@@ -103,7 +103,7 @@ export default function DetailTheaterScreen(props) {
         innerContainerStyle={styles.container}
         scrollViewProps={{
           onScrollBeginDrag: () => console.log("onScrollBeginDrag"),
-          onScrollEndDrag: () => console.log("onScrollEndDrag")
+          onScrollEndDrag: () => console.log("onScrollEndDrag"),
         }}
       />
     </View>
@@ -135,35 +135,35 @@ const styles = StyleSheet.create({
   appbarr: {
     marginTop: 30,
     backgroundColor: "#fff",
-    elevation: 0
+    elevation: 0,
   },
   box: { paddingHorizontal: 8, flexDirection: "column" },
   container: {
     flex: 1,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
   },
   contentContainer: {
     flexGrow: 1,
-    color: "#000"
+    color: "#000",
   },
   navContainer: {
     height: HEADER_HEIGHT,
-    marginHorizontal: 10
+    marginHorizontal: 10,
   },
   statusBar: {
     height: STATUS_BAR_HEIGHT,
-    backgroundColor: "transparent"
+    backgroundColor: "transparent",
   },
   navBar: {
     height: NAV_BAR_HEIGHT,
     justifyContent: "space-between",
     alignItems: "center",
     flexDirection: "row",
-    backgroundColor: "transparent"
+    backgroundColor: "transparent",
   },
   titleStyle: {
     color: "#fff",
     fontWeight: "bold",
-    fontSize: 18
-  }
+    fontSize: 18,
+  },
 });

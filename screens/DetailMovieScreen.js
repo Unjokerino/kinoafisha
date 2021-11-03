@@ -27,6 +27,7 @@ import {
   Headline,
   Subheading,
   Caption,
+  IconButton,
 } from "react-native-paper";
 import { MonoText } from "../components/StyledText";
 import ReactNativeParallaxHeader from "react-native-parallax-header";
@@ -227,9 +228,7 @@ export default function DetailMovieScreen(props) {
             alignItems: "center",
           }}
         >
-          <Headline style={{ color: colors.caption_color }}>
-            Расписание
-          </Headline>
+          <Headline style={{ color: colors.text_color }}>Расписание</Headline>
           <Text style={{ color: colors.caption_color }}>
             {movieData.type_film} | {movieData.vozvrast}+
           </Text>
@@ -261,34 +260,50 @@ export default function DetailMovieScreen(props) {
                   setCurrentDate(date);
                 }}
                 style={{
+                  flex: 1,
                   alignItems: "center",
                   justifyContent: "center",
                   height: "100%",
-                  backgroundColor:
-                    currentDate.getDate() === date.getDate()
-                      ? "#EF0000"
-                      : colors.card_color,
-                  paddingHorizontal: 16,
-                  paddingVertical: 8,
+                  backgroundColor: colors.card_color,
                 }}
               >
-                <Text
-                  style={{
-                    textAlign: "center",
-
-                    color:
+                <View
+                  style={[
+                    JSON.stringify(currentDate) == "null"
+                      ? () =>
+                          setCurrentDate(new Date(props.route.params.cur_date))
+                      : currentDate.getDate() === date.getDate() && {
+                          backgroundColor: "#EB5757",
+                          borderRadius: 6,
+                          marginVertical: 2,
+                          justifyContent: "center",
+                          alignItems: "center",
+                          textAlign: "center",
+                          flex: 1,
+                          width: "100%",
+                          height: "100%",
+                        },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      {
+                        textAlign: "center",
+                        color: colors.text_color,
+                      },
                       JSON.stringify(currentDate) == "null"
                         ? () =>
                             setCurrentDate(
                               new Date(props.route.params.cur_date)
                             )
-                        : currentDate.getDate() === date.getDate()
-                        ? "#fff"
-                        : colors.text_color,
-                  }}
-                >
-                  {date.getDate() > 9 ? date.getDate() : "0" + date.getDate()}
-                </Text>
+                        : currentDate.getDate() === date.getDate() && {
+                            color: "#fff",
+                          },
+                    ]}
+                  >
+                    {moment(date).format("MM/DD")}
+                  </Text>
+                </View>
               </TouchableOpacity>
             );
           })}
@@ -330,19 +345,6 @@ export default function DetailMovieScreen(props) {
             })}
           </View>
 
-          <WebView
-            style={{
-              marginTop: Platform.OS == "ios" ? 20 : 0,
-              width: "100%",
-              height: 250,
-            }}
-            javaScriptEnabled={true}
-            domStorageEnabled={true}
-            source={{
-              uri: "https://www.youtube.com/embed/" + movieData.youtube,
-            }}
-          />
-
           <View
             style={{
               marginTop: 20,
@@ -376,7 +378,7 @@ export default function DetailMovieScreen(props) {
             <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
               <Text style={styles.title}>{movieData.country.join(", ")} </Text>
             </View>
-            <Caption style={{ color: colors.caption_color }}>Режисер</Caption>
+            <Caption style={{ color: colors.caption_color }}>Режиссер</Caption>
             <Text style={styles.title}>{movieData.regisser}</Text>
             <Caption style={{ color: colors.caption_color }}>
               В главных ролях
@@ -403,7 +405,7 @@ export default function DetailMovieScreen(props) {
       />
       <ReactNativeParallaxHeader
         headerMinHeight={HEADER_HEIGHT}
-        headerMaxHeight={200}
+        headerMaxHeight={300}
         extraScrollHeight={20}
         navbarColor="#EF0000"
         alwaysShowTitle={false}
@@ -423,16 +425,18 @@ export default function DetailMovieScreen(props) {
               justifyContent: "center",
             }}
           >
-            <Title
+            <IconButton
+              icon="play"
+              size={60}
+              color={"#fff"}
               style={{
-                color: colors.text_color,
-                fontFamily: "Roboto",
-                textAlign: "center",
-                marginHorizontal: 10,
+                width: 80,
+                height: 80,
+                backgroundColor: "#990000",
+                borderRadius: 40,
+                alignSelf: "center",
               }}
-            >
-              {""}
-            </Title>
+            />
           </TouchableOpacity>
         }
         titleStyle={styles.titleStyle}

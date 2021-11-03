@@ -276,7 +276,7 @@ export default function SoonOnScreenDetail(props) {
             <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
               <Text style={styles.title}>{movieData.country.join(", ")} </Text>
             </View>
-            <Caption style={{ color: colors.caption_color }}>Режисер</Caption>
+            <Caption style={{ color: colors.caption_color }}>Режиссер</Caption>
             <Text style={styles.title}>{movieData.regisser}</Text>
             <Caption style={{ color: colors.caption_color }}>
               В главных ролях

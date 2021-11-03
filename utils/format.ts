@@ -29,12 +29,12 @@ export function format(items: any[]) {
         const dateTemp = {
           date: moment(seanse.date).format("YYYY-MM-DD"),
           data: [seanse],
-          info: { ...formatedItem, seanses: null },
+          info: { ...formatedItem },
         };
         dates.push(dateTemp);
       }
     });
   });
 
-  return dates;
+  return dates.sort((a, b) => new Date(a.date) - new Date(b.date));
 }

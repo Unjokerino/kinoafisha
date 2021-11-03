@@ -10,7 +10,7 @@ import {
   View,
   ActivityIndicator,
   Dimensions,
-  FlatList
+  FlatList,
 } from "react-native";
 import moment from "moment";
 import MovieCard from "../components/MovieCard";
@@ -22,7 +22,7 @@ import {
   Provider,
   Headline,
   Subheading,
-  Caption
+  Caption,
 } from "react-native-paper";
 import { MonoText } from "../components/StyledText";
 import ReactNativeParallaxHeader from "react-native-parallax-header";
@@ -42,8 +42,8 @@ export default function DetailMovieScreen(props) {
       uri:
         movieData.poster === ""
           ? "https://webgradients.com/public/webgradients_png/035%20Itmeo%20Branding.png"
-          : movieData.poster
-    }
+          : movieData.poster,
+    },
   };
 
   function renderContent() {
@@ -54,7 +54,7 @@ export default function DetailMovieScreen(props) {
             justifyContent: "space-between",
             flexDirection: "row",
             paddingHorizontal: 8,
-            alignItems: "center"
+            alignItems: "center",
           }}
         >
           <Headline>Расписание</Headline>
@@ -68,11 +68,11 @@ export default function DetailMovieScreen(props) {
             backgroundColor: "#fff",
             width: "100%",
             elevation: 1,
-            marginVertical: 8
+            marginVertical: 8,
           }}
         ></View>
         <View style={styles.box}>
-          {movieData.seanses.map(seans => {
+          {movieData.seanses.map((seans) => {
             return (
               <TouchableOpacity
                 style={{
@@ -81,7 +81,7 @@ export default function DetailMovieScreen(props) {
                   borderRadius: 5,
                   borderColor: "#f1f1f1",
                   borderWidth: 1,
-                  alignSelf: "flex-start"
+                  alignSelf: "flex-start",
                 }}
               >
                 <Text>
@@ -91,17 +91,17 @@ export default function DetailMovieScreen(props) {
             );
           })}
           <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-            {movieData.country.map(val => {
+            {movieData.country.map((val) => {
               return <Caption>{val} </Caption>;
             })}
           </View>
           <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-            {movieData.ganre.map(val => {
+            {movieData.ganre.map((val) => {
               return <Caption>{val} </Caption>;
             })}
           </View>
           <Text>{movieData.desc}</Text>
-          <Caption>Режисер</Caption>
+          <Caption>Режиссер</Caption>
           <Text>{movieData.regisser}</Text>
           <Caption>В главных ролях</Caption>
           <Text>{movieData.acters} </Text>
@@ -115,7 +115,7 @@ export default function DetailMovieScreen(props) {
       <View
         style={{
           height: 30,
-          backgroundColor: "#000"
+          backgroundColor: "#000",
         }}
       />
       <ReactNativeParallaxHeader
@@ -134,7 +134,7 @@ export default function DetailMovieScreen(props) {
         innerContainerStyle={styles.container}
         scrollViewProps={{
           onScrollBeginDrag: () => console.log("onScrollBeginDrag"),
-          onScrollEndDrag: () => console.log("onScrollEndDrag")
+          onScrollEndDrag: () => console.log("onScrollEndDrag"),
         }}
       />
     </View>
@@ -166,35 +166,35 @@ const styles = StyleSheet.create({
   appbarr: {
     marginTop: 30,
     backgroundColor: "#fff",
-    elevation: 0
+    elevation: 0,
   },
   box: { paddingHorizontal: 8, flexDirection: "column" },
   container: {
     flex: 1,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
   },
   contentContainer: {
     flexGrow: 1,
-    color: "#000"
+    color: "#000",
   },
   navContainer: {
     height: HEADER_HEIGHT,
-    marginHorizontal: 10
+    marginHorizontal: 10,
   },
   statusBar: {
     height: STATUS_BAR_HEIGHT,
-    backgroundColor: "transparent"
+    backgroundColor: "transparent",
   },
   navBar: {
     height: NAV_BAR_HEIGHT,
     justifyContent: "space-between",
     alignItems: "center",
     flexDirection: "row",
-    backgroundColor: "transparent"
+    backgroundColor: "transparent",
   },
   titleStyle: {
     color: "#fff",
     fontWeight: "bold",
-    fontSize: 18
-  }
+    fontSize: 18,
+  },
 });

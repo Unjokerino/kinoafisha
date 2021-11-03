@@ -133,12 +133,14 @@ class BottomNavigator extends React.Component {
           animated={true}
           backgroundColor={this.state.routes[this.state.index].color}
         />
-        <View
-          style={{
-            height: 30,
-            backgroundColor: this.state.routes[this.state.index].color,
-          }}
-        />
+        {Platform.OS === "ios" && (
+          <View
+            style={{
+              height: 30,
+              backgroundColor: this.state.routes[this.state.index].color,
+            }}
+          />
+        )}
 
         <Appbar
           style={{
