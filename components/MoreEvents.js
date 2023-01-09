@@ -3,11 +3,10 @@ import React, { useEffect, useState } from "react";
 import {
   FlatList,
   StyleSheet,
-  AsyncStorage,
 } from "react-native";
 import moment from 'moment'
-import localization from 'moment/locale/ru'
 import HorizontalItemCard from "./HorizontalItemCard"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export default function MoreEvents(props){
     const [moreEvents,setMoreEvents] = useState([])

@@ -53,7 +53,6 @@ export default function SoonOnScreen() {
           <MovieCard
             current_date={item.date}
             movies={movies}
-            navigation={navigation}
             detailType="DetailMovieScreen"
             soonOnScreens={true}
             {...item}

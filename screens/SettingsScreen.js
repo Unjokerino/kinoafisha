@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { ExpoConfigView } from "@expo/samples";
 import {
   ScrollView,
   StyleSheet,
   Switch,
   View,
-  AsyncStorage
 } from "react-native";
 import { Text, Appbar } from "react-native-paper";
-import App from "../navigation/AppNavigator";
 import COLORS from "../assets/colors"
-import { color } from "react-native-reanimated";
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export default function SettingsScreen(props) {
   const [newsNotifications, setNewsNotification] = useState(false)

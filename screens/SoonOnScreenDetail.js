@@ -8,7 +8,6 @@ import {
   Text,
   TouchableOpacity,
   View,
-  AsyncStorage,
   ActivityIndicator,
   Dimensions,
   FlatList,
@@ -18,6 +17,8 @@ import { WebView } from "react-native-webview";
 import moment from "moment";
 import localization from "moment/locale/ru";
 import MoreEvents from "../components/MoreEvents";
+import AsyncStorage from "@react-native-async-storage/async-storage"
+
 import {
   Appbar,
   Title,

@@ -1,30 +1,15 @@
-import * as WebBrowser from "expo-web-browser";
+import moment from "moment";
+import "moment/min/moment-with-locales";
 import React, { useEffect, useState } from "react";
 import {
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  ActivityIndicator,
   Dimensions,
-  RefreshControl,
-  FlatList
+  RefreshControl, ScrollView, SectionList, StyleSheet,
+  Text, View
 } from "react-native";
-import moment from "moment";
-import TheaterCard from "../components/TheaterCard";
 import {
-  Appbar,
-  Title,
-  FAB,
-  Portal,
-  Provider,
   Headline
 } from "react-native-paper";
-import { MonoText } from "../components/StyledText";
-import "moment/min/moment-with-locales";
+import TheaterCard from "../components/TheaterCard";
 
 const deviceWidth = Dimensions.get("window").width;
 HomeScreen.navigationOptions = {
@@ -72,42 +57,45 @@ export default function HomeScreen(props) {
     getData();
   }, []);
 
+
+  const renderItem = ({item}) => {
+        return <View>
+          <Text style={{ padding: 5 }}>
+            {moment(avalableSeans.date).format("MMM Do")}
+          </Text>
+          <View style={{ backgroundColor: "#fff" }}>
+            {avalableSeans.theatres.map(val => {
+              return (
+                <TheaterCard navigation={props} {...val}></TheaterCard>
+              );
+            })}
+          </View>
+        </View>
+  }
+
+  const renderSectionHeader = ({item}) => {
+    return  <Text style={{ padding: 5 }}>
+    {moment(avalableSeans.date).format("MMM Do")}
+  </Text>
+  }
+
   return (
     <View style={styles.container}>
       <Headline
         style={{
           paddingHorizontal: 10,
-
           backgroundColor: "#fff"
         }}
       >
         Расписание
       </Headline>
-      <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={getData} />
-        }
-        style={{}}
-      >
-        {avalableSeanses.map(avalableSeans => {
-          moment.locale("ru");
-          if (avalableSeans.theatres.length > 0)
-            return (
-              <View>
-                <Text style={{ padding: 5 }}>
-                  {moment(avalableSeans.date).format("MMM Do")}
-                </Text>
-                <View style={{ backgroundColor: "#fff" }}>
-                  {avalableSeans.theatres.map(val => {
-                    return (
-                      <TheaterCard navigation={props} {...val}></TheaterCard>
-                    );
-                  })}
-                </View>
-              </View>
-            );
-        })}
-      </ScrollView>
+      <SectionList 
+      renderSectionHeader={renderSectionHeader}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={getData} />
+              }
+        renderItem={renderItem}
+      />
     </View>
   );
 }

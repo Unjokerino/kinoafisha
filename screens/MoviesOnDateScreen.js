@@ -1,25 +1,13 @@
-import * as WebBrowser from "expo-web-browser";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import {
-  Image,
-  Platform,
-  AsyncStorage,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  RefreshControl,
-  View,
-  ActivityIndicator,
   Dimensions,
-  FlatList,
+  FlatList, StyleSheet, View
 } from "react-native";
-import MovieCard from "../components/MovieCard";
-import { Appbar, Title, FAB, Portal, Provider } from "react-native-paper";
-import { MonoText } from "../components/StyledText";
+import { Appbar, Provider, Title } from "react-native-paper";
 import COLORS from "../assets/colors";
-import moment from "moment";
-import localization from "moment/locale/ru";
+import MovieCard from "../components/MovieCard";
 
 const deviceWidth = Dimensions.get("window").width;
 
@@ -153,9 +141,8 @@ export default function MoviesOnDateScreen(props) {
                 detailType="DetailMovieScreen"
                 url={props.route.params.url}
                 darkTheme={darkTheme}
-                navigation={props.navigation}
                 {...item}
-              ></MovieCard>
+              />
             )}
             keyExtractor={(item) => item.id}
           />

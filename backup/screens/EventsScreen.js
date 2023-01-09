@@ -1,30 +1,17 @@
-import * as WebBrowser from "expo-web-browser";
+import moment from "moment";
+import "moment/min/moment-with-locales";
 import React, { useEffect, useState } from "react";
 import {
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  ActivityIndicator,
   Dimensions,
-  RefreshControl,
-  FlatList
+  RefreshControl, ScrollView,
+  StyleSheet,
+  Text, View
 } from "react-native";
-import moment from "moment";
-import TheaterCard from "../components/TheaterCard";
 import {
-  Appbar,
-  Title,
-  FAB,
-  Portal,
-  Provider,
   Headline
 } from "react-native-paper";
-import { MonoText } from "../components/StyledText";
-import "moment/min/moment-with-locales";
+import { requests } from "../api";
+import TheaterCard from "../components/TheaterCard";
 
 const deviceWidth = Dimensions.get("window").width;
 
@@ -34,34 +21,23 @@ export default function EventsScreen(props) {
   const [avalableSeanses, setAvalableSeanses] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
 
-  function getData() {
+  const getData = async () => {
     let aTheatres = [];
     try {
       setRefreshing(true);
-      fetch("https://newtime.binarywd.com/jsonfeed/afisha", {
-        headers: {
-          "Cache-Control": "no-cache, no-store, must-revalidate,max-age=0",
-          "Content-Type": "application/json",
-          "Cache-Control": "post-check=0, pre-check=0",
-          Pragma: "no-cache"
-        }
-      }).then(response =>
-        response.json().then(text => {
-          console.log(text);
-          setRefreshing(false);
-          setDates(getDates());
+      const afisha = await requests.getAfisha()
+      setRefreshing(false);
+      setDates(getDates());
+      setTheatre(text);
+      dates.forEach(date => {
+        aTheatres.push({
+          theatres: [...checkDate(date, text)],
+          date: date
+        });
+      });
 
-          setTheatre(text);
-          dates.forEach(date => {
-            aTheatres.push({
-              theatres: [...checkDate(date, text)],
-              date: date
-            });
-          });
-
-          setAvalableSeanses(aTheatres);
-        })
-      );
+      setAvalableSeanses(aTheatres);
+     
     } catch (error) {
       console.log(111111, error);
     }
@@ -76,7 +52,6 @@ export default function EventsScreen(props) {
       <Headline
         style={{
           paddingHorizontal: 10,
-
           backgroundColor: "#fff"
         }}
       >

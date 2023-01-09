@@ -1,0 +1,14 @@
+@expo/samples 
+@react-native-firebase/app 
+@react-navigation/drawer 
+@react-navigation/native 
+@react-navigation/native-stack 
+@react-navigation/stack 
+@react-navigation/web 
+firebase 
+moment 
+react-native-paper 
+react-native-parallax-header 
+react-navigation 
+react-navigation-stack 
+react-navigation-tabs

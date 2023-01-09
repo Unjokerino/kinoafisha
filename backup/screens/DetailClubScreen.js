@@ -1,31 +1,13 @@
-import * as WebBrowser from "expo-web-browser";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
+  Dimensions, Linking, Platform, StyleSheet,
   Text,
   TouchableOpacity,
-  View,
-  ActivityIndicator,
-  Dimensions,
-  FlatList,
-  Linking
+  View
 } from "react-native";
-import moment from "moment";
-import MovieCard from "../components/MovieCard";
 import {
-  Appbar,
-  Title,
-  FAB,
-  Provider,
-  Headline,
-  Portal,
-  Subheading,
-  Caption
+  Appbar, Caption, Provider
 } from "react-native-paper";
-import { MonoText } from "../components/StyledText";
 import ReactNativeParallaxHeader from "react-native-parallax-header";
 
 const deviceWidth = Dimensions.get("window").width;

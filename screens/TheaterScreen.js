@@ -1,27 +1,23 @@
-import * as WebBrowser from "expo-web-browser";
-import React, { useEffect, useState, useMemo } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import moment from "moment";
+import "moment/min/moment-with-locales";
+import "moment/src/locale/ru";
+import React, { useEffect, useMemo, useState } from "react";
 import {
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  ActivityIndicator,
   Dimensions,
   RefreshControl,
-  FlatList,
-  AsyncStorage,
+  ScrollView,
   SectionList,
+  StyleSheet,
+  Text,
+  View,
+  Image,
 } from "react-native";
-import moment from "moment";
-import { format } from "../utils/format";
-import "moment/src/locale/ru";
-import "moment/min/moment-with-locales";
+import Fuse from "fuse.js";
 import MovieCard from "../components/MovieCard";
-import { Title } from "react-native-paper";
-import COLORS from "../assets/colors";
+import { format } from "../utils/format";
+import { useColors } from "../hooks/useColors";
+import { PushkinCard } from "../components/PushkinCard";
 
 const deviceWidth = Dimensions.get("window").width;
 HomeScreen.navigationOptions = {
@@ -30,20 +26,14 @@ HomeScreen.navigationOptions = {
 
 export default function HomeScreen(props) {
   const [theatre, setTheatre] = useState([]);
-  const [dates, setDates] = useState([new Date()]);
-  const [darkTheme, setdarkTheme] = useState("0");
   const [refreshing, setRefreshing] = useState(false);
-  const [colors, setColors] = useState(
-    global.darkTheme ? COLORS.DARK : COLORS.LIGHT
-  );
-
+  const { colors, darkTheme } = useColors();
+  const [searched, setSearched] = useState(theatre);
+  const [query, setQuery] = useState("");
   const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: colors.background_color,
-    },
-    scheduleContainer: {
-      backgroundColor: colors.card_color,
     },
     header: {
       padding: 11,
@@ -70,7 +60,9 @@ export default function HomeScreen(props) {
     scheduleTitle: {
       fontSize: 20,
       paddingHorizontal: 10,
-      marginTop: 10,
+      paddingTop: 18,
+      paddingBottom: 12,
+      fontWeight: "800",
       color: colors.text_color,
     },
     dateText: {
@@ -89,12 +81,27 @@ export default function HomeScreen(props) {
     scrollView: {
       width: deviceWidth,
     },
+    title: {
+      fontSize: 14,
+    },
+    menuItem: {
+      borderRadius: 8,
+      borderWidth: 1.5,
+      borderColor: colors.border_color,
+      paddingVertical: 10,
+      color: "#434670",
+      fontSize: 15,
+      fontWeight: "500",
+      paddingHorizontal: 24,
+      marginHorizontal: 12,
+      textTransform: "capitalize",
+      maxWidth: 300,
+    },
   });
 
   function getData() {
     try {
       setRefreshing(true);
-
       fetch(props.route.url, {
         headers: {
           "Cache-Control": "no-cache",
@@ -104,83 +111,130 @@ export default function HomeScreen(props) {
       }).then((response) =>
         response.json().then((text) => {
           setTheatre(text);
-          console.log("text", props.route.url, text);
           setRefreshing(false);
         })
       );
     } catch (error) {
-      console.log(111111, error);
+      console.log(error);
     }
   }
 
   const avalableSeanses = useMemo(() => {
-    const formatedTheatre = format(theatre);
-    console.log(formatedTheatre);
+    const formatedTheatre = format(searched.length > 0 ? searched : theatre);
     return formatedTheatre;
     //const as = await checkSeanses(theatre);
     //console.warn("as", as);
     //return as;
-  }, [theatre]);
-
-  async function isDarkTheme() {
-    let darkTheme = await AsyncStorage.getItem("darkTheme");
-    setdarkTheme(darkTheme);
-    darkTheme === "1" ? setColors(COLORS.DARK) : setColors(COLORS.LIGHT);
-  }
+  }, [theatre, searched, query]);
 
   useEffect(() => {
-    isDarkTheme();
     getData();
   }, []);
+
+  const searchByType = (type) => {
+  
+    if(query === type) {
+      setQuery("")
+      setSearched(theatre)
+      return
+    };
+    setQuery(type)
+    const options = {
+      keys: ["short_desc"],
+    };
+    if (type === "pushkin_card"){
+      const result = theatre.filter((item) => !!item.pushkin_card)
+      setSearched(result);
+      return 
+    }
+    const fuse = new Fuse(theatre, options);
+    const result =  fuse.search(type).map(item => item.item);
+    setSearched(result);
+  
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.scheduleContainer}>
-        <Title style={styles.scheduleTitle}>Расписание</Title>
+        <Text style={[styles.scheduleTitle, { color: colors.afisha_title }]}>
+          Расписание
+        </Text>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingHorizontal: 12, paddingBottom: 12 }}
+        >
+          <Text
+            onPress={() => searchByType("pushkin_card")}
+            style={[
+              styles.menuItem,
+              +darkTheme && { color: "#fff", borderColor: "#ffffff26" },
+              query === "pushkin_card" && { backgroundColor: "#4579FF26" },
+            ]}
+          >
+           
+            <PushkinCard style={{ height: 15, width: 15 }} />
+            <Text style={{ paddingLeft: 8 }}>Пушкинская карта</Text>
+          </Text>
+          {theatre.map((item) => {
+            return (
+              <Text
+                onPress={() => searchByType(item.short_desc)}
+                numberOfLines={1}
+                style={[
+                  styles.menuItem,
+                  +darkTheme && { color: "#fff", borderColor: "#ffffff26" },
+                  query === item.short_desc && { backgroundColor: "#4579FF26" },
+                ]}
+              >
+                {item.short_desc}
+              </Text>
+            );
+          })}
+        </ScrollView>
       </View>
       {avalableSeanses?.[0]?.date && (
         <SectionList
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={getData} />
+          }
           sections={avalableSeanses}
           keyExtractor={(item, index) => item + index}
           renderItem={({ item, section }) => (
             <View
               style={{
-                backgroundColor: colors.card_color,
-                padding: 3,
+                paddingHorizontal: 24,
+                paddingTop: 12,
                 paddingBottom: 10,
               }}
             >
               <MovieCard
+                titleStyle={styles.title}
                 detailType="DetailTheaterScreen"
                 url={props.route.url}
                 darkTheme={darkTheme}
-                navigation={props}
                 {...item}
                 {...section.info}
               />
             </View>
           )}
           renderSectionHeader={({ section: { date } }) => (
-            <Text style={[styles.header, { color: colors.text_color }]}>
+            <Text
+              style={[
+                styles.header,
+                {
+                  color: colors.text_color,
+                  backgroundColor: colors.gray,
+                  fontWeight: "400",
+                  fontSize: 16,
+                },
+              ]}
+            >
               {moment(date).format("DD MMMM, dddd")}
             </Text>
           )}
         />
       )}
-      <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={getData} />
-        }
-        style={{}}
-      >
-        {/* <MovieCard
-                      detailType="DetailTheaterScreen"
-                      url={props.route.url}
-                      darkTheme={darkTheme}
-                      navigation={props}
-                      {...event}
-                    /> */}
-      </ScrollView>
     </View>
   );
 }

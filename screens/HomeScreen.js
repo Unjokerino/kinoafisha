@@ -1,25 +1,20 @@
-import * as WebBrowser from "expo-web-browser";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import {
-  Image,
-  Platform,
-  AsyncStorage,
+  Dimensions,
+  FlatList,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  RefreshControl,
   View,
-  ActivityIndicator,
-  Dimensions,
-  FlatList,
+  Image,
 } from "react-native";
-import MovieCard from "../components/MovieCard";
-import { Appbar, Title, FAB, Portal, Provider } from "react-native-paper";
-import { MonoText } from "../components/StyledText";
 import COLORS from "../assets/colors";
-import moment from "moment";
-import localization from "moment/locale/ru";
+import MovieCard from "../components/MovieCard";
+import { useColors } from "../hooks/useColors";
 
 const deviceWidth = Dimensions.get("window").width;
 HomeScreen.navigationOptions = {
@@ -27,18 +22,14 @@ HomeScreen.navigationOptions = {
 };
 export default function HomeScreen(props) {
   const [movies, setMovies] = useState([]);
-  const [offset, setOffset] = useState(0);
   const [scrollState, setscrollState] = useState(false);
   const [categoryScrollState, setcategoryScrollState] = useState(false);
-  const [darkTheme, setdarkTheme] = useState("0");
   const [categoryIndex, setCategoryIndex] = useState(0);
   const [dates, setDates] = useState([new Date()]);
-  const [FABopen, setFABopen] = useState(false);
   const [avalableSeanses, setAvalableSeanses] = useState([]);
-  const [currentDate, setCurrentDate] = useState(new Date().getDate());
-  const [scrollCheckEnabled, setScrollCheckEnabled] = useState(true);
   const [refreshing, setRefreshing] = React.useState(false);
-  const [colors, setColors] = useState(COLORS.LIGHT);
+  const { colors, darkTheme } = useColors();
+  const [showPushkin, setShowPushkin] = useState(false);
 
   const styles = StyleSheet.create({
     container: {
@@ -46,17 +37,20 @@ export default function HomeScreen(props) {
       backgroundColor: colors.background_color,
     },
     scheduleContainer: {
-      backgroundColor: colors.card_color,
+      backgroundColor: colors.background_color,
     },
     scheduleText: {
       fontSize: 16,
       fontWeight: "700",
       color: colors.text_color,
+      textAlign: "center",
     },
     scheduleTitle: {
-      paddingHorizontal: 10,
-      marginTop: 10,
+      paddingHorizontal: 24,
+      paddingVertical: 18,
       color: colors.text_color,
+      fontSize: 20,
+      fontWeight: "800",
     },
     message: {
       textAlign: "center",
@@ -80,13 +74,21 @@ export default function HomeScreen(props) {
     scrollView: {
       width: deviceWidth,
     },
+    pushkinButton:{
+      width: 64,
+      height: 64,
+      borderRadius: 32,
+      backgroundColor: +darkTheme ? '#5669FF' : '#EF0000',
+      justifyContent: 'center',
+      alignItems: 'center',
+      position: 'absolute',
+      bottom: 37,
+      right: 25,
+      
+    }
   });
 
-  let scrollListReftop;
-
   useEffect(() => {
-    //getData()
-
     if (scrollState && categoryScrollState) {
       scrollState.scrollTo({
         x: deviceWidth * categoryIndex,
@@ -102,7 +104,6 @@ export default function HomeScreen(props) {
   }, [categoryIndex]);
 
   function getData() {
-    let aSeanses = [];
     try {
       setRefreshing(true);
       fetch("http://rus-noyabrsk.ru/platforms/themes/blankslate/kino.json", {
@@ -124,174 +125,155 @@ export default function HomeScreen(props) {
         setRefreshing(false);
       });
     } catch (error) {
-      console.log(111111, error);
+      console.log(error);
     }
   }
 
   useEffect(() => {
-    isDarkTheme();
     getData();
   }, []);
 
-  async function isDarkTheme() {
-    let darkTheme = await AsyncStorage.getItem("darkTheme");
-    setdarkTheme(darkTheme);
-    darkTheme === "1" ? setColors(COLORS.DARK) : setColors(COLORS.LIGHT);
+  const searchByPuskinCard = () => {
+    setShowPushkin(prev => !prev)
   }
+
 
   return (
     <View style={styles.container}>
-      <Provider>
-        <View style={styles.scheduleContainer}>
-          <Title style={styles.scheduleTitle}>Расписание</Title>
-          <ScrollView
-            ref={setcategoryScrollState}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            style={{ flexWrap: "wrap", flexGrow: 1 }}
-          >
-            {dates.map((date, index) => {
-              return (
-                <View>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setCategoryIndex(index);
-                    }}
-                    style={{
-                      flexGrow: 1,
-                      paddingVertical: 8,
-                      paddingHorizontal: 8,
-                      margin: 5,
-                    }}
-                  >
-                    <Text style={styles.scheduleText}>
-                      {date.getDate() < 10 ? "0" : ""}
-                      {date.getDate()}/{date.getMonth() < 10 ? "0" : ""}
-                      {date.getMonth() + 1}
-                    </Text>
-                    <View
-                      style={{
-                        marginTop: 3,
-                        borderTopLeftRadius: 5,
-                        borderTopRightRadius: 5,
-                        height: 3,
-                        width: "100%",
-                        backgroundColor:
-                          categoryIndex === index ? "#990000" : "#CFCFCF",
-                      }}
-                    ></View>
-                  </TouchableOpacity>
-                </View>
-              );
-            })}
-          </ScrollView>
-        </View>
+      <View style={styles.scheduleContainer}>
+        <Text
+          style={[
+            styles.scheduleTitle,
+            {
+              backgroundColor: colors.background_color,
+              color: colors.afisha_title,
+            },
+          ]}
+        >
+          Расписание
+        </Text>
         <ScrollView
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={getData} />
-          }
-          pagingEnabled={true}
-          nestedScrollEnabled={true}
-          ref={(ref) => setscrollState}
-          onScroll={(event) => {
-            let offset = Math.round(
-              event.nativeEvent.contentOffset.x / deviceWidth
-            );
-            offset !== categoryIndex && setCategoryIndex(offset);
-          }}
-          ref={setscrollState}
+          ref={setcategoryScrollState}
           horizontal={true}
           showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingLeft: 37,
+            paddingRight: 25,
+            backgroundColor: colors.background_color,
+            paddingBottom: 29,
+          }}
+          style={{ flexWrap: "wrap", flexGrow: 1 }}
         >
-          {Object.entries(avalableSeanses).map((avalableSeans, index) => {
-            const [data, seans] = avalableSeans;
-
+          {dates.map((date, index) => {
             return (
               <View>
-                <Text
+                <TouchableOpacity
+                  onPress={() => {
+                    setCategoryIndex(index);
+                  }}
                   style={{
-                    paddingVertical: 10,
-                    fontSize: 16,
-                    color: colors.text_color,
-                    paddingHorizontal: 5,
+                    flexGrow: 1,
+                    paddingHorizontal: 8,
                   }}
                 >
-                  Сеансы на {data}
-                </Text>
-                {countSeanses(seans) > 0 ? (
-                  <FlatList
-                    contentContainerStyle={{
-                      backgroundColor: colors.background_color,
-                      paddingTop: 10,
+                  <Text style={styles.scheduleText}>
+                    {date.getDate() < 10 ? "0" : ""}
+                    {date.getDate()}/{date.getMonth() < 10 ? "0" : ""}
+                    {date.getMonth() + 1}
+                  </Text>
+                  <View
+                    style={{
+                      marginTop: 3,
+                      borderTopLeftRadius: 5,
+                      borderTopRightRadius: 5,
+                      height: 3,
+                      width: 47,
+                      backgroundColor:
+                        categoryIndex === index ? "#990000" : "#CFCFCF",
                     }}
-                    nestedScrollEnabled={true}
-                    key={seans.name + index}
-                    showsVerticalScrollIndicator={false}
-                    style={styles.scrollView}
-                    data={seans}
-                    renderItem={({ item }) => (
-                      <View>
-                        <MovieCard
-                          detailType="DetailMovieScreen"
-                          darkTheme={darkTheme}
-                          current_date={item.date}
-                          movies={movies}
-                          navigation={props}
-                          {...item}
-                        />
-                      </View>
-                    )}
-                    keyExtractor={(item, index) => item.name}
-                  />
-                ) : (
-                  <View style={[styles.scrollView, styles.message]}>
-                    <Text style={styles.messageText}>
-                      Сеансов пока нет, но скоро обязательно появятся{" "}
-                    </Text>
-                  </View>
-                )}
+                  ></View>
+                </TouchableOpacity>
               </View>
             );
           })}
         </ScrollView>
-        {/*}
-        <Portal>
-          <FAB.Group
-            fabStyle={{ backgroundColor: "#EF0000" }}
-            open={FABopen}
-            icon={FABopen ? "dots-vertical" : "format-list-bulleted"}
-            actions={[
-              {
-                icon: "email",
-                label: "Формат",
-                onPress: () => console.log("Pressed email")
-              },
-              {
-                icon: "bell",
-                label: "Жанр",
-                onPress: () => console.log("Pressed notifications")
-              },
-              {
-                icon: "email",
-                label: "Дата и время",
-                onPress: () => console.log("Pressed email")
-              },
-              {
-                icon: "email",
-                label: "Контент",
-                onPress: () => console.log("Pressed email")
-              }
-            ]}
-            onStateChange={({ open }) => setFABopen(open)}
-            onPress={() => {
-              if (FABopen) {
-                // do something if the speed dial is open
-              }
-            }}
-          />
-        </Portal>
-          {*/}
-      </Provider>
+      </View>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={getData} />
+        }
+        pagingEnabled
+        nestedScrollEnabled
+        ref={(ref) => setscrollState}
+        onScroll={(event) => {
+          let offset = Math.round(
+            event.nativeEvent.contentOffset.x / deviceWidth
+          );
+          offset !== categoryIndex && setCategoryIndex(offset);
+        }}
+        ref={setscrollState}
+        horizontal={true}
+        showsHorizontalScrollIndicator={false}
+      >
+        {Object.entries(avalableSeanses).map((avalableSeans, index) => {
+          const [data, seans] = avalableSeans;
+        
+          return (
+            <View>
+              <Text
+                style={{
+                  paddingVertical: 8,
+                  fontSize: 16,
+                  backgroundColor: "#E1E1E1",
+                  color: "#000",
+                  paddingHorizontal: 24,
+                }}
+              >
+                {data}
+              </Text>
+              {countSeanses(seans.filter(item =>  {
+                    if(showPushkin){
+                      return item.pushkin_card
+                    }
+                    return true
+                  })) > 0 ? (
+                <FlatList
+                  contentContainerStyle={{
+                    backgroundColor: colors.background_color,
+                    paddingTop: 10,
+                  }}
+                  nestedScrollEnabled={true}
+                  key={seans.name + index}
+                  showsVerticalScrollIndicator={false}
+                  style={styles.scrollView}
+                  data={seans}
+                  renderItem={({ item }) => (
+                    <View style={{ paddingHorizontal: 24, paddingBottom: 12 }}>
+                      
+                      <MovieCard
+                        detailType="DetailMovieScreen"
+                        current_date={item.date}
+                        movies={movies}
+                        {...item}
+                      />
+                    </View>
+                  )}
+                  keyExtractor={(item, index) => item.name}
+                />
+              ) : (
+                <View style={[styles.scrollView, styles.message]}>
+                  <Text style={styles.messageText}>
+                    Сеансов пока нет, но скоро обязательно появятся{" "}
+                  </Text>
+                </View>
+              )}
+            </View>
+          );
+        })}
+      </ScrollView>
+      <TouchableOpacity onPress={searchByPuskinCard} style={styles.pushkinButton}>
+        <Image source={require("../assets/images/pushkinWhite.png")} />
+      </TouchableOpacity>
     </View>
   );
 }
@@ -305,7 +287,6 @@ function countSeanses(seans) {
 }
 
 async function checkDate(dates, all_movies) {
-  let startD = new Date();
   let avalableMovies = JSON.stringify(all_movies);
   avalableMovies = JSON.parse(avalableMovies);
   let city = await AsyncStorage.getItem("city");
@@ -347,37 +328,6 @@ async function checkDate(dates, all_movies) {
   return seansesOnDate;
 }
 
-function checkMonth(month) {
-  switch (month) {
-    case 1:
-      return "Январь";
-    case 2:
-      return "Февраль";
-    case 3:
-      return "Март";
-    case 4:
-      return "Апрель";
-    case 5:
-      return "Май";
-    case 6:
-      return "Июнь";
-    case 7:
-      return "Июль";
-    case 8:
-      return "Август";
-    case 9:
-      return "Сентябрь";
-    case 10:
-      return "Октябрь";
-    case 11:
-      return "Ноябрь";
-    case 12:
-      return "Декабрь";
-
-    default:
-      return "Январь";
-  }
-}
 
 async function getDates() {
   let dates = [];

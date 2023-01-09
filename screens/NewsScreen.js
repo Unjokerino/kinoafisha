@@ -1,25 +1,12 @@
-import * as WebBrowser from "expo-web-browser";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState } from "react";
 import {
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  ActivityIndicator,
-  RefreshControl,
-  Dimensions,
-  FlatList,
-  AsyncStorage,
-  StatusBar,
+  Dimensions, RefreshControl, ScrollView, StatusBar, StyleSheet, View
 } from "react-native";
-import moment from "moment";
-import NewsCard from "../components/NewsCard";
-import { Appbar, Title, FAB, Portal, Provider } from "react-native-paper";
-import { MonoText } from "../components/StyledText";
+
+import { Appbar } from "react-native-paper";
 import COLORS from "../assets/colors";
+import NewsCard from "../components/NewsCard";
 
 const deviceWidth = Dimensions.get("window").width;
 

@@ -1,22 +1,21 @@
 import AppLoading from "expo-app-loading";
 import * as Updates from "expo-updates";
-
-import * as Notifications from "expo-notifications";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Asset } from "expo-asset";
 import * as Font from "expo-font";
-import React, { useState, useEffect } from "react";
+import * as Notifications from "expo-notifications";
 import * as Permissions from "expo-permissions";
-import AsyncStorage from "@react-native-community/async-storage";
-import { Platform, StatusBar, StyleSheet, View } from "react-native";
 import moment from "moment";
-
-import "moment/src/locale/ru";
-import "moment/min/moment-with-locales";
+import React, { useEffect, useState } from "react";
+import { Platform, StatusBar, StyleSheet, View } from "react-native";
+import SS from 'expo-splash-screen'
 import { Ionicons } from "@expo/vector-icons";
-import AppNavigator from "./navigation/AppNavigator";
-import { Modal, Portal, Text, Button, Provider } from "react-native-paper";
-import * as firebase from "firebase";
 import Constants from "expo-constants";
+import * as firebase from "firebase";
+import "moment/min/moment-with-locales";
+import "moment/src/locale/ru";
+import { Button, Modal, Portal, Provider, Text } from "react-native-paper";
+import AppNavigator from "./navigation/AppNavigator";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDHtsweqDfruO6JhZBxaQvkG-NPaBqTcHs",
@@ -42,6 +41,7 @@ export default function App(props) {
     checkForUpdates();
     checkCity();
     registerNotifications();
+    SS?.hideAsync()
   }, []);
 
   async function registerNotifications() {

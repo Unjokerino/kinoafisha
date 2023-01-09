@@ -1,37 +1,20 @@
-import * as WebBrowser from "expo-web-browser";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import {
-  Image,
-  Platform,
+  Dimensions, Platform,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
-  AsyncStorage,
-  ActivityIndicator,
-  Dimensions,
-  FlatList,
-  Linking,
+  View
 } from "react-native";
-import { WebView } from "react-native-webview";
-import moment from "moment";
-import localization from "moment/locale/ru";
-import MoreEvents from "../components/MoreEvents";
 import {
-  Appbar,
-  Title,
-  FAB,
-  Portal,
-  Provider,
-  Headline,
-  Subheading,
-  Caption,
-  IconButton,
+  Appbar, Caption, Headline, IconButton
 } from "react-native-paper";
-import { MonoText } from "../components/StyledText";
 import ReactNativeParallaxHeader from "react-native-parallax-header";
 import COLORS from "../assets/colors";
+import MoreEvents from "../components/MoreEvents";
 
 const deviceWidth = Dimensions.get("window").width;
 const SCREEN_HEIGHT = Dimensions.get("screen").height;

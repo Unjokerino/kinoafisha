@@ -1,19 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, Image, StyleSheet, AsyncStorage } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import React, { useEffect, useState } from "react";
+import { Image, StyleSheet, Text, View } from "react-native";
+import { Colors, List } from "react-native-paper";
+import SettingsScreen from "../screens/SettingsScreen";
 import MainTabNavigator from "./MainTabNavigator";
 import NewsStuck from "./NewsStuck";
-import SettingsScreen from "../screens/SettingsScreen";
 import SoonOnScreensStuck from "./SoonOnScreensStuck";
-import { List, Colors } from "react-native-paper";
 
-import DetailMovieScreen from "../screens/DetailMovieScreen";
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
-  DrawerItemList,
-  DrawerItem,
+  DrawerItemList
 } from "@react-navigation/drawer";
 import { TouchableOpacity } from "react-native-gesture-handler";
 

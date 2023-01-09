@@ -1,6 +1,7 @@
 import React from "react";
 import { createBottomTabNavigator } from "react-navigation-tabs";
-import { Platform, View, AsyncStorage, StatusBar } from "react-native";
+import { Platform, View, StatusBar, TouchableOpacity } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import TabBarIcon from "../components/TabBarIcon";
 import HomeScreen from "../screens/HomeScreen";
 import SettingsScreen from "../screens/SettingsScreen";
@@ -15,6 +16,7 @@ import DetailClubScreen from "../screens/DetailClubScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 import { BottomNavigation, Text, Appbar } from "react-native-paper";
 import MoviesOnDateScreen from "../screens/MoviesOnDateScreen";
+import { Burger2Icon, CalendarIconNew, StarIcon } from "../assets/icons";
 
 const tabNavigator = createBottomTabNavigator({
   HomeScreen,
@@ -148,22 +150,28 @@ class BottomNavigator extends React.Component {
             elevation: 0,
           }}
         >
-          <Appbar.Action
-            icon="menu"
+          <TouchableOpacity
+            style={{ paddingLeft: 24 }}
             onPress={() => this.props.navigation.openDrawer()}
-          />
+          >
+            <Burger2Icon />
+          </TouchableOpacity>
+
           <Appbar.Content title={this.state.routes[this.state.index].title} />
+
           {this.state.index < 3 && (
-            <Appbar.Action
-              icon="calendar"
+            <TouchableOpacity
+              style={{ paddingLeft: 24 }}
               onPress={() => this.showDatepicker()}
-            />
+            >
+              <CalendarIconNew />
+            </TouchableOpacity>
           )}
           <Appbar.Action
             icon={
               this.state.darkTheme === "1"
-                ? "weather-sunny"
-                : "theme-light-dark"
+                ? "theme-light-dark"
+                : () => <StarIcon />
             }
             onPress={async () => {
               let darkTheme = await AsyncStorage.getItem("darkTheme");
