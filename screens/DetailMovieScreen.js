@@ -1,20 +1,20 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import {
-  Dimensions, Platform,
+  Dimensions,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
-import {
-  Appbar, Caption, Headline, IconButton
-} from "react-native-paper";
+import { Appbar, Caption, Headline, IconButton } from "react-native-paper";
 import ReactNativeParallaxHeader from "react-native-parallax-header";
-import COLORS from "../assets/colors";
+import { PlayIcon } from "../assets/icons";
 import MoreEvents from "../components/MoreEvents";
+import { PushkinCard } from "../components/PushkinCard";
+import { useColors } from "../hooks/useColors";
 
 const deviceWidth = Dimensions.get("window").width;
 const SCREEN_HEIGHT = Dimensions.get("screen").height;
@@ -26,25 +26,26 @@ const NAV_BAR_HEIGHT = HEADER_HEIGHT - STATUS_BAR_HEIGHT;
 export default function DetailMovieScreen(props) {
   const movieData = props.route.params;
   const [dates, setDates] = useState([]);
-  const [darkTheme, setdarkTheme] = useState("0");
-  const [colors, setColors] = useState(
-    movieData.darkTheme === "1" ? COLORS.DARK : COLORS.LIGHT
-  );
   const [currentMovie, setCurrentMovie] = useState([]);
   const [seanses, setSeanses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentDate, setCurrentDate] = useState(
     new Date(movieData.current_date)
   );
+  const soonOnScreens = props?.route?.params?.soonOnScreens;
   const url = "http://rus-noyabrsk.ru/platforms/themes/blankslate/kino.json";
-
+  const { darkTheme: stringDarkTheme, colors } = useColors();
+  const darkTheme = stringDarkTheme === "1" ? true : false;
   const styles = StyleSheet.create({
-    appbarr: {
-      marginTop: 30,
-      backgroundColor: colors.background_color,
-      elevation: 0,
+    box: { flexDirection: "column", flex: 1 },
+    row: {
+      flexDirection: "row",
+      borderBottomColor: "#7070703D",
+      borderBottomWidth: 1,
+      alignItems: "center",
+      flex: 1,
+      paddingVertical: 10,
     },
-    box: { paddingHorizontal: 8, flexDirection: "column" },
     container: {
       flex: 1,
       backgroundColor: colors.background_color,
@@ -54,9 +55,18 @@ export default function DetailMovieScreen(props) {
       color: colors.text_color,
     },
     title: {
-      fontSize: 13,
+      fontSize: 16,
       fontFamily: "Roboto",
-      color: colors.text_color,
+      fontWeight: "700",
+      width: "100%",
+      flex: 1,
+      alignSelf: "flex-start",
+      color: darkTheme ? "#FFFFFF" : "#364F6B",
+    },
+    subtitle: {
+      color: darkTheme ? "#FFFFFF" : "#364F6B",
+      opacity: 0.6,
+      paddingRight: 15,
     },
     iconLeft: {
       opacity: 1,
@@ -70,12 +80,9 @@ export default function DetailMovieScreen(props) {
       backgroundColor: "transparent",
     },
     text: {
-      paddingVertical: 0,
-      borderColor: "#f1f1f1",
-      borderRadius: 5,
-      fontSize: 13,
       fontFamily: "Roboto",
-      color: colors.text_color,
+      color: darkTheme ? "#FFFFFF" : "#364F6B",
+      fontWeight: "500",
     },
     navBar: {
       height: NAV_BAR_HEIGHT,
@@ -88,6 +95,45 @@ export default function DetailMovieScreen(props) {
       color: colors.text_color,
       fontWeight: "bold",
       fontSize: 18,
+    },
+    caption: {
+      fontFamily: "Roboto",
+      opacity: 0.6,
+      color: darkTheme ? "#F5F5F5" : "#364F6B",
+    },
+    menuRow: {
+      paddingHorizontal: 8,
+      flexDirection: "row",
+      elevation: 1,
+      flexGrow: 1,
+      flexWrap: "wrap",
+      marginVertical: 8,
+    },
+    menuItem: {
+      width: 85,
+      height: 33,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingHorizontal: 4,
+    },
+    menuButton: {
+      borderRadius: 8,
+      marginVertical: 2,
+      justifyContent: "center",
+      alignItems: "center",
+      textAlign: "center",
+      borderColor: "#D1D6DD",
+      borderWidth: darkTheme ? 0 : 1.5,
+      backgroundColor: darkTheme ? "#262626" : "transparent",
+    },
+    contentWrapper: {
+      marginTop: 20,
+      borderRadius: 5,
+      backgroundColor: colors.card_color,
+      borderTopColor: darkTheme ? "#000" : "#7070702B",
+      borderTopWidth: darkTheme ? 0 : 1,
+      padding: 16,
+      marginBottom: 10,
     },
   });
 
@@ -151,16 +197,6 @@ export default function DetailMovieScreen(props) {
   }, []);
 
   useEffect(() => {
-    isDarkTheme();
-  }, []);
-
-  async function isDarkTheme() {
-    let darkTheme = await AsyncStorage.getItem("darkTheme");
-    setdarkTheme(darkTheme);
-    darkTheme === "1" ? setColors(COLORS.DARK) : setColors(COLORS.LIGHT);
-  }
-
-  useEffect(() => {
     setLoading(true);
     checkDate(currentDate, currentMovie).then((dates) => {
       setSeanses(dates);
@@ -211,87 +247,88 @@ export default function DetailMovieScreen(props) {
             alignItems: "center",
           }}
         >
-          <Headline style={{ color: colors.text_color }}>Расписание</Headline>
-          <Text style={{ color: colors.caption_color }}>
+          <Headline
+            style={{
+              color: colors.text_color,
+              fontSize: 18,
+              fontFamily: "Roboto",
+            }}
+          >
+            РАСПИСАНИЕ
+          </Headline>
+          <Text style={styles.caption}>
             {movieData.type_film} | {movieData.vozvrast}+
           </Text>
         </View>
-
-        <View
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-          containerStyle={{
-            maxHeight: 50,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-          style={{
-            height: 50,
-            backgroundColor: colors.background_color,
-            flexDirection: "row",
-            elevation: 1,
-            justifyContent: "center",
-            flexWrap: "wrap",
-            marginVertical: 8,
-          }}
-        >
-          {dates.map((date) => {
-            return (
-              <TouchableOpacity
-                key={date.getDate() + date.getMonth()}
-                onPress={() => {
-                  setCurrentDate(date);
-                }}
-                style={{
-                  flex: 1,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  height: "100%",
-                  backgroundColor: colors.card_color,
-                }}
-              >
-                <View
-                  style={[
-                    JSON.stringify(currentDate) == "null"
-                      ? () =>
-                          setCurrentDate(new Date(props.route.params.cur_date))
-                      : currentDate.getDate() === date.getDate() && {
-                          backgroundColor: "#EB5757",
-                          borderRadius: 6,
-                          marginVertical: 2,
-                          justifyContent: "center",
-                          alignItems: "center",
-                          textAlign: "center",
-                          flex: 1,
-                          width: "100%",
-                          height: "100%",
-                        },
-                  ]}
+        {soonOnScreens ? (
+          <Text
+            style={[
+              styles.title,
+              {
+                fontSize: 16,
+                fontFamily: "Roboto",
+                fontWeight: "600",
+                textAlign: "center",
+              },
+            ]}
+          >
+            В кино с {moment(movieData?.seanses?.[0].date).format("D MMMM")}
+          </Text>
+        ) : (
+          <ScrollView
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            containerStyle={{
+              maxHeight: 50,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            contentContainerStyle={{
+              justifyContent: "center",
+            }}
+            style={styles.menuRow}
+          >
+            {dates.map((date) => {
+              const isCurrent =
+                JSON.stringify(currentDate) == "null"
+                  ? () => setCurrentDate(new Date(props.route.params.cur_date))
+                  : currentDate.getDate() === date.getDate();
+              return (
+                <TouchableOpacity
+                  key={date.getDate() + date.getMonth()}
+                  onPress={() => {
+                    setCurrentDate(date);
+                  }}
+                  style={styles.menuItem}
                 >
-                  <Text
+                  <View
                     style={[
-                      {
-                        textAlign: "center",
-                        color: colors.text_color,
+                      styles.menuButton,
+                      { width: "100%", height: "100%" },
+                      isCurrent && {
+                        backgroundColor: darkTheme ? "#EF0000" : "#4579FF26",
                       },
-                      JSON.stringify(currentDate) == "null"
-                        ? () =>
-                            setCurrentDate(
-                              new Date(props.route.params.cur_date)
-                            )
-                        : currentDate.getDate() === date.getDate() && {
-                            color: "#fff",
-                          },
                     ]}
                   >
-                    {moment(date).format("MM/DD")}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-
+                    <Text
+                      style={[
+                        {
+                          textAlign: "center",
+                          color: darkTheme ? "#FFFFFF" : "#434670",
+                        },
+                        isCurrent && {
+                          color: darkTheme ? "#fff" : "#434670",
+                        },
+                      ]}
+                    >
+                      {moment(date).format("MM/DD")}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        )}
         <ScrollView style={styles.box}>
           <View
             style={{
@@ -308,17 +345,15 @@ export default function DetailMovieScreen(props) {
                   onPress={() => {
                     goToBuying(seans);
                   }}
-                  style={{
-                    marginRight: 10,
-                    marginBottom: 5,
-                    paddingHorizontal: 16,
-                    paddingVertical: 8,
-                    borderRadius: 5,
-                    borderColor: "#f1f1f1",
-                    borderWidth: 1,
-                    backgroundColor: colors.card_color,
-                    alignSelf: "flex-start",
-                  }}
+                  style={[
+                    styles.menuButton,
+                    styles.menuItem,
+                    {
+                      width: "auto",
+                      paddingHorizontal: 25,
+                      marginHorizontal: 4,
+                    },
+                  ]}
                 >
                   <Text style={styles.text}>
                     {moment(seans.date).format("HH:mm")} | {seans.type_zal}
@@ -328,45 +363,43 @@ export default function DetailMovieScreen(props) {
             })}
           </View>
 
-          <View
-            style={{
-              marginTop: 20,
-              borderColor: "#f1f1f1",
-              borderRadius: 5,
-              backgroundColor: colors.card_color,
-              borderWidth: 1,
-              padding: 16,
-              marginBottom: 10,
-            }}
-          >
-            <View
-              style={{ borderBottomColor: "#f1f1f1", borderBottomWidth: 1 }}
+          <View style={styles.contentWrapper}>
+            <Text
+              style={[
+                styles.title,
+                { fontSize: 16, fontFamily: "Roboto", fontWeight: "600" },
+              ]}
             >
-              <Text style={[styles.title, { fontSize: 18 }]}>
-                {movieData.name}
-              </Text>
-              <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-                <Caption style={{ color: colors.caption_color }}>
-                  {movieData.ganre.join(", ")}{" "}
-                </Caption>
-              </View>
-            </View>
-            <Caption style={{ color: colors.caption_color }}>Описание</Caption>
-            <Text style={styles.text}>
+              {movieData.name}
+            </Text>
+            <Caption style={styles.caption}>
+              {movieData.ganre.join(", ")}{" "}
+            </Caption>
+
+            <Text
+              style={[
+                [
+                  styles.text,
+                  { paddingVertical: 22, lineHeight: 18, fontSize: 13 },
+                ],
+              ]}
+            >
               {movieData.desc
                 ? movieData.desc.replace('<?xml encoding="utf8" ?>', "")
                 : "Описания пока нет :("}
             </Text>
-            <Caption style={{ color: colors.caption_color }}>Cтрана</Caption>
-            <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+            <View style={styles.row}>
+              <Caption style={styles.subtitle}>Cтрана</Caption>
               <Text style={styles.title}>{movieData.country.join(", ")} </Text>
             </View>
-            <Caption style={{ color: colors.caption_color }}>Режиссер</Caption>
-            <Text style={styles.title}>{movieData.regisser}</Text>
-            <Caption style={{ color: colors.caption_color }}>
-              В главных ролях
-            </Caption>
-            <Text style={styles.title}>{movieData.acters} </Text>
+            <View style={styles.row}>
+              <Caption style={styles.subtitle}>Режиссер</Caption>
+              <Text style={styles.title}>{movieData.regisser}</Text>
+            </View>
+            <View style={[styles.row, { borderBottomWidth: 0 }]}>
+              <Caption style={styles.subtitle}>В главных ролях</Caption>
+              <Text style={styles.title}>{movieData.acters} </Text>
+            </View>
           </View>
           <MoreEvents
             name={movieData.name}
@@ -379,49 +412,50 @@ export default function DetailMovieScreen(props) {
     );
   }
 
+  const renderTitle = () => {
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          props.navigation.navigate("WebViewScreen", {
+            url: "https://www.youtube.com/embed/" + movieData.youtube,
+            name: movieData.name,
+          });
+        }}
+        style={{
+          height: "100%",
+          width: "100%",
+          justifyContent: "center",
+          backgroundColor: "#11111154",
+          justifyContent: "center",
+        }}
+      >
+        <IconButton
+          icon="play"
+          size={50}
+          color={"#fff"}
+          style={{
+            width: 60,
+            height: 60,
+            borderRadius: 30,
+            borderWidth: 5,
+            borderColor: "#fff",
+            alignSelf: "center",
+          }}
+        />
+        <PushkinCard style={{ position: "absolute", bottom: 8, right: 13 }} />
+      </TouchableOpacity>
+    );
+  };
+
   return (
     <View style={styles.container}>
-      <View
-        style={{
-          backgroundColor: Platform.OS === "ios" ? "#fff" : "#000",
-        }}
-      />
       <ReactNativeParallaxHeader
         headerMinHeight={HEADER_HEIGHT}
-        headerMaxHeight={300}
+        headerMaxHeight={250}
         extraScrollHeight={20}
-        navbarColor="#EF0000"
+        navbarColor={darkTheme ? "black" : "black"}
         alwaysShowTitle={false}
-        title={
-          <TouchableOpacity
-            onPress={() => {
-              props.navigation.navigate("WebViewScreen", {
-                url: "https://www.youtube.com/embed/" + movieData.youtube,
-                name: movieData.name,
-              });
-            }}
-            style={{
-              height: "100%",
-              width: "100%",
-              justifyContent: "center",
-              backgroundColor: "#11111154",
-              justifyContent: "center",
-            }}
-          >
-            <IconButton
-              icon="play"
-              size={60}
-              color={"#fff"}
-              style={{
-                width: 80,
-                height: 80,
-                backgroundColor: "#990000",
-                borderRadius: 40,
-                alignSelf: "center",
-              }}
-            />
-          </TouchableOpacity>
-        }
+        title={renderTitle()}
         titleStyle={styles.titleStyle}
         backgroundImage={images.background}
         backgroundImageScale={1.2}

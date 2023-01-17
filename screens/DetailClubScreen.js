@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
 import {
-  Dimensions, Linking, Platform, StyleSheet,
+  Dimensions,
+  Linking,
+  Platform,
+  StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
-import {
-  Appbar, Caption, Portal, Provider, Title
-} from "react-native-paper";
+import { Appbar, Caption, Portal, Provider, Title } from "react-native-paper";
 import ReactNativeParallaxHeader from "react-native-parallax-header";
 import COLORS from "../assets/colors";
 import MoreEvents from "../components/MoreEvents";
+import { useColors } from "../hooks/useColors";
 
 const deviceWidth = Dimensions.get("window").width;
 const SCREEN_HEIGHT = Dimensions.get("screen").height;
@@ -25,6 +27,9 @@ export default function DetailClubScreen(props) {
     clubData.darkTheme === "1" ? COLORS.DARK : COLORS.LIGHT
   );
 
+  const { darkTheme: stringDarkTheme } = useColors();
+  const darkTheme = stringDarkTheme === "1" ? true : false;
+
   const styles = StyleSheet.create({
     appbarr: {
       marginTop: 30,
@@ -34,12 +39,17 @@ export default function DetailClubScreen(props) {
     box: { paddingHorizontal: 8, flexDirection: "column" },
     container: {
       flex: 1,
+      paddingHorizontal: 14,
+      paddingTop: 17,
       backgroundColor: colors.background_color,
     },
-    text: {
-      textAlign: "center",
-      color: colors.text_color,
+    title: {
+      textAlign: "left",
+      color: darkTheme ? "#fff" : "#000",
+      fontFamily: "Roboto",
+      fontSize: 18,
     },
+
     contentContainer: {
       flexGrow: 1,
       color: colors.text_color,
@@ -53,32 +63,33 @@ export default function DetailClubScreen(props) {
       backgroundColor: "transparent",
     },
     description: {
-      backgroundColor: colors.card_color,
-      color: colors.text_color,
-      fontWeight: "bold",
-      textAlign: "center",
+      paddingVertical: 25,
+      textAlign: "left",
+      color: darkTheme ? "#fff" : "#364F6B",
       fontFamily: "Roboto",
-      paddingTop: 30,
-      elevation: 1,
-      paddingVertical: 8,
-      paddingHorizontal: 4,
-      marginTop: 10,
-      paddingBottom: 20,
+      lineHeight: 18,
+      fontSize: 13,
     },
     buttonContainer: {
       position: "absolute",
       bottom: 0,
       alignSelf: "center",
       paddingHorizontal: 6,
-      borderRadius: 14,
-      borderColor: "#03a9f4",
-      borderWidth: 2,
+      borderRadius: 8,
+
       paddingVertical: 12,
       justifyContent: "center",
       alignItems: "center",
       marginVertical: 20,
-      elevation: 2,
-      backgroundColor: colors.card_color,
+
+      backgroundColor: "#EF0000",
+    },
+    buttonText: {
+      color: "#fff",
+      paddingHorizontal: 30,
+      fontFamily: "Roboto",
+      fontWeight: "900",
+      fontSize: 18,
     },
 
     navBar: {
@@ -95,8 +106,6 @@ export default function DetailClubScreen(props) {
     },
   });
 
-  useEffect(() => {}, []);
-
   const images = {
     background: {
       uri: clubData.img
@@ -110,27 +119,13 @@ export default function DetailClubScreen(props) {
   function renderContent(colors) {
     const url = "http://rus-noyabrsk.ru/platforms/themes/blankslate/clubs.json";
     return (
-      <View style={styles.container}>
-        <Title style={styles.text}>{clubData.name}</Title>
+      <>
+        <Text style={styles.title}>{clubData.name}</Text>
         <Text style={styles.description}>
           {clubData.mobile
             ? clubData.mobile.replace('<?xml encoding="utf8" ?>', "")
             : clubData.description.replace('<?xml encoding="utf8" ?>', "")}
         </Text>
-        <Caption
-          style={[
-            {
-              textAlign: "center",
-              paddingHorizontal: 16,
-              fontFamily: "Roboto",
-              marginBottom: 50,
-            },
-            styles.text,
-          ]}
-        >
-          Увидеть положение и подать заявку на вступление вы можете на нашем
-          сайте
-        </Caption>
         <MoreEvents
           skipDateCheck={true}
           skipCityCheck={true}
@@ -146,12 +141,10 @@ export default function DetailClubScreen(props) {
             }}
             style={styles.buttonContainer}
           >
-            <Caption style={styles.text}>
-              Функция записи будет скоро доступна
-            </Caption>
+            <Text style={styles.buttonText}>Подать заявку на вступление</Text>
           </TouchableOpacity>
         </Portal>
-      </View>
+      </>
     );
   }
 
@@ -177,17 +170,12 @@ export default function DetailClubScreen(props) {
   }
 
   return (
-    <Provider style={styles.container}>
-      <View
-        style={{
-          backgroundColor: "#000",
-        }}
-      />
+    <>
       <ReactNativeParallaxHeader
         headerMinHeight={HEADER_HEIGHT}
         headerMaxHeight={200}
         extraScrollHeight={20}
-        navbarColor="#006d6a"
+        navbarColor="black"
         title={""}
         titleStyle={styles.titleStyle}
         backgroundImage={images.background}
@@ -196,12 +184,11 @@ export default function DetailClubScreen(props) {
         renderContent={renderContent}
         containerStyle={styles.container}
         contentContainerStyle={styles.contentContainer}
-        innerContainerStyle={styles.container}
         scrollViewProps={{
           onScrollBeginDrag: () => console.log("onScrollBeginDrag"),
           onScrollEndDrag: () => console.log("onScrollEndDrag"),
         }}
       />
-    </Provider>
+    </>
   );
 }

@@ -1,17 +1,25 @@
 import moment from "moment";
 //@ts-ignore
 import React from "react";
-import { Image, StyleProp, StyleSheet, TextStyle, View } from "react-native";
+import {
+  Image,
+  StyleProp,
+  StyleSheet,
+  TextStyle,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { MonoText as Text } from "./StyledText";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { Caption } from "react-native-paper";
 import COLORS from "../assets/colors";
 import { useNavigation } from "@react-navigation/native";
 import { EventProps } from "../screens/DetailTheaterScreen";
 import { useColors } from "../hooks/useColors";
-import {PushkinCard} from "./PushkinCard";
-export default function MovieCard(props: EventProps & { titleStyle: StyleProp<TextStyle> }) {
-  const {colors, darkTheme} = useColors()
+import { PushkinCard } from "./PushkinCard";
+export default function MovieCard(
+  props: EventProps & { titleStyle: StyleProp<TextStyle> }
+) {
+  const { colors, darkTheme } = useColors();
   const navigation = useNavigation();
   const styles = StyleSheet.create({
     container: {
@@ -88,7 +96,11 @@ export default function MovieCard(props: EventProps & { titleStyle: StyleProp<Te
           }}
         />
         <View style={styles.wraper}>
-          <Text numberOfLines={2} style={[styles.text, styles.title, props.titleStyle]}>
+          <Text
+            numberOfLines={2}
+            style={[styles.text, styles.title, props.titleStyle]}
+          >
+            {props.type_afisha_name + ""}
             {props.name}
           </Text>
           {props.ganre && (
@@ -102,7 +114,10 @@ export default function MovieCard(props: EventProps & { titleStyle: StyleProp<Te
             </Text>
           )}
           {props.mobile && (
-            <Text numberOfLines={2} style={[styles.caption, {paddingVertical: 6}]}>
+            <Text
+              numberOfLines={2}
+              style={[styles.caption, { paddingVertical: 6 }]}
+            >
               {props.mobile}
             </Text>
           )}
@@ -120,7 +135,14 @@ export default function MovieCard(props: EventProps & { titleStyle: StyleProp<Te
                 </Text>
               </TouchableOpacity>
             ) : (
-              <View style={{ flexDirection: "row",  alignItems:'center', maxWidth: '80%', overflow:'hidden' }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  maxWidth: "80%",
+                  overflow: "hidden",
+                }}
+              >
                 {props.seanses &&
                   props.seanses.map((seans, index) => {
                     return (
@@ -131,16 +153,18 @@ export default function MovieCard(props: EventProps & { titleStyle: StyleProp<Te
                   })}
               </View>
             )}
-          
+
             {props.pushkin_card && (
-              <PushkinCard style={{
-                zIndex: 1,
-                position: "absolute",
-                bottom: -5,
-                right: 0,
-                width: 26,
-                height: 26,
-              }} />
+              <PushkinCard
+                style={{
+                  zIndex: 1,
+                  position: "absolute",
+                  bottom: -5,
+                  right: 0,
+                  width: 26,
+                  height: 26,
+                }}
+              />
             )}
           </View>
         </View>

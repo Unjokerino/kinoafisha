@@ -1,6 +1,5 @@
 import React from "react";
-import { Image, Text, View } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { Image, Text, View, TouchableOpacity } from "react-native";
 import { Caption, Title } from "react-native-paper";
 import COLORS from "../assets/colors";
 

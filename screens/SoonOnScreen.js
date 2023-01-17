@@ -1,13 +1,15 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { View, StatusBar, FlatList } from "react-native";
+import { View, FlatList } from "react-native";
 import { Appbar } from "react-native-paper";
 import MovieCard from "../components/MovieCard";
+import { useColors } from "../hooks/useColors";
 
 export default function SoonOnScreen() {
   const navigation = useNavigation();
   const [refreshing, setRefreshing] = useState(false);
   const [movies, setMovies] = useState([]);
+  const { colors } = useColors();
   const fetchData = async () => {
     try {
       setRefreshing(true);
@@ -35,8 +37,7 @@ export default function SoonOnScreen() {
     fetchData();
   }, []);
   return (
-    <View>
-      <StatusBar backgroundColor="#EF0000" animated={true} />
+    <View style={{ flex: 1, backgroundColor: colors.background_color }}>
       <Appbar
         style={{
           backgroundColor: "#EF0000",
@@ -49,14 +50,17 @@ export default function SoonOnScreen() {
       </Appbar>
       <FlatList
         data={movies}
+        contentContainerStyle={{ paddingVertical: 16 }}
         renderItem={({ item }) => (
-          <MovieCard
-            current_date={item.date}
-            movies={movies}
-            detailType="DetailMovieScreen"
-            soonOnScreens={true}
-            {...item}
-          />
+          <View style={{ marginBottom: 16 }}>
+            <MovieCard
+              current_date={item.date}
+              movies={movies}
+              detailType="DetailMovieScreen"
+              soonOnScreens={true}
+              {...item}
+            />
+          </View>
         )}
       />
     </View>

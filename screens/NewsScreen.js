@@ -1,7 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState } from "react";
 import {
-  Dimensions, RefreshControl, ScrollView, StatusBar, StyleSheet, View
+  Dimensions,
+  RefreshControl,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  View,
 } from "react-native";
 
 import { Appbar } from "react-native-paper";
@@ -65,12 +70,6 @@ export default function NewsScreen(props) {
 
   return (
     <View>
-      <View
-        style={{
-          height: 30,
-          backgroundColor: "#000",
-        }}
-      />
       <Appbar
         style={{
           backgroundColor: "#000",

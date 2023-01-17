@@ -53,6 +53,7 @@ export interface EventProps {
   type_afisha: any;
   short_desc: string;
   img_sobitiya: string;
+  type_afisha_name: string;
   mobile: string;
   price: string;
   mesto_sobitiya: string;
@@ -78,7 +79,8 @@ const Text = ({ style, children, ...rest }) => {
 };
 
 export default (props: Props) => {
-  const { colors, darkTheme } = useColors();
+  const { colors, darkTheme: darkThemeString } = useColors();
+  const darkTheme = darkThemeString === "1";
   const params = props.route.params;
 
   const translationY = useSharedValue(0);
@@ -112,8 +114,8 @@ export default (props: Props) => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    StatusBar.setBackgroundColor("#EF0000");
-  }, [props]);
+    StatusBar.setBackgroundColor(darkTheme ? "#1B1B1B" : "#EF0000");
+  }, [props, darkTheme]);
 
   const copyToClipboard = async () => {
     const text = `${params.name}|${params.date}|Узнай больше в Приложении Русь Ноябрьск`;
@@ -122,8 +124,13 @@ export default (props: Props) => {
 
   const renderNavBar = () => {
     return (
-      <View style={styles.navContainer}>
-        <View style={styles.navBar}>
+      <View style={[styles.navContainer]}>
+        <View
+          style={[
+            styles.navBar,
+            { backgroundColor: darkTheme ? "#1B1B1B" : "#EF0000" },
+          ]}
+        >
           <TouchableOpacity onPress={navigation.goBack}>
             <BackIcon />
           </TouchableOpacity>
@@ -144,7 +151,9 @@ export default (props: Props) => {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.card_color }]}>
+    <View
+      style={[styles.container, { backgroundColor: colors.background_color }]}
+    >
       {renderNavBar()}
       <Animated.ScrollView
         onScroll={scrollHandler}
@@ -156,33 +165,30 @@ export default (props: Props) => {
           <Text style={[styles.subtitle, { color: colors.text_color }]}>
             Название события{" "}
           </Text>
-          {params.pushkin_card && (
-            <PushkinCard
-              
-              style={styles.pushkinCard}
-            />
-          )}
+          {params.pushkin_card && <PushkinCard style={styles.pushkinCard} />}
         </View>
-        <Text style={[styles.text, { color: colors.text_color }]}>
+        <Text
+          style={[styles.text, { color: colors.black, fontFamily: "Roboto" }]}
+        >
           {params.name}
         </Text>
         <View style={styles.infoContainer}>
           <View style={[styles.infoRow, styles.border]}>
-            <CalendarIcon fill={darkTheme && "#fff"} />
+            <CalendarIcon fill={darkTheme ? "#fff" : "#000"} />
             <Text style={[styles.subtitle, styles.infoText]}>Дата события</Text>
             <Text style={[styles.title, styles.infoText]}>
               {moment(params.date).format("DD MMMM YYYY")}
             </Text>
           </View>
           <View style={[styles.infoRow, styles.border]}>
-            <ClockIcon fill={darkTheme && "#fff"} />
+            <ClockIcon fill={darkTheme ? "#fff" : "#111111"} />
             <Text style={[styles.subtitle, styles.infoText]}>Время</Text>
             <Text style={[styles.title, styles.infoText]}>
               {moment(params.date).format("HH:mm")}
             </Text>
           </View>
           <View style={[styles.infoRow]}>
-            <LocationIcon fill={darkTheme && "#fff"} />
+            <LocationIcon fill={darkTheme ? "#fff" : "#111111"} />
             <Text style={[styles.subtitle, styles.infoText]}>
               Место события
             </Text>
@@ -193,25 +199,26 @@ export default (props: Props) => {
         </View>
         {params.mobile && <Text style={styles.subtitle}>Описание</Text>}
         {params.mobile && <Text style={styles.caption}>{params.mobile}</Text>}
-
-        <View style={styles.footerContainer}>
-          <View style={styles.footerInfoContainer}>
-            <WalletIcon fill={darkTheme && "#fff"} />
-            <View style={styles.priceContainer}>
-              <Text style={styles.subtitle}>Цена</Text>
-              <Text style={[styles.title, { color: "#000" }]}>
-                {params.price} руб.
-              </Text>
-            </View>
-          </View>
-          <TouchableOpacity
-            onPress={() => Linking.openURL(params.link)}
-            style={styles.button}
-          >
-            <DefaultText style={[styles.buttonText,]}>Купить билет</DefaultText>
-          </TouchableOpacity>
-        </View>
       </Animated.ScrollView>
+      <View
+        style={[styles.footerContainer, { backgroundColor: colors.card_color }]}
+      >
+        <View style={styles.footerInfoContainer}>
+          <WalletIcon fill={darkTheme ? "#fff" : "#111111"} />
+          <View style={styles.priceContainer}>
+            <Text style={styles.subtitle}>Цена</Text>
+            <Text style={[styles.title, { color: "#000" }]}>
+              {params.price} руб.
+            </Text>
+          </View>
+        </View>
+        <TouchableOpacity
+          onPress={() => Linking.openURL(params.link)}
+          style={styles.button}
+        >
+          <DefaultText style={[styles.buttonText]}>Купить билет</DefaultText>
+        </TouchableOpacity>
+      </View>
       <Animated.Image
         style={[styles.mainImg, stylez]}
         source={{ uri: params.img_sobitiya }}
@@ -287,10 +294,11 @@ const styles = StyleSheet.create({
     paddingBottom: 55,
   },
   footerContainer: {
+    paddingHorizontal: 46,
     flexDirection: "row",
     width: "100%",
     justifyContent: "space-between",
-    paddingBottom: 24,
+    paddingVertical: 12,
   },
   button: {
     backgroundColor: "#EF0000",
@@ -309,7 +317,6 @@ const styles = StyleSheet.create({
   },
   priceContainer: {
     paddingLeft: 10,
-    justifyContent: "space-between",
   },
   text: {
     fontWeight: "400",
@@ -317,9 +324,9 @@ const styles = StyleSheet.create({
   pushkinCard: {
     alignSelf: "flex-end",
   },
-  row:{
+  row: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-  }
+  },
 });

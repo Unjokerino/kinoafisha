@@ -59,7 +59,7 @@ export default function HomeScreen(props) {
     },
     scheduleTitle: {
       fontSize: 20,
-      paddingHorizontal: 10,
+      paddingHorizontal: 24,
       paddingTop: 18,
       paddingBottom: 12,
       fontWeight: "800",
@@ -132,25 +132,23 @@ export default function HomeScreen(props) {
   }, []);
 
   const searchByType = (type) => {
-  
-    if(query === type) {
-      setQuery("")
-      setSearched(theatre)
-      return
-    };
-    setQuery(type)
+    if (query === type) {
+      setQuery("");
+      setSearched(theatre);
+      return;
+    }
+    setQuery(type);
     const options = {
       keys: ["short_desc"],
     };
-    if (type === "pushkin_card"){
-      const result = theatre.filter((item) => !!item.pushkin_card)
+    if (type === "pushkin_card") {
+      const result = theatre.filter((item) => !!item.pushkin_card);
       setSearched(result);
-      return 
+      return;
     }
     const fuse = new Fuse(theatre, options);
-    const result =  fuse.search(type).map(item => item.item);
+    const result = fuse.search(type).map((item) => item.item);
     setSearched(result);
-  
   };
 
   return (
@@ -172,7 +170,6 @@ export default function HomeScreen(props) {
               query === "pushkin_card" && { backgroundColor: "#4579FF26" },
             ]}
           >
-           
             <PushkinCard style={{ height: 15, width: 15 }} />
             <Text style={{ paddingLeft: 8 }}>Пушкинская карта</Text>
           </Text>

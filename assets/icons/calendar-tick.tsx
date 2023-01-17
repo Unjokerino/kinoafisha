@@ -1,7 +1,7 @@
 import * as React from "react";
 import Svg, { Path } from "react-native-svg";
 
-export default function ShareIcon({fill= "#111111"}) {
+export default function ShareIcon({ fill = "#111111" }) {
   return (
     <Svg width="25" height="25" viewBox="0 0 25 25" fill="none">
       <Path

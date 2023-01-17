@@ -8,6 +8,7 @@ import WalletIcon from './empty-wallet'
 import Burger2Icon from './burgerNew'
 import StarIcon from './star'
 import CalendarIconNew from './calendar'
+import PlayIcon from './play'
 
 export { 
     BurgerIcon, 
@@ -19,5 +20,6 @@ export {
     WalletIcon,
     Burger2Icon,
     StarIcon,
-    CalendarIconNew
+    CalendarIconNew,
+    PlayIcon
 }

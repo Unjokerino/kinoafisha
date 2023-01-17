@@ -74,18 +74,20 @@ export default function HomeScreen(props) {
     scrollView: {
       width: deviceWidth,
     },
-    pushkinButton:{
+    pushkinButton: {
       width: 64,
       height: 64,
       borderRadius: 32,
-      backgroundColor: +darkTheme ? '#5669FF' : '#EF0000',
-      justifyContent: 'center',
-      alignItems: 'center',
-      position: 'absolute',
+      backgroundColor: +darkTheme ? "#5669FF" : "#EF0000",
+      justifyContent: "center",
+      alignItems: "center",
+      position: "absolute",
       bottom: 37,
       right: 25,
-      
-    }
+    },
+    pushkinButtonActive: {
+      backgroundColor: +darkTheme ? "#EF0000" : "#5669FF",
+    },
   });
 
   useEffect(() => {
@@ -134,9 +136,8 @@ export default function HomeScreen(props) {
   }, []);
 
   const searchByPuskinCard = () => {
-    setShowPushkin(prev => !prev)
-  }
-
+    setShowPushkin((prev) => !prev);
+  };
 
   return (
     <View style={styles.container}>
@@ -217,7 +218,21 @@ export default function HomeScreen(props) {
       >
         {Object.entries(avalableSeanses).map((avalableSeans, index) => {
           const [data, seans] = avalableSeans;
-        
+          const filteredSeans = seans.filter((item) => {
+            if (showPushkin) {
+              return !!item.pushkin_card;
+            }
+            return true;
+          });
+          const seansCount = countSeanses(
+            seans.filter((item) => {
+              if (showPushkin) {
+                return !!item.pushkin_card;
+              }
+              return true;
+            })
+          );
+
           return (
             <View>
               <Text
@@ -231,12 +246,7 @@ export default function HomeScreen(props) {
               >
                 {data}
               </Text>
-              {countSeanses(seans.filter(item =>  {
-                    if(showPushkin){
-                      return item.pushkin_card
-                    }
-                    return true
-                  })) > 0 ? (
+              {seansCount > 0 ? (
                 <FlatList
                   contentContainerStyle={{
                     backgroundColor: colors.background_color,
@@ -246,10 +256,9 @@ export default function HomeScreen(props) {
                   key={seans.name + index}
                   showsVerticalScrollIndicator={false}
                   style={styles.scrollView}
-                  data={seans}
+                  data={filteredSeans}
                   renderItem={({ item }) => (
                     <View style={{ paddingHorizontal: 24, paddingBottom: 12 }}>
-                      
                       <MovieCard
                         detailType="DetailMovieScreen"
                         current_date={item.date}
@@ -258,7 +267,7 @@ export default function HomeScreen(props) {
                       />
                     </View>
                   )}
-                  keyExtractor={(item, index) => item.name}
+                  keyExtractor={(item, index) => item.name + index}
                 />
               ) : (
                 <View style={[styles.scrollView, styles.message]}>
@@ -271,7 +280,13 @@ export default function HomeScreen(props) {
           );
         })}
       </ScrollView>
-      <TouchableOpacity onPress={searchByPuskinCard} style={styles.pushkinButton}>
+      <TouchableOpacity
+        onPress={searchByPuskinCard}
+        style={[
+          styles.pushkinButton,
+          showPushkin && styles.pushkinButtonActive,
+        ]}
+      >
         <Image source={require("../assets/images/pushkinWhite.png")} />
       </TouchableOpacity>
     </View>
@@ -290,6 +305,7 @@ async function checkDate(dates, all_movies) {
   let avalableMovies = JSON.stringify(all_movies);
   avalableMovies = JSON.parse(avalableMovies);
   let city = await AsyncStorage.getItem("city");
+  console.log(city);
   city ? city : "Ноябрьск";
   let seansesOnDate = [];
 
@@ -300,7 +316,9 @@ async function checkDate(dates, all_movies) {
       avalableMovie = JSON.stringify(avalableMovie);
       avalableMovie = JSON.parse(avalableMovie);
 
-      let avalableSeanses = [];
+      let avalableSeanses = avalableMovie.seanses.filter(
+        (seans) => seans.type_afisha_name !== city
+      );
       avalableMovie.seanses.forEach((seans) => {
         let seansDate = new Date(moment(seans.date));
         if (seans.city === city) {
@@ -328,7 +346,6 @@ async function checkDate(dates, all_movies) {
   return seansesOnDate;
 }
 
-
 async function getDates() {
   let dates = [];
   for (let i = 0; i < 7; i++) {
@@ -340,7 +357,7 @@ async function getDates() {
     // to get a value that is either negative, positive, or zero.
     return new Date(a) - new Date(b);
   });
-  console.log(dates);
+
   return dates;
 }
 

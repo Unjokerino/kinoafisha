@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import React, { useEffect, useState } from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Colors, List } from "react-native-paper";
 import SettingsScreen from "../screens/SettingsScreen";
 import MainTabNavigator from "./MainTabNavigator";
@@ -12,9 +12,8 @@ import SoonOnScreensStuck from "./SoonOnScreensStuck";
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
-  DrawerItemList
+  DrawerItemList,
 } from "@react-navigation/drawer";
-import { TouchableOpacity } from "react-native-gesture-handler";
 
 const Drawer = createDrawerNavigator();
 
@@ -55,7 +54,7 @@ function CustomDrawerContent(props, city, setCity) {
       >
         <TouchableOpacity
           onPress={async () => {
-            const city = await AsyncStorage.setItem("city", "Ноябрьск");
+            await AsyncStorage.setItem("city", "Ноябрьск");
             setCity("Ноябрьск");
           }}
           style={[styles.cityCard, city === "Ноябрьск" && styles.activeCard]}
@@ -66,7 +65,7 @@ function CustomDrawerContent(props, city, setCity) {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={async () => {
-            const city = await AsyncStorage.setItem("city", "Вынгапур");
+            await AsyncStorage.setItem("city", "Вынгапур");
             setCity("Вынгапур");
           }}
           style={[styles.cityCard, city === "Вынгапур" && styles.activeCard]}

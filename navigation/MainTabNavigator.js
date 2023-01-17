@@ -2,7 +2,6 @@ import React from "react";
 import { createBottomTabNavigator } from "react-navigation-tabs";
 import { Platform, View, StatusBar, TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import TabBarIcon from "../components/TabBarIcon";
 import HomeScreen from "../screens/HomeScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import TheaterScreen from "../screens/TheaterScreen";
@@ -29,6 +28,7 @@ tabNavigator.path = "";
 class BottomNavigator extends React.Component {
   constructor(props) {
     super(props);
+
     let darkTheme;
     this.state = {
       date: new Date(),
@@ -41,7 +41,7 @@ class BottomNavigator extends React.Component {
       routes: [
         {
           key: "Afisha",
-          title: "Афиша",
+          title: "Киноафиша",
           darkTheme: darkTheme,
           url: "http://rus-noyabrsk.ru/platforms/themes/blankslate/kino.json",
           icon: "filmstrip",
@@ -129,24 +129,24 @@ class BottomNavigator extends React.Component {
   });
 
   render() {
+    const backgroundColor =
+      +this.darkTheme > 0
+        ? "#1B1B1B"
+        : this.state.routes[this.state.index].color;
     return (
       <View style={{ flex: 1 }}>
-        <StatusBar
-          animated={true}
-          backgroundColor={this.state.routes[this.state.index].color}
-        />
+        <StatusBar animated={true} backgroundColor={backgroundColor} />
         {Platform.OS === "ios" && (
           <View
             style={{
               height: 30,
-              backgroundColor: this.state.routes[this.state.index].color,
+              backgroundColor,
             }}
           />
         )}
-
         <Appbar
           style={{
-            backgroundColor: this.state.routes[this.state.index].color,
+            backgroundColor,
             elevation: 0,
           }}
         >
@@ -190,7 +190,13 @@ class BottomNavigator extends React.Component {
         <BottomNavigation
           key={this.state.darkTheme}
           shifting={true}
-          navigationState={this.state}
+          navigationState={{
+            ...this.state,
+            routes: this.state.routes.map((route) => ({
+              ...route,
+              color: this.darkTheme === "1" ? "#1B1B1B" : route.color,
+            })),
+          }}
           onIndexChange={this._handleIndexChange}
           renderScene={this._renderScene}
         />

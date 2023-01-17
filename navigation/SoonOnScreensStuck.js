@@ -1,6 +1,7 @@
 import React from "react";
-import SoonOnScreenDetail from "../screens/SoonOnScreenDetail";
+import DetailMovieScreen from "../screens/DetailMovieScreen";
 import SoonOnScreens from "../screens/SoonOnScreen";
+
 import { createStackNavigator } from "@react-navigation/stack";
 
 const Stack = createStackNavigator();
@@ -22,7 +23,7 @@ export default function SoonOnScreensStuck(props) {
           headerShown: false,
         }}
         name="DetailMovieScreen"
-        component={SoonOnScreenDetail}
+        component={DetailMovieScreen}
       />
     </Stack.Navigator>
   );

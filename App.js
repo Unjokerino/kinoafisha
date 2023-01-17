@@ -3,33 +3,15 @@ import * as Updates from "expo-updates";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Asset } from "expo-asset";
 import * as Font from "expo-font";
-import * as Notifications from "expo-notifications";
-import * as Permissions from "expo-permissions";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { Platform, StatusBar, StyleSheet, View } from "react-native";
-import SS from 'expo-splash-screen'
+import SS from "expo-splash-screen";
 import { Ionicons } from "@expo/vector-icons";
-import Constants from "expo-constants";
-import * as firebase from "firebase";
 import "moment/min/moment-with-locales";
 import "moment/src/locale/ru";
 import { Button, Modal, Portal, Provider, Text } from "react-native-paper";
 import AppNavigator from "./navigation/AppNavigator";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDHtsweqDfruO6JhZBxaQvkG-NPaBqTcHs",
-  authDomain: "kinoafisha-d29d7.firebaseapp.com",
-  databaseURL: "https://kinoafisha-d29d7.firebaseio.com",
-  projectId: "kinoafisha-d29d7",
-  storageBucket: "kinoafisha-d29d7.appspot.com",
-  messagingSenderId: "1080891018380",
-  appId: "1:1080891018380:web:7224710c052df32b83ffa9",
-  measurementId: "G-SNP0W2B5N6",
-};
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
@@ -40,41 +22,11 @@ export default function App(props) {
   useEffect(() => {
     checkForUpdates();
     checkCity();
-    registerNotifications();
-    SS?.hideAsync()
+    SS?.hideAsync();
   }, []);
-
-  async function registerNotifications() {
-    const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-    // only asks if permissions have not already been determined, because
-    // iOS won't necessarily prompt the user a second time.
-    // On Android, permissions are granted on app installation, so
-    // `askAsync` will never prompt the user
-
-    // Stop here if the user did not grant permissions
-    if (status !== "granted") {
-      alert("No notification permissions!");
-      return;
-    }
-
-    // Get the token that identifies this device
-    let token = await Notifications.getExpoPushTokenAsync();
-    storeHighScore(Constants.installationId, token);
-  }
-
-  function storeHighScore(userId, token) {
-    firebase
-      .database()
-      .ref("apps/kinoafisha/users/" + userId)
-      .set({
-        token: token,
-        appOwnership: Constants.appOwnership,
-      });
-  }
 
   async function checkCity() {
     const value = await AsyncStorage.getItem("city");
-    console.log(value);
     if (value === null) {
       await AsyncStorage.setItem("city", "Ноябрьск");
     }
