@@ -15,6 +15,7 @@ import {
 import COLORS from "../assets/colors";
 import MovieCard from "../components/MovieCard";
 import { useColors } from "../hooks/useColors";
+import { useLocation } from "../hooks/useLocation";
 
 const deviceWidth = Dimensions.get("window").width;
 HomeScreen.navigationOptions = {
@@ -30,6 +31,7 @@ export default function HomeScreen(props) {
   const [refreshing, setRefreshing] = React.useState(false);
   const { colors, darkTheme } = useColors();
   const [showPushkin, setShowPushkin] = useState(false);
+  const { city } = useLocation();
 
   const styles = StyleSheet.create({
     container: {
@@ -133,11 +135,49 @@ export default function HomeScreen(props) {
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [city]);
 
   const searchByPuskinCard = () => {
     setShowPushkin((prev) => !prev);
   };
+
+  async function checkDate(dates, all_movies) {
+    const avalableMovies = [
+      ...all_movies.filter((movie) => movie.type_afisha_name === city),
+    ];
+    let seansesOnDate = [];
+
+    dates.forEach((date) => {
+      seansesOnDate[moment(date).format("D MMMM")] = [];
+
+      avalableMovies.map((avalableMovie, index) => {
+        avalableMovie = JSON.stringify(avalableMovie);
+        avalableMovie = JSON.parse(avalableMovie);
+        const avalableSeanses = [];
+        avalableMovie.seanses.forEach((seans) => {
+          let seansDate = new Date(moment(seans.date));
+          if (
+            seansDate.getDate() + "/" + seansDate.getMonth() ===
+            date.getDate() + "/" + date.getMonth()
+          ) {
+            avalableSeanses.push(seans);
+          }
+        });
+
+        avalableMovie.date = date;
+        avalableMovie.seanses = avalableSeanses;
+        if (avalableMovie.seanses.length > 0) {
+          seansesOnDate[moment(date).format("D MMMM")].push({
+            ...avalableMovie,
+          });
+        }
+
+        //console.log(date,avalableMovies[index])
+      });
+    });
+
+    return seansesOnDate;
+  }
 
   return (
     <View style={styles.container}>
@@ -299,51 +339,6 @@ function countSeanses(seans) {
     count += element.seanses.length;
   });
   return count;
-}
-
-async function checkDate(dates, all_movies) {
-  let avalableMovies = JSON.stringify(all_movies);
-  avalableMovies = JSON.parse(avalableMovies);
-  let city = await AsyncStorage.getItem("city");
-  console.log(city);
-  city ? city : "Ноябрьск";
-  let seansesOnDate = [];
-
-  dates.forEach((date) => {
-    seansesOnDate[moment(date).format("D MMMM")] = [];
-
-    avalableMovies.map((avalableMovie, index) => {
-      avalableMovie = JSON.stringify(avalableMovie);
-      avalableMovie = JSON.parse(avalableMovie);
-
-      let avalableSeanses = avalableMovie.seanses.filter(
-        (seans) => seans.type_afisha_name !== city
-      );
-      avalableMovie.seanses.forEach((seans) => {
-        let seansDate = new Date(moment(seans.date));
-        if (seans.city === city) {
-          if (
-            seansDate.getDate() + "/" + seansDate.getMonth() ===
-            date.getDate() + "/" + date.getMonth()
-          ) {
-            avalableSeanses.push(seans);
-          }
-        }
-      });
-
-      avalableMovie.date = date;
-      avalableMovie.seanses = avalableSeanses;
-      if (avalableMovie.seanses.length > 0) {
-        seansesOnDate[moment(date).format("D MMMM")].push({
-          ...avalableMovie,
-        });
-      }
-
-      //console.log(date,avalableMovies[index])
-    });
-  });
-
-  return seansesOnDate;
 }
 
 async function getDates() {

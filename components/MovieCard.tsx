@@ -100,7 +100,6 @@ export default function MovieCard(
             numberOfLines={2}
             style={[styles.text, styles.title, props.titleStyle]}
           >
-            {props.type_afisha_name + ""}
             {props.name}
           </Text>
           {props.ganre && (
