@@ -8,15 +8,16 @@ import React, { useEffect, useState } from "react";
 import { Platform, StatusBar, StyleSheet, View } from "react-native";
 import SS from "expo-splash-screen";
 import { Ionicons } from "@expo/vector-icons";
-import "moment/min/moment-with-locales";
-import "moment/src/locale/ru";
+
+import "moment/locale/ru";
 import { Button, Modal, Portal, Provider, Text } from "react-native-paper";
 import AppNavigator from "./navigation/AppNavigator";
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
   const [visible, setvisible] = useState(false);
-  moment.locale = "ru";
+  moment.locale("ru");
+
   global.currentScreen = 0;
 
   useEffect(() => {
@@ -57,6 +58,7 @@ export default function App(props) {
     return (
       <Provider style={{ flex: 1 }}>
         {Platform.OS === "ios" && <StatusBar barStyle="default" />}
+
         <AppNavigator />
         <Portal>
           <Modal visible={visible}>

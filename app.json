@@ -28,10 +28,10 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.binarywd.kinoafisha",
-      "buildNumber": "1.0.1"
+      "buildNumber": "2.0.0"
     },
     "android": {
-      "versionCode": 8,
+      "versionCode": 10,
       "permissions": [],
       "googleServicesFile": "./google-services.json",
       "package": "com.binarywd.kinoafisha"

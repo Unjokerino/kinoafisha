@@ -43,7 +43,7 @@ class BottomNavigator extends React.Component {
           key: "Afisha",
           title: "Киноафиша",
           darkTheme: darkTheme,
-          url: "http://rus-noyabrsk.ru/platforms/themes/blankslate/kino.json",
+          url: "https://rus-noyabrsk.ru/platforms/themes/blankslate/kino.json",
           icon: "filmstrip",
           color: "#EF0000",
           navigation: this.props.navigation,
@@ -51,7 +51,9 @@ class BottomNavigator extends React.Component {
         {
           key: "Theater",
           title: "Театр",
-          url: "http://rus-noyabrsk.ru/platforms/themes/blankslate/theatre.json",
+          url: "https://rus-noyabrsk.ru/platforms/themes/blankslate/theatre.json",
+          vingapurUrl:
+            "https://rus-noyabrsk.ru/platforms/themes/blankslate/theatre.json",
           darkTheme: darkTheme,
           icon: "drama-masks",
           color: "#000",
@@ -59,7 +61,9 @@ class BottomNavigator extends React.Component {
         },
         {
           key: "Events",
-          url: "http://rus-noyabrsk.ru/platforms/themes/blankslate/afisha.json",
+          url: "https://rus-noyabrsk.ru/platforms/themes/blankslate/afisha.json",
+          vingapurUrl:
+            "https://rus-noyabrsk.ru/platforms/themes/blankslate/afisha-vingapur.json",
           title: "События",
           darkTheme: darkTheme,
           icon: "calendar-star",
@@ -69,7 +73,7 @@ class BottomNavigator extends React.Component {
         {
           key: "Clubs",
           title: "Клубы",
-          url: "http://rus-noyabrsk.ru/platforms/themes/blankslate/clubs.json",
+          url: "https://rus-noyabrsk.ru/platforms/themes/blankslate/clubs.json",
           darkTheme: darkTheme,
           icon: "account-multiple",
           color: "#006d6a",

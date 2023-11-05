@@ -30,7 +30,7 @@ export default function SoonOnScreen() {
         });
       });
     } catch (error) {
-      console.log(111111, error);
+      console.log(error);
     }
   };
   useEffect(() => {

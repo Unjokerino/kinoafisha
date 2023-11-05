@@ -1,4 +1,3 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import moment from "moment";
 import "moment/min/moment-with-locales";
 import "moment/src/locale/ru";
@@ -11,7 +10,6 @@ import {
   StyleSheet,
   Text,
   View,
-  Image,
 } from "react-native";
 import Fuse from "fuse.js";
 import MovieCard from "../components/MovieCard";
@@ -30,6 +28,7 @@ export default function HomeScreen(props) {
   const { colors, darkTheme } = useColors();
   const [searched, setSearched] = useState(theatre);
   const [query, setQuery] = useState("");
+
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -97,6 +96,16 @@ export default function HomeScreen(props) {
       textTransform: "capitalize",
       maxWidth: 300,
     },
+    scheduleContainer: {
+      elevation: 5,
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      backgroundColor: colors.background_color,
+    },
   });
 
   function getData() {
@@ -122,9 +131,6 @@ export default function HomeScreen(props) {
   const avalableSeanses = useMemo(() => {
     const formatedTheatre = format(searched.length > 0 ? searched : theatre);
     return formatedTheatre;
-    //const as = await checkSeanses(theatre);
-    //console.warn("as", as);
-    //return as;
   }, [theatre, searched, query]);
 
   useEffect(() => {
@@ -153,7 +159,7 @@ export default function HomeScreen(props) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.scheduleContainer}>
+      <View style={[styles.scheduleContainer]}>
         <Text style={[styles.scheduleTitle, { color: colors.afisha_title }]}>
           Расписание
         </Text>
@@ -196,7 +202,7 @@ export default function HomeScreen(props) {
             <RefreshControl refreshing={refreshing} onRefresh={getData} />
           }
           sections={avalableSeanses}
-          keyExtractor={(item, index) => item + index}
+          keyExtractor={(item, index) => (item as string) + index}
           renderItem={({ item, section }) => (
             <View
               style={{

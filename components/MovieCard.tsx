@@ -10,8 +10,7 @@ import {
   View,
 } from "react-native";
 import { MonoText as Text } from "./StyledText";
-import { Caption } from "react-native-paper";
-import COLORS from "../assets/colors";
+
 import { useNavigation } from "@react-navigation/native";
 import { EventProps } from "../screens/DetailTheaterScreen";
 import { useColors } from "../hooks/useColors";

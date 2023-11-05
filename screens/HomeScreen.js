@@ -1,4 +1,3 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import {
@@ -12,10 +11,14 @@ import {
   View,
   Image,
 } from "react-native";
-import COLORS from "../assets/colors";
 import MovieCard from "../components/MovieCard";
 import { useColors } from "../hooks/useColors";
 import { useLocation } from "../hooks/useLocation";
+
+const VINGAPUR_URL =
+  "https://rus-noyabrsk.ru/platforms/themes/blankslate/kino-vingapur.json";
+const NOYABRSK_URL =
+  "https://rus-noyabrsk.ru/platforms/themes/blankslate/kino.json";
 
 const deviceWidth = Dimensions.get("window").width;
 HomeScreen.navigationOptions = {
@@ -110,7 +113,7 @@ export default function HomeScreen(props) {
   function getData() {
     try {
       setRefreshing(true);
-      fetch("http://rus-noyabrsk.ru/platforms/themes/blankslate/kino.json", {
+      fetch(city === "Ноябрьск" ? NOYABRSK_URL : VINGAPUR_URL, {
         headers: {
           "Cache-Control": "no-cache",
           "Content-Type": "application/json",
@@ -148,7 +151,8 @@ export default function HomeScreen(props) {
     let seansesOnDate = [];
 
     dates.forEach((date) => {
-      seansesOnDate[moment(date).format("D MMMM")] = [];
+      const momentDate = moment(date).format("DD MMMM");
+      seansesOnDate[momentDate] = [];
 
       avalableMovies.map((avalableMovie, index) => {
         avalableMovie = JSON.stringify(avalableMovie);
@@ -156,6 +160,7 @@ export default function HomeScreen(props) {
         const avalableSeanses = [];
         avalableMovie.seanses.forEach((seans) => {
           let seansDate = new Date(moment(seans.date));
+
           if (
             seansDate.getDate() + "/" + seansDate.getMonth() ===
             date.getDate() + "/" + date.getMonth()
@@ -166,8 +171,9 @@ export default function HomeScreen(props) {
 
         avalableMovie.date = date;
         avalableMovie.seanses = avalableSeanses;
+
         if (avalableMovie.seanses.length > 0) {
-          seansesOnDate[moment(date).format("D MMMM")].push({
+          seansesOnDate[momentDate]?.push({
             ...avalableMovie,
           });
         }
