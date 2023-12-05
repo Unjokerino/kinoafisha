@@ -31,7 +31,7 @@
       "buildNumber": "2.0.0"
     },
     "android": {
-      "versionCode": 10,
+      "versionCode": 12,
       "permissions": [],
       "googleServicesFile": "./google-services.json",
       "package": "com.binarywd.kinoafisha"
@@ -40,6 +40,17 @@
       "eas": {
         "projectId": "ecaff331-ec01-45f0-bb30-c29e46a43c5c"
       }
-    }
+    },
+    "plugins": [[
+      "expo-build-properties",
+      {
+        "android": {
+          "compileSdkVersion": 33,
+          "targetSdkVersion": 33,
+          "buildToolsVersion": "33.0.0",
+          "minSdkVersion": 33
+        }
+      }
+    ]]
   }
 }
